@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Designer Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            chartreuse: '#d8ff3d',
+            ink: '#0e0e0c',
+            paper: '#f2eee5',
+            tangerine: '#ff5a1f',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          borderWidth: {
+            '1.5': '1.5px',
+          },
+          animation: {
+            'marquee': 'marquee 25s linear infinite',
+          },
+          keyframes: {
+            marquee: {
+              '0%': { transform: 'translateX(0%)' },
+              '100%': { transform: 'translateX(-100%)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --color-chartreuse: #d8ff3d;
+      --color-ink: #0e0e0c;
+      --color-paper: #f2eee5;
+      --color-tangerine: #ff5a1f;
+      --font-body: "Inter", system-ui, sans-serif;
+    }
+
+    body {
+      background-color: var(--color-paper);
+      color: var(--color-ink);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Custom Selection Color */
+    ::selection {
+      background: var(--color-tangerine);
+      color: var(--color-paper);
+    }
+
+    /* 
+     * PROVIDED CTA BUTTON STYLES 
+     * Modified slightly to work on <a> tags as well as <button> 
+     */
+    .bc-cta {
+      --bc-cta-bg: var(--color-chartreuse, #d8ff3d);
+      --bc-cta-ink: var(--color-ink, #0e0e0c);
+      --bc-cta-paper: var(--color-paper, #f2eee5);
+      --bc-cta-tangerine: var(--color-tangerine, #ff5a1f);
+
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      height: 56px;
+      padding: 0 10px 0 28px;
+      background: var(--bc-cta-bg);
+      color: var(--bc-cta-ink);
+      font-family: var(--font-body, "Inter", system-ui, sans-serif);
+      font-weight: 600;
+      font-size: 0.9375rem;
+      line-height: 1;
+      letter-spacing: -0.005em;
+      border: 1.5px solid var(--bc-cta-ink);
+      border-radius: 999px;
+      cursor: pointer;
+      user-select: none;
+      text-decoration: none;
+      transition:
+        background 180ms cubic-bezier(0.2, 0.7, 0.2, 1),
+        color 180ms cubic-bezier(0.2, 0.7, 0.2, 1),
+        transform 180ms cubic-bezier(0.2, 0.7, 0.2, 1),
+        box-shadow 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    /* Variant for secondary button matching the system */
+    .bc-cta-secondary {
+      --bc-cta-bg: transparent;
+      background: transparent;
+    }
+    .bc-cta-secondary .bc-cta__arrow {
+      background: var(--bc-cta-ink);
+      color: var(--color-paper);
+    }
+    .bc-cta-secondary:hover .bc-cta__arrow {
+      background: var(--bc-cta-ink);
+      color: var(--color-paper);
+    }
+
+    .bc-cta__label {
+      display: inline-block;
+      padding-bottom: 1px;
+    }
+
+    .bc-cta__arrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: var(--bc-cta-ink);
+      color: var(--bc-cta-bg);
+      transition:
+        background 180ms cubic-bezier(0.2, 0.7, 0.2, 1),
+        color 180ms cubic-bezier(0.2, 0.7, 0.2, 1),
+        transform 200ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .bc-cta__arrow svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+
+    .bc-cta:hover {
+      background: var(--bc-cta-ink);
+      color: var(--bc-cta-paper); /* Adjusted hover color to paper instead of bg to prevent chartreuse on ink clash */
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px -14px rgba(14, 14, 12, 0.45);
+    }
+
+    .bc-cta:hover .bc-cta__arrow {
+      background: var(--bc-cta-bg);
+      color: var(--bc-cta-ink);
+      transform: translateX(4px);
+    }
+
+    .bc-cta:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .bc-cta:focus-visible {
+      outline: 2px solid var(--bc-cta-tangerine);
+      outline-offset: 3px;
+    }
+
+    /* Custom utility classes */
+    .border-ink-1\.5 {
+      border: 1.5px solid var(--color-ink);
+    }
+    
+    .card-shadow {
+      box-shadow: 4px 4px 0px 0px var(--color-ink);
+      transition: all 0.2s ease-in-out;
+    }
+    
+    .card-shadow:hover {
+      box-shadow: 8px 8px 0px 0px var(--color-ink);
+      transform: translate(-4px, -4px);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col relative overflow-x-hidden">
+
+  <nav class="w-full fixed top-0 left-0 z-50 bg-paper/80 backdrop-blur-md border-b-1.5 border-ink">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#" class="text-2xl font-black tracking-tighter text-ink flex items-center gap-2 hover:text-tangerine transition-colors">
+        <div class="w-4 h-4 bg-chartreuse rounded-full border-1.5 border-ink"></div>
+        STUDIO.
+      </a>
+      <div class="hidden md:flex gap-8 font-medium">
+        <a href="#work" class="hover:text-tangerine transition-colors">Work</a>
+        <a href="#about" class="hover:text-tangerine transition-colors">About</a>
+        <a href="#services" class="hover:text-tangerine transition-colors">Services</a>
+      </div>
+      <a href="#contact" class="bc-cta bc-cta-secondary h-12 text-sm !px-2 !pl-6 !gap-8 hidden sm:inline-flex">
+        <span class="bc-cta__label">Let's Talk</span>
+        <span class="bc-cta__arrow !w-8 !h-8" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"></path>
+            <path d="M13 6l6 6-6 6"></path>
+          </svg>
+        </span>
+      </a>
+    </div>
+  </nav>
+
+  <main class="flex-grow pt-32 pb-20">
+    <section class="max-w-7xl mx-auto px-6 pt-12 md:pt-24 pb-20">
+      <div class="flex flex-col items-start gap-8 max-w-4xl">
+        <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full border-1.5 border-ink bg-white text-sm font-semibold shadow-[2px_2px_0px_0px_#0e0e0c]">
+          <span class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-tangerine opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-tangerine border border-ink"></span>
+          </span>
+          Available for new projects
+        </div>
+        
+        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.05] text-ink">
+          Crafting digital <br/>
+          experiences with <br/>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-ink via-ink to-tangerine bg-[length:200%_100%] hover:bg-[position:100%_0] transition-all duration-500 italic pr-4">precision.</span>
+        </h1>
+        
+        <p class="text-lg md:text-xl font-medium max-w-xl text-ink/80 leading-relaxed mb-4">
+          I'm a multidisciplinary designer focusing on web applications, branding, and interactive design systems that leave a lasting impact.
+        </p>
+        
+        <!-- The Main Provided Button -->
+        <a href="#work" class="bc-cta">
+          <span class="bc-cta__label">Explore my work</span>
+          <span class="bc-cta__arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14"></path>
+              <path d="M13 6l6 6-6 6"></path>
+            </svg>
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Marquee Banner -->
+    <div class="w-full bg-chartreuse border-y-1.5 border-ink py-4 overflow-hidden flex relative whitespace-nowrap">
+      <div class="animate-marquee flex gap-12 items-center text-xl font-bold uppercase tracking-widest text-ink">
+        <span>UI/UX Design</span>
+        <span class="w-3 h-3 bg-ink rounded-full"></span>
+        <span>Art Direction</span>
+        <span class="w-3 h-3 bg-ink rounded-full"></span>
+        <span>Web Development</span>
+        <span class="w-3 h-3 bg-ink rounded-full"></span>
+        <span>Brand Identity</span>
+        <span class="w-3 h-3 bg-ink rounded-full"></span>
+        <span>UI/UX Design</span>
+        <span class="w-3 h-3 bg-ink rounded-full"></span>
+        <span>Art Direction</span>
+        <span class="w-3 h-3 bg-ink rounded-full"></span>
+        <span>Web Development</span>
+        <span class="w-3 h-3 bg-ink rounded-full"></span>
+        <span>Brand Identity</span>
+      </div>
+      <!-- Duplicate for seamless looping -->
+      <div class="animate-marquee flex gap-12 items-center text-xl font-bold uppercase tracking-widest text-ink absolute top-4 left-full">
+        <span>UI/UX Design</span>
+        <span class="w-3 h-3 bg-ink rounded-full"></span>
+        <span>Art Direction</span>
+        <span class="w-3 h-3 bg-ink rounded-full"></span>
+        <span>Web Development</span>
+        <span class="w-3 h-3 bg-ink rounded-full"></span>
+        <span>Brand Identity</span>
+        <span class="w-3 h-3 bg-ink rounded-full"></span>
+        <span>UI/UX Design</span>
+        <span class="w-3 h-3 bg-ink rounded-full"></span>
+        <span>Art Direction</span>
+        <span class="w-3 h-3 bg-ink rounded-full"></span>
+        <span>Web Development</span>
+        <span class="w-3 h-3 bg-ink rounded-full"></span>
+        <span>Brand Identity</span>
+      </div>
+    </div>
+
+    <section id="work" class="max-w-7xl mx-auto px-6 py-24">
+      <h2 class="text-4xl md:text-5xl font-black tracking-tight mb-12 flex items-center gap-4">
+        Selected Cases 
+        <span class="h-0.5 flex-grow bg-ink max-w-[200px]"></span>
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        
+        <!-- Project 1 -->
+        <article class="group relative bg-white border-1.5 border-ink rounded-3xl overflow-hidden flex flex-col card-shadow">
+          <div class="h-64 sm:h-80 w-full bg-tangerine border-b-1.5 border-ink relative overflow-hidden">
+            <img src="https://placehold.co/800x600/ff5a1f/0e0e0c?text=Fintech+App" alt="Project Thumbnail" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+            <div class="absolute top-4 left-4 flex gap-2">
+              <span class="px-3 py-1 bg-white border-1.5 border-ink rounded-full text-xs font-bold uppercase">App Design</span>
+            </div>
+          </div>
+          <div class="p-6 md:p-8 flex flex-col flex-grow justify-between gap-6">
+            <div>
+              <h3 class="text-2xl font-bold mb-2">Vault Finance</h3>
+              <p class="text-ink/70 font-medium">A comprehensive design system and mobile application for a modern banking startup.</p>
+            </div>
+            <!-- Standard Provided Button -->
+            <button class="bc-cta self-start" type="button">
+              <span class="bc-cta__label">View the case</span>
+              <span class="bc-cta__arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14"></path>
+                  <path d="M13 6l6 6-6 6"></path>
+                </svg>
+              </span>
+            </button>
+          </div>
+        </article>
+
+        <!-- Project 2 -->
+        <article class="group relative bg-white border-1.5 border-ink rounded-3xl overflow-hidden flex flex-col card-shadow md:translate-y-12">
+          <div class="h-64 sm:h-80 w-full bg-chartreuse border-b-1.5 border-ink relative overflow-hidden">
+            <img src="https://placehold.co/800x600/d8ff3d/0e0e0c?text=E-Commerce" alt="Project Thumbnail" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+            <div class="absolute top-4 left-4 flex gap-2">
+              <span class="px-3 py-1 bg-white border-1.5 border-ink rounded-full text-xs font-bold uppercase">Web Platform</span>
+            </div>
+          </div>
+          <div class="p-6 md:p-8 flex flex-col flex-grow justify-between gap-6">
+            <div>
+              <h3 class="text-2xl font-bold mb-2">Aura Studio</h3>
+              <p class="text-ink/70 font-medium">Redefining online shopping experiences with a bold, brutalist e-commerce platform.</p>
+            </div>
+            <!-- Standard Provided Button -->
+            <button class="bc-cta self-start" type="button">
+              <span class="bc-cta__label">View the case</span>
+              <span class="bc-cta__arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14"></path>
+                  <path d="M13 6l6 6-6 6"></path>
+                </svg>
+              </span>
+            </button>
+          </div>
+        </article>
+        
+        <!-- Project 3 -->
+        <article class="group relative bg-white border-1.5 border-ink rounded-3xl overflow-hidden flex flex-col card-shadow">
+          <div class="h-64 sm:h-80 w-full bg-[#f2eee5] border-b-1.5 border-ink relative overflow-hidden">
+            <img src="https://placehold.co/800x600/f2eee5/0e0e0c?text=Branding" alt="Project Thumbnail" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+            <div class="absolute top-4 left-4 flex gap-2">
+              <span class="px-3 py-1 bg-white border-1.5 border-ink rounded-full text-xs font-bold uppercase">Brand Identity</span>
+            </div>
+          </div>
+          <div class="p-6 md:p-8 flex flex-col flex-grow justify-between gap-6">
+            <div>
+              <h3 class="text-2xl font-bold mb-2">Nova Framework</h3>
+              <p class="text-ink/70 font-medium">Logo and identity system for an open-source development tool.</p>
+            </div>
+            <!-- Standard Provided Button -->
+            <button class="bc-cta self-start" type="button">
+              <span class="bc-cta__label">View the case</span>
+              <span class="bc-cta__arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14"></path>
+                  <path d="M13 6l6 6-6 6"></path>
+                </svg>
+              </span>
+            </button>
+          </div>
+        </article>
+
+        <!-- Project 4 -->
+        <article class="group relative bg-white border-1.5 border-ink rounded-3xl overflow-hidden flex flex-col card-shadow md:translate-y-12">
+          <div class="h-64 sm:h-80 w-full bg-ink border-b-1.5 border-ink relative overflow-hidden">
+            <img src="https://placehold.co/800x600/0e0e0c/d8ff3d?text=Interactive" alt="Project Thumbnail" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+            <div class="absolute top-4 left-4 flex gap-2">
+              <span class="px-3 py-1 bg-white border-1.5 border-ink rounded-full text-xs font-bold uppercase">Interactive</span>
+            </div>
+          </div>
+          <div class="p-6 md:p-8 flex flex-col flex-grow justify-between gap-6">
+            <div>
+              <h3 class="text-2xl font-bold mb-2">Neon Nights Exhibit</h3>
+              <p class="text-ink/70 font-medium">An interactive web experience promoting a digital art exhibition in Tokyo.</p>
+            </div>
+            <!-- Standard Provided Button -->
+            <button class="bc-cta self-start" type="button">
+              <span class="bc-cta__label">View the case</span>
+              <span class="bc-cta__arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14"></path>
+                  <path d="M13 6l6 6-6 6"></path>
+                </svg>
+              </span>
+            </button>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <section id="about" class="mt-20 border-y-1.5 border-ink bg-ink text-paper py-24">
+      <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div>
+          <h2 class="text-4xl md:text-6xl font-black tracking-tight mb-8">
+            Design that <br/>
+            <span class="text-chartreuse">works harder.</span>
+          </h2>
+          <p class="text-lg md:text-xl font-medium text-paper/80 leading-relaxed mb-8">
+            I believe good design isn't just about making things look pretty. It's about problem-solving, intuitive user flows, and creating systems that scale. Over the past 5 years, I've partnered with startups and global brands to build digital products that stand out.
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <span class="px-4 py-2 border-1.5 border-paper/30 rounded-full text-sm font-semibold hover:border-chartreuse hover:text-chartreuse transition-colors">Figma</span>
+            <span class="px-4 py-2 border-1.5 border-paper/30 rounded-full text-sm font-semibold hover:border-chartreuse hover:text-chartreuse transition-colors">React / Vercel</span>
+            <span class="px-4 py-2 border-1.5 border-paper/30 rounded-full text-sm font-semibold hover:border-chartreuse hover:text-chartreuse transition-colors">Tailwind CSS</span>
+            <span class="px-4 py-2 border-1.5 border-paper/30 rounded-full text-sm font-semibold hover:border-chartreuse hover:text-chartreuse transition-colors">Creative Coding</span>
+            <span class="px-4 py-2 border-1.5 border-paper/30 rounded-full text-sm font-semibold hover:border-chartreuse hover:text-chartreuse transition-colors">Framer</span>
+          </div>
+        </div>
+        
+        <div class="relative w-full aspect-square max-w-md mx-auto">
+          <!-- Decorative abstract element matching design system -->
+          <div class="absolute inset-0 bg-tangerine rounded-full border-1.5 border-paper translate-x-4 translate-y-4"></div>
+          <div class="absolute inset-0 bg-chartreuse rounded-full border-1.5 border-paper overflow-hidden flex items-center justify-center p-8">
+            <div class="text-center">
+              <span class="block text-8xl font-black text-ink">5+</span>
+              <span class="block text-xl font-bold uppercase tracking-wider text-ink mt-2">Years Exp.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="contact" class="bg-paper border-t-1.5 border-ink pt-20 pb-10">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row justify-between items-start gap-12 mb-20">
+        <div class="max-w-2xl">
+          <h2 class="text-5xl md:text-7xl font-black tracking-tight mb-8">
+            Got an idea? <br/>
+            Let's build it.
+          </h2>
+          <!-- Adjusted provided button for contact -->
+          <a href="mailto:hello@example.com" class="bc-cta" style="--bc-cta-bg: var(--color-tangerine);">
+            <span class="bc-cta__label">Get in touch</span>
+            <span class="bc-cta__arrow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"></path>
+                <path d="M13 6l6 6-6 6"></path>
+              </svg>
+            </span>
+          </a>
+        </div>
+        
+        <div class="flex flex-col gap-4 text-lg font-semibold">
+          <p class="text-ink/50 text-sm uppercase tracking-widest mb-2">Socials</p>
+          <a href="#" class="hover:text-tangerine transition-colors flex items-center gap-2">
+            Twitter 
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+          </a>
+          <a href="#" class="hover:text-tangerine transition-colors flex items-center gap-2">
+            LinkedIn
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+          </a>
+          <a href="#" class="hover:text-tangerine transition-colors flex items-center gap-2">
+            Dribbble
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+          </a>
+          <a href="#" class="hover:text-tangerine transition-colors flex items-center gap-2">
+            GitHub
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+          </a>
+        </div>
+      </div>
+      
+      <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t-1.5 border-ink text-sm font-medium text-ink/60">
+        <p>&copy; 2026 Studio Digital. All rights reserved.</p>
+        <p class="mt-4 md:mt-0 flex items-center gap-2">
+          Designed with 
+          <span class="w-3 h-3 bg-tangerine rounded-full inline-block animate-pulse"></span>
+          and precision.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if(target) {
+          target.scrollIntoView({
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

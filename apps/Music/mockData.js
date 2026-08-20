@@ -2,122 +2,208 @@
 
 // Helper to create reliable SVG gradient covers
 function createGradientCover(text, artist, bgGrad, textColor = '#ffffff') {
+    // Format title and artist for spaced minimalist editorial typography
+    const cleanTitle = (text || 'DAWN').replace(/[^a-zA-Z0-9 ]/g, '').trim();
+    const displayTitle = (cleanTitle.length > 8 ? cleanTitle.slice(0, 8) : cleanTitle || 'DAWN').split('').join(' ').toUpperCase();
+    const displayArtist = (artist || 'ACOUSTIC SESSIONS').toUpperCase().slice(0, 22);
+
     const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
         <defs>
-            <!-- Album Art Inset Gradient -->
+            <!-- Inset Scenery / Artwork Gradient -->
             <linearGradient id="artBg" x1="0%" y1="0%" x2="100%" y2="100%">
                 ${bgGrad}
             </linearGradient>
 
-            <!-- Book Spine Leather/Cloth Gradient -->
-            <linearGradient id="spineLeather" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#18181c" />
-                <stop offset="35%" stop-color="#303036" />
-                <stop offset="70%" stop-color="#222228" />
-                <stop offset="100%" stop-color="#121215" />
+            <!-- Sleeve Cream Matte Base Gradient -->
+            <linearGradient id="sleevePaper" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#f5f2ed" />
+                <stop offset="45%" stop-color="#ece8e1" />
+                <stop offset="100%" stop-color="#ded9d0" />
             </linearGradient>
 
-            <!-- Gold Foil Accent Gradient -->
-            <linearGradient id="goldFoil" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#ffe4a0" />
-                <stop offset="25%" stop-color="#ffd07b" />
-                <stop offset="50%" stop-color="#fff2c8" />
-                <stop offset="75%" stop-color="#d49c43" />
-                <stop offset="100%" stop-color="#f5c767" />
+            <!-- Vinyl Disc Body Gradient -->
+            <radialGradient id="vinylBody" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#1c1c1f" />
+                <stop offset="55%" stop-color="#111114" />
+                <stop offset="90%" stop-color="#08080a" />
+                <stop offset="100%" stop-color="#020202" />
+            </radialGradient>
+
+            <!-- Vinyl Metallic Conic / Radial Sheen -->
+            <linearGradient id="vinylSheen1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.32" />
+                <stop offset="25%" stop-color="#ffffff" stop-opacity="0.04" />
+                <stop offset="50%" stop-color="#ffffff" stop-opacity="0.25" />
+                <stop offset="75%" stop-color="#ffffff" stop-opacity="0.03" />
+                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.28" />
             </linearGradient>
 
-            <!-- Anisotropic Vinyl Sheen -->
-            <linearGradient id="aniso" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.28" />
-                <stop offset="30%" stop-color="#ffffff" stop-opacity="0.06" />
-                <stop offset="50%" stop-color="#ffffff" stop-opacity="0.2" />
-                <stop offset="70%" stop-color="#ffffff" stop-opacity="0.04" />
-                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.22" />
+            <!-- Center Metal Spindle -->
+            <radialGradient id="spindleHub" cx="40%" cy="40%" r="60%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="40%" stop-color="#d0d0d5" />
+                <stop offset="80%" stop-color="#7a7a82" />
+                <stop offset="100%" stop-color="#3a3a40" />
+            </radialGradient>
+
+            <!-- Frosted Glass Wave Overlays -->
+            <linearGradient id="glassWave1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.45" />
+                <stop offset="40%" stop-color="#ffffff" stop-opacity="0.18" />
+                <stop offset="80%" stop-color="#ffffff" stop-opacity="0.05" />
+                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.12" />
             </linearGradient>
 
-            <!-- Spine Crease Shadow -->
-            <linearGradient id="creaseShadow" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#000000" stop-opacity="0.5" />
-                <stop offset="40%" stop-color="#000000" stop-opacity="0.18" />
-                <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+            <linearGradient id="glassGlare" x1="0%" y1="0%" x2="80%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.4" />
+                <stop offset="35%" stop-color="#ffffff" stop-opacity="0.1" />
+                <stop offset="70%" stop-color="#ffffff" stop-opacity="0" />
             </linearGradient>
 
-            <!-- Layered Page Edge Stack -->
-            <linearGradient id="pageEdges" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#e2e2e6" />
-                <stop offset="50%" stop-color="#fafafc" />
-                <stop offset="100%" stop-color="#c8c8cc" />
-            </linearGradient>
+            <!-- Sleeve Notch Clip Path -->
+            <clipPath id="sleeveClip">
+                <path d="
+                    M 32,12
+                    H 174
+                    Q 196,12 196,34
+                    V 112
+                    C 196,124 176,132 176,150
+                    C 176,168 196,176 196,188
+                    V 266
+                    Q 196,288 174,288
+                    H 32
+                    Q 10,288 10,266
+                    V 34
+                    Q 10,12 32,12
+                    Z
+                " />
+            </clipPath>
         </defs>
 
-        <!-- Hardcover Base Jacket -->
-        <rect width="300" height="300" rx="6" fill="#18181c" />
+        <!-- Pure Black Studio Canvas Background -->
+        <rect width="300" height="300" fill="#000000" />
 
-        <!-- Visible Layered Paper Pages Stack on Right Edge -->
-        <rect x="292" y="6" width="5" height="288" rx="1.5" fill="url(#pageEdges)" />
-        <line x1="293.5" y1="6" x2="293.5" y2="294" stroke="#bcbcc2" stroke-width="0.5" />
-        <line x1="295" y1="7" x2="295" y2="293" stroke="#dcdce2" stroke-width="0.5" />
+        <!-- ════════════════════════════════════════════════════════════════════ -->
+        <!-- VINYL RECORD (SLIDING OUT ON THE RIGHT) -->
+        <!-- ════════════════════════════════════════════════════════════════════ -->
+        <g id="vinyl-disc">
+            <!-- Vinyl Outer Disc -->
+            <circle cx="216" cy="150" r="80" fill="url(#vinylBody)" stroke="#050507" stroke-width="1" />
 
-        <!-- Front Hardcover Board Surface -->
-        <rect x="0" y="0" width="292" height="300" rx="5" fill="#202028" />
-        
-        <!-- Bound Book Spine (Left Strip) -->
-        <rect x="0" y="0" width="24" height="300" rx="4" fill="url(#spineLeather)" />
-        <line x1="0.75" y1="0" x2="0.75" y2="300" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" />
+            <!-- Anisotropic Radial Light Flares (Specular Sheen) -->
+            <path d="M 136,150 L 216,150 L 272,94 A 80 80 0 0 1 296,150 Z" fill="url(#vinylSheen1)" opacity="0.35" />
+            <path d="M 216,150 L 160,206 A 80 80 0 0 1 136,150 Z" fill="url(#vinylSheen1)" opacity="0.35" />
+            <path d="M 216,150 L 272,206 A 80 80 0 0 1 216,230 Z" fill="url(#vinylSheen1)" opacity="0.25" />
+            <path d="M 216,150 L 160,94 A 80 80 0 0 1 216,70 Z" fill="url(#vinylSheen1)" opacity="0.25" />
 
-        <!-- Gold Foil Thread Stitching along Spine Hinge -->
-        <g stroke="url(#goldFoil)" stroke-width="1.5" stroke-linecap="round" opacity="0.9">
-            <line x1="12" y1="14" x2="12" y2="24" />
-            <line x1="12" y1="38" x2="12" y2="48" />
-            <line x1="12" y1="62" x2="12" y2="72" />
-            <line x1="12" y1="86" x2="12" y2="96" />
-            <line x1="12" y1="110" x2="12" y2="120" />
-            <line x1="12" y1="134" x2="12" y2="144" />
-            <line x1="12" y1="158" x2="12" y2="168" />
-            <line x1="12" y1="182" x2="12" y2="192" />
-            <line x1="12" y1="206" x2="12" y2="216" />
-            <line x1="12" y1="230" x2="12" y2="240" />
-            <line x1="12" y1="254" x2="12" y2="264" />
-            <line x1="12" y1="278" x2="12" y2="288" />
+            <!-- Concentric Sound Grooves -->
+            <circle cx="216" cy="150" r="77" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.75" />
+            <circle cx="216" cy="150" r="73" fill="none" stroke="rgba(0,0,0,0.4)" stroke-width="0.75" />
+            <circle cx="216" cy="150" r="69" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.75" />
+            <circle cx="216" cy="150" r="65" fill="none" stroke="rgba(0,0,0,0.35)" stroke-width="0.75" />
+            <circle cx="216" cy="150" r="61" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.75" />
+            <circle cx="216" cy="150" r="57" fill="none" stroke="rgba(0,0,0,0.35)" stroke-width="0.75" />
+            <circle cx="216" cy="150" r="53" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.75" />
+            <circle cx="216" cy="150" r="49" fill="none" stroke="rgba(0,0,0,0.35)" stroke-width="0.75" />
+            <circle cx="216" cy="150" r="45" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="0.75" />
+            <circle cx="216" cy="150" r="41" fill="none" stroke="rgba(0,0,0,0.4)" stroke-width="0.75" />
+            <circle cx="216" cy="150" r="37" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.75" />
+            <circle cx="216" cy="150" r="33" fill="none" stroke="rgba(0,0,0,0.4)" stroke-width="0.75" />
+
+            <!-- Center Paper Label (Cream / Matte Off-White) -->
+            <circle cx="216" cy="150" r="28" fill="#e8e4de" stroke="#d5d0c7" stroke-width="0.8" />
+            <circle cx="216" cy="150" r="26" fill="none" stroke="#ded9cf" stroke-width="0.5" />
+
+            <!-- Label Artwork / Minimal Mountain Emblem -->
+            <path d="M 203,144 L 210,137 L 217,144" fill="none" stroke="#7a7873" stroke-width="0.9" stroke-linejoin="round" />
+            <path d="M 213,144 L 221,135 L 228,144" fill="none" stroke="#7a7873" stroke-width="0.9" stroke-linejoin="round" />
+            
+            <!-- Label Spindle Text -->
+            <text x="216" y="157" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="3.8" font-weight="700" fill="#3a3834" text-anchor="middle" letter-spacing="1.2">DAWN</text>
+            <text x="216" y="161.5" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="2.6" font-weight="500" fill="#7a7873" text-anchor="middle" letter-spacing="0.5">ACOUSTIC SESSIONS</text>
+            <line x1="211" y1="164" x2="221" y2="164" stroke="#b5b0a6" stroke-width="0.4" />
+
+            <!-- Center Metallic Spindle Bushing & Hole -->
+            <circle cx="216" cy="150" r="4.5" fill="url(#spindleHub)" stroke="#55555c" stroke-width="0.5" />
+            <circle cx="216" cy="150" r="2" fill="#000000" />
         </g>
 
-        <!-- Spine Hinge Crease Line & Depth Shadow -->
-        <line x1="24" y1="0" x2="24" y2="300" stroke="#000000" stroke-width="1.5" />
-        <rect x="24" y="0" width="14" height="300" fill="url(#creaseShadow)" />
-        <line x1="25.5" y1="0" x2="25.5" y2="300" stroke="rgba(255,255,255,0.14)" stroke-width="1" />
+        <!-- ════════════════════════════════════════════════════════════════════ -->
+        <!-- SLEEVE (FRONT COVER WITH NOTCH CUTOUT) -->
+        <!-- ════════════════════════════════════════════════════════════════════ -->
+        <g id="sleeve-jacket" clip-path="url(#sleeveClip)">
+            <!-- Sleeve Base Background -->
+            <rect x="10" y="12" width="186" height="276" fill="url(#sleevePaper)" />
 
-        <!-- Debossed Artwork Inset Picture Window -->
-        <rect x="34" y="14" width="248" height="272" rx="6" fill="#121215" />
-        <rect x="35" y="15" width="246" height="270" rx="5" fill="url(#artBg)" />
+            <!-- Background Landscape / Vibrant Gradient Artwork Window -->
+            <g transform="translate(10, 80)">
+                <rect width="186" height="196" fill="url(#artBg)" />
+                <!-- Mountain Silhouettes -->
+                <path d="M 0,90 Q 40,40 70,65 T 140,55 T 186,85 V 196 H 0 Z" fill="#2b323c" opacity="0.85" />
+                <path d="M 0,115 Q 60,75 110,105 T 186,95 V 196 H 0 Z" fill="#1b2027" opacity="0.95" />
+                <!-- Glowing Sun/Dawn Core -->
+                <circle cx="118" cy="62" r="7" fill="#fffbe8" />
+                <circle cx="118" cy="62" r="14" fill="#ffb469" opacity="0.35" />
+            </g>
 
-        <!-- High-Fidelity Vinyl Sound Grooves inside Art Window -->
-        <circle cx="158" cy="150" r="105" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
-        <circle cx="158" cy="150" r="90" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="0.75" />
-        <circle cx="158" cy="150" r="75" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1" />
-        <circle cx="158" cy="150" r="60" fill="none" stroke="rgba(0,0,0,0.07)" stroke-width="0.75" />
-        <circle cx="158" cy="150" r="46" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+            <!-- Frosted Glass Wave Ribbon 1 (Upper Translucent Layer) -->
+            <path d="M 10,130 C 50,130 90,175 130,120 C 160,80 175,95 196,88 V 288 H 10 Z" fill="url(#glassWave1)" />
+            <path d="M 10,130 C 50,130 90,175 130,120 C 160,80 175,95 196,88" fill="none" stroke="#ffffff" stroke-width="1.8" opacity="0.8" />
 
-        <!-- Anisotropic Light Reflections in Inset Art -->
-        <path d="M 35,15 L 158,150 L 281,15 Z" fill="url(#aniso)" opacity="0.38" />
-        <path d="M 35,285 L 158,150 L 281,285 Z" fill="url(#aniso)" opacity="0.38" />
+            <!-- Frosted Glass Wave Ribbon 2 (Lower Cream Layer) -->
+            <path d="M 10,165 C 45,170 80,185 110,215 C 145,250 175,215 196,200 V 288 H 10 Z" fill="#ded9d0" opacity="0.92" />
+            <path d="M 10,165 C 45,170 80,185 110,215 C 145,250 175,215 196,200" fill="none" stroke="#ffffff" stroke-width="1.2" opacity="0.9" />
 
-        <!-- 3D Gold-Foil Apple Music Emblem -->
-        <!-- Drop Shadow -->
-        <path d="M136 195 C 136 209, 124.5 220, 110 220 C 95.5 220, 84 209, 84 195 C 84 181, 95.5 170, 110 170 C 119 170, 126 174, 130 181 L 130 85 L 230 62 L 230 170 C 230 184, 218.5 195, 204 195 C 189.5 195, 178 184, 178 170 C 178 156, 189.5 145, 204 145 C 213 145, 220 149, 224 156 L 224 96 L 136 117 Z" fill="#000000" opacity="0.32" transform="translate(0, 3)" />
-        
-        <!-- Gold Foil Note Body -->
-        <path d="M136 195 C 136 209, 124.5 220, 110 220 C 95.5 220, 84 209, 84 195 C 84 181, 95.5 170, 110 170 C 119 170, 126 174, 130 181 L 130 85 L 230 62 L 230 170 C 230 184, 218.5 195, 204 195 C 189.5 195, 178 184, 178 170 C 178 156, 189.5 145, 204 145 C 213 145, 220 149, 224 156 L 224 96 L 136 117 Z" fill="url(#goldFoil)" stroke="rgba(255,255,255,0.75)" stroke-width="1.2" />
-        
-        <!-- Top Beam Specular Light -->
-        <path d="M130 85 L 230 62 L 230 66 L 130 89 Z" fill="#ffffff" opacity="0.95" />
+            <!-- Diagonal Glass Sheen Glare across Top of Sleeve -->
+            <path d="M 10,12 L 196,12 L 196,40 L 10,150 Z" fill="url(#glassGlare)" />
 
-        <!-- Inset Frame Deboss Border -->
-        <rect x="35" y="15" width="246" height="270" rx="5" fill="none" stroke="rgba(0,0,0,0.35)" stroke-width="1.5" />
-        <rect x="36" y="16" width="244" height="268" rx="4" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" />
+            <!-- ── Editorial Typography ─────────────────────────────────────── -->
+            <!-- Top Title -->
+            <text x="28" y="52" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif" font-size="14" font-weight="700" fill="#1c202a" letter-spacing="4">${displayTitle}</text>
+            
+            <!-- Subtitle -->
+            <text x="28" y="64" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif" font-size="5.5" font-weight="600" fill="#6a707e" letter-spacing="1.8">${displayArtist}</text>
+            
+            <!-- Horizontal Divider Line -->
+            <line x1="28" y1="72" x2="48" y2="72" stroke="#a6abb6" stroke-width="0.8" />
 
-        <!-- Outer Hardcover Book Edge Bevel Highlight -->
-        <rect x="0.75" y="0.75" width="298.5" height="298.5" rx="5.5" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" />
+            <!-- Bottom Left Catalog Number -->
+            <text x="28" y="268" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif" font-size="5.5" font-weight="600" fill="#6a707e" letter-spacing="1.2">VOL. 01</text>
+        </g>
+
+        <!-- Sleeve Perimeter Bevel & Notch Outline Highlight -->
+        <path d="
+            M 32,12
+            H 174
+            Q 196,12 196,34
+            V 112
+            C 196,124 176,132 176,150
+            C 176,168 196,176 196,188
+            V 266
+            Q 196,288 174,288
+            H 32
+            Q 10,288 10,266
+            V 34
+            Q 10,12 32,12
+            Z
+        " fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.2" />
+
+        <path d="
+            M 32,12.6
+            H 174
+            Q 195.4,12.6 195.4,34
+            V 112
+            C 195.4,124 175.4,132 175.4,150
+            C 175.4,168 195.4,176 195.4,188
+            V 266
+            Q 195.4,287.4 174,287.4
+            H 32
+            Q 10.6,287.4 10.6,266
+            V 34
+            Q 10.6,12.6 32,12.6
+            Z
+        " fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.8" />
     </svg>`;
     return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
