@@ -5,12 +5,55 @@ function createGradientCover(text, artist, bgGrad, textColor = '#ffffff') {
     const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
         <defs>
-            <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
                 ${bgGrad}
             </linearGradient>
+            <linearGradient id="gloss" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.4" />
+                <stop offset="38%" stop-color="#ffffff" stop-opacity="0.12" />
+                <stop offset="70%" stop-color="#ffffff" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient id="spine" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.5" />
+                <stop offset="30%" stop-color="#ffffff" stop-opacity="0.1" />
+                <stop offset="100%" stop-color="#000000" stop-opacity="0.3" />
+            </linearGradient>
+            <linearGradient id="noteGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
+                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.6" />
+            </linearGradient>
         </defs>
-        <rect width="300" height="300" fill="url(#g)" />
-        <path d="M120 200 C 120 216.5, 106.5 230, 90 230 C 73.5 230, 60 216.5, 60 200 C 60 183.5, 73.5 170, 90 170 C 100 170, 108 175, 113 183 L 113 70 L 243 40 L 243 170 C 243 186.5, 229.5 200, 213 200 C 196.5 200, 183 186.5, 183 170 C 183 153.5, 196.5 140, 213 140 C 223 140, 231 145, 236 153 L 236 55 L 120 82 Z" fill="${textColor}" opacity="0.2" />
+
+        <!-- Base Cover Surface -->
+        <rect width="300" height="300" fill="url(#bg)" />
+
+        <!-- Skeuomorphic Vinyl Record Grooves -->
+        <circle cx="150" cy="150" r="135" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5" />
+        <circle cx="150" cy="150" r="118" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="1" />
+        <circle cx="150" cy="150" r="100" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1.5" />
+        <circle cx="150" cy="150" r="82" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="1" />
+        <circle cx="150" cy="150" r="65" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5" />
+
+        <!-- 3D Embossed Music Note Shadow -->
+        <g transform="translate(0, 4)" opacity="0.35">
+            <path d="M120 200 C 120 216.5, 106.5 230, 90 230 C 73.5 230, 60 216.5, 60 200 C 60 183.5, 73.5 170, 90 170 C 100 170, 108 175, 113 183 L 113 70 L 243 40 L 243 170 C 243 186.5, 229.5 200, 213 200 C 196.5 200, 183 186.5, 183 170 C 183 153.5, 196.5 140, 213 140 C 223 140, 231 145, 236 153 L 236 55 L 120 82 Z" fill="#000000" />
+        </g>
+
+        <!-- 3D Embossed Music Note Core -->
+        <path d="M120 200 C 120 216.5, 106.5 230, 90 230 C 73.5 230, 60 216.5, 60 200 C 60 183.5, 73.5 170, 90 170 C 100 170, 108 175, 113 183 L 113 70 L 243 40 L 243 170 C 243 186.5, 229.5 200, 213 200 C 196.5 200, 183 186.5, 183 170 C 183 153.5, 196.5 140, 213 140 C 223 140, 231 145, 236 153 L 236 55 L 120 82 Z" fill="url(#noteGrad)" />
+        
+        <!-- Top Rim Light on 3D Note Beam -->
+        <path d="M113 70 L 243 40 L 243 44 L 113 74 Z" fill="#ffffff" opacity="0.8" />
+
+        <!-- Glass Jewel Case Diagonal Gloss Reflection -->
+        <path d="M 0,0 L 300,0 L 300,90 L 0,220 Z" fill="url(#gloss)" />
+
+        <!-- Left Spine Acrylic / Bevel Highlight -->
+        <rect x="0" y="0" width="10" height="300" fill="url(#spine)" />
+
+        <!-- Outer Inset Bevel Frame -->
+        <rect x="1" y="1" width="298" height="298" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="2" />
+        <rect x="2" y="2" width="296" height="296" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="1" />
     </svg>`;
     return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
