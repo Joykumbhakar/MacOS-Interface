@@ -2,10 +2,41 @@ const { useState, useEffect, useRef, createContext, useContext } = React;
 
 const PlayerContext = createContext();
 
-// Helper fallback cover component
-const SafeImage = ({ src, className, style, alt = 'Cover' }) => {
-    const [imgSrc, setImgSrc] = useState(src);
-    useEffect(() => { setImgSrc(src); }, [src]);
+// Helper fallback cover component with dynamic vinyl rotation
+const SafeImage = ({ src, className, style, alt = 'Cover', song = null }) => {
+    const player = useContext(PlayerContext);
+    const isPlaying = Boolean(
+        player && player.isPlaying && player.currentTrack && (
+            (song && player.currentTrack.id === song.id) ||
+            (player.currentTrack.cover === src)
+        )
+    );
+
+    let finalSrc = src;
+    if (isPlaying && src && typeof src === 'string' && src.startsWith('data:image/svg')) {
+        try {
+            const rawSvg = decodeURIComponent(src.replace('data:image/svg+xml;utf8,', ''));
+            if (!rawSvg.includes('vinyl-rotating')) {
+                const animatedSvg = rawSvg.replace('id="vinyl-disc"', 'id="vinyl-disc" class="vinyl-rotating"');
+                finalSrc = `data:image/svg+xml;utf8,${encodeURIComponent(animatedSvg)}`;
+            }
+        } catch (e) {
+            finalSrc = src;
+        }
+    } else if (!isPlaying && src && typeof src === 'string' && src.startsWith('data:image/svg')) {
+        try {
+            const rawSvg = decodeURIComponent(src.replace('data:image/svg+xml;utf8,', ''));
+            if (rawSvg.includes('vinyl-rotating')) {
+                const staticSvg = rawSvg.replace('class="vinyl-rotating"', '');
+                finalSrc = `data:image/svg+xml;utf8,${encodeURIComponent(staticSvg)}`;
+            }
+        } catch (e) {
+            finalSrc = src;
+        }
+    }
+
+    const [imgSrc, setImgSrc] = useState(finalSrc);
+    useEffect(() => { setImgSrc(finalSrc); }, [finalSrc]);
 
     const fallbackSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="%23fa243c"><rect width="100" height="100" rx="12" fill="%23ff3b30"/><circle cx="50" cy="50" r="22" fill="%23ffffff" opacity="0.2"/><path d="M46 38v24l16-12z" fill="%23ffffff"/></svg>`;
 
@@ -375,7 +406,7 @@ const HomeView = ({ setActiveTab }) => {
                 {data.songs.slice(0, 5).map(song => (
                     <div className="am-card" key={song.id} onClick={() => playSong(song)}>
                         <div className="am-card-img-wrapper">
-                            <SafeImage src={song.cover} className="am-card-img" alt={song.title} />
+                            <SafeImage src={song.cover} song={song} className="am-card-img" alt={song.title} />
                             <div className="am-card-play"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{marginLeft: '2px'}}><path d="M7 4l12 8-12 8V4z"/></svg></div>
                         </div>
                         <div className="am-card-title">{song.title}</div>
@@ -393,7 +424,7 @@ const HomeView = ({ setActiveTab }) => {
                 {data.songs.slice(5, 10).map(song => (
                     <div className="am-card" key={song.id} onClick={() => playSong(song)}>
                         <div className="am-card-img-wrapper">
-                            <SafeImage src={song.cover} className="am-card-img" alt={song.title} />
+                            <SafeImage src={song.cover} song={song} className="am-card-img" alt={song.title} />
                             <div className="am-card-play"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{marginLeft: '2px'}}><path d="M7 4l12 8-12 8V4z"/></svg></div>
                         </div>
                         <div className="am-card-title">{song.title}</div>
@@ -516,7 +547,7 @@ const NewView = () => {
                 {data.songs.slice(0, 4).map(song => (
                     <div className="am-card" style={{width: '260px'}} key={song.id} onClick={() => playSong(song)}>
                         <div className="am-card-img-wrapper" style={{aspectRatio: '16/10'}}>
-                            <SafeImage src={song.cover} className="am-card-img" alt={song.title} />
+                            <SafeImage src={song.cover} song={song} className="am-card-img" alt={song.title} />
                             <div className="am-card-play"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{marginLeft: '2px'}}><path d="M7 4l12 8-12 8V4z"/></svg></div>
                         </div>
                         <div className="am-card-title" style={{fontSize: '14px', marginTop: '4px'}}>{song.title}</div>
@@ -577,7 +608,7 @@ const SongsView = () => {
                         onClick={() => playSong(song)}
                     >
                         <div className="am-song-index">{idx + 1}</div>
-                        <SafeImage src={song.cover} className="am-song-cover" alt={song.title} />
+                        <SafeImage src={song.cover} song={song} className="am-song-cover" alt={song.title} />
                         <div className="am-song-info">
                             <div className="am-song-title">{song.title}</div>
                             <div className="am-song-artist">{song.artist}</div>
@@ -720,7 +751,7 @@ const FloatingPlayer = () => {
                 
                 {/* Center Now Playing Info + Scrubber */}
                 <div className="am-now-playing-container">
-                    <SafeImage src={currentTrack.cover} className="am-np-cover" alt={currentTrack.title} />
+                    <SafeImage src={currentTrack.cover} song={currentTrack} className="am-np-cover" alt={currentTrack.title} />
                     <div className="am-np-details">
                         <div className="am-np-text-row" style={{ display: "flex", alignItems: "center" }}>
                             <span className="am-np-title">{currentTrack.title}</span>
@@ -836,7 +867,7 @@ const QueuePopover = () => {
                         className={`am-queue-item ${currentTrack.id === song.id ? 'active' : ''}`}
                         onClick={() => playSong(song)}
                     >
-                        <SafeImage src={song.cover} className="am-queue-cover" alt={song.title} />
+                        <SafeImage src={song.cover} song={song} className="am-queue-cover" alt={song.title} />
                         <div className="am-queue-info">
                             <div className="am-queue-title">{song.title}</div>
                             <div className="am-queue-artist">{song.artist}</div>

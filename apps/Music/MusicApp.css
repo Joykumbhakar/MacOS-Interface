@@ -306,15 +306,11 @@
     position: relative;
     width: 100%;
     aspect-ratio: 1;
-    border-radius: 14px;
-    overflow: hidden;
-    background: #000000;
+    border-radius: 12px;
+    overflow: visible;
+    background: transparent;
     box-shadow: none;
-    border: 0.5px solid rgba(255, 255, 255, 0.08);
-}
-
-.am-card-img-wrapper::after {
-    display: none;
+    border: none;
 }
 
 .am-card-img {
@@ -447,14 +443,14 @@
 }
 
 .am-song-cover {
-    width: 38px;
-    height: 38px;
-    border-radius: 6px;
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
     margin-right: 14px;
-    object-fit: cover;
+    object-fit: contain;
     box-shadow: none;
-    border: 0.5px solid rgba(255, 255, 255, 0.08);
-    background: #000000;
+    border: none;
+    background: transparent;
 }
 
 .am-song-info {
@@ -595,14 +591,14 @@
 }
 
 .am-np-cover {
-    width: 38px;
-    height: 38px;
-    border-radius: 6px;
-    object-fit: cover;
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    object-fit: contain;
     box-shadow: none;
-    border: 0.5px solid rgba(255, 255, 255, 0.08);
+    border: none;
     flex-shrink: 0;
-    background: #000000;
+    background: transparent;
 }
 
 .am-np-details {
@@ -818,13 +814,13 @@
 }
 
 .am-queue-cover {
-    width: 32px;
-    height: 32px;
-    border-radius: 4px;
-    object-fit: cover;
+    width: 34px;
+    height: 34px;
+    border-radius: 3px;
+    object-fit: contain;
     box-shadow: none;
-    border: 0.5px solid rgba(255, 255, 255, 0.08);
-    background: #000000;
+    border: none;
+    background: transparent;
 }
 
 .am-queue-info {

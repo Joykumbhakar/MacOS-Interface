@@ -6,7 +6,7 @@
   <title>Digital Designer Portfolio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -20,6 +20,7 @@
           },
           fontFamily: {
             sans: ['Inter', 'system-ui', 'sans-serif'],
+            handwriting: ['Caveat', 'cursive'],
           },
           borderWidth: {
             '1.5': '1.5px',
@@ -31,6 +32,10 @@
             marquee: {
               '0%': { transform: 'translateX(0%)' },
               '100%': { transform: 'translateX(-100%)' },
+            },
+            blink: {
+              '0%, 100%': { opacity: 1 },
+              '50%': { opacity: 0 },
             }
           }
         }
@@ -172,6 +177,34 @@
       box-shadow: 8px 8px 0px 0px var(--color-ink);
       transform: translate(-4px, -4px);
     }
+    
+    /* Animation Classes */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .delay-100 { transition-delay: 100ms; }
+    .delay-200 { transition-delay: 200ms; }
+    .delay-300 { transition-delay: 300ms; }
+
+    /* Typing Cursor */
+    .typing-cursor {
+      display: inline-block;
+      width: 4px;
+      height: 1.1em;
+      background-color: var(--color-tangerine);
+      margin-left: 6px;
+      vertical-align: -10%;
+      animation: blink 1s step-end infinite;
+    }
+    .typing-cursor.typing {
+      animation: none;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col relative overflow-x-hidden">
@@ -200,8 +233,24 @@
   </nav>
 
   <main class="flex-grow pt-32 pb-20">
-    <section class="max-w-7xl mx-auto px-6 pt-12 md:pt-24 pb-20">
-      <div class="flex flex-col items-start gap-8 max-w-4xl">
+    <section class="max-w-7xl mx-auto px-6 pt-12 md:pt-24 pb-20 relative">
+      
+      <!-- Handwriting Decoration -->
+      <div class="absolute right-10 md:right-32 top-0 md:top-10 rotate-12 text-tangerine font-handwriting text-3xl md:text-5xl reveal delay-300 hidden sm:block">
+        <div class="flex items-center gap-1">
+          <span>hello there!</span>
+          <!-- Hand Wave Icon Replacing Emoji -->
+          <svg class="w-8 h-8 md:w-10 md:h-10 text-tangerine -mt-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 11V6a2 2 0 0 0-4 0v4"/>
+            <path d="M14 10V4a2 2 0 0 0-4 0v6"/>
+            <path d="M10 10.5V3a2 2 0 0 0-4 0v9"/>
+            <path d="M6 14v-2a2 2 0 0 0-4 0v5.5a8.5 8.5 0 0 0 8.5 8.5h3.17a5 5 0 0 0 3.7-1.66l3.59-3.95a2 2 0 0 0-.25-2.88l-1.92-1.54a2 2 0 0 0-2.48.24l-2.31 2.31"/>
+          </svg>
+        </div>
+        <svg class="w-12 h-12 absolute -left-8 top-8 -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      </div>
+
+      <div class="flex flex-col items-start gap-8 max-w-4xl reveal">
         <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full border-1.5 border-ink bg-white text-sm font-semibold shadow-[2px_2px_0px_0px_#0e0e0c]">
           <span class="relative flex h-3 w-3">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-tangerine opacity-75"></span>
@@ -210,18 +259,18 @@
           Available for new projects
         </div>
         
-        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.05] text-ink">
+        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.05] text-ink reveal delay-100">
           Crafting digital <br/>
-          experiences with <br/>
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-ink via-ink to-tangerine bg-[length:200%_100%] hover:bg-[position:100%_0] transition-all duration-500 italic pr-4">precision.</span>
+          <span class="text-tangerine"><span id="typed-text"></span><span class="typing-cursor"></span></span> <br/>
+          with <span class="text-transparent bg-clip-text bg-gradient-to-r from-ink via-ink to-tangerine bg-[length:200%_100%] hover:bg-[position:100%_0] transition-all duration-500 italic pr-4">precision.</span>
         </h1>
         
-        <p class="text-lg md:text-xl font-medium max-w-xl text-ink/80 leading-relaxed mb-4">
+        <p class="text-lg md:text-xl font-medium max-w-xl text-ink/80 leading-relaxed mb-4 reveal delay-200">
           I'm a multidisciplinary designer focusing on web applications, branding, and interactive design systems that leave a lasting impact.
         </p>
         
         <!-- The Main Provided Button -->
-        <a href="#work" class="bc-cta">
+        <a href="#work" class="bc-cta reveal delay-300">
           <span class="bc-cta__label">Explore my work</span>
           <span class="bc-cta__arrow" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -234,8 +283,8 @@
     </section>
 
     <!-- Marquee Banner -->
-    <div class="w-full bg-chartreuse border-y-1.5 border-ink py-4 overflow-hidden flex relative whitespace-nowrap">
-      <div class="animate-marquee flex gap-12 items-center text-xl font-bold uppercase tracking-widest text-ink">
+    <div class="w-full bg-chartreuse border-y-1.5 border-ink py-4 overflow-hidden flex whitespace-nowrap reveal">
+      <div class="animate-marquee flex shrink-0 min-w-full justify-around gap-12 items-center pr-12 text-xl font-bold uppercase tracking-widest text-ink">
         <span>UI/UX Design</span>
         <span class="w-3 h-3 bg-ink rounded-full"></span>
         <span>Art Direction</span>
@@ -253,7 +302,7 @@
         <span>Brand Identity</span>
       </div>
       <!-- Duplicate for seamless looping -->
-      <div class="animate-marquee flex gap-12 items-center text-xl font-bold uppercase tracking-widest text-ink absolute top-4 left-full">
+      <div aria-hidden="true" class="animate-marquee flex shrink-0 min-w-full justify-around gap-12 items-center pr-12 text-xl font-bold uppercase tracking-widest text-ink">
         <span>UI/UX Design</span>
         <span class="w-3 h-3 bg-ink rounded-full"></span>
         <span>Art Direction</span>
@@ -273,7 +322,7 @@
     </div>
 
     <section id="work" class="max-w-7xl mx-auto px-6 py-24">
-      <h2 class="text-4xl md:text-5xl font-black tracking-tight mb-12 flex items-center gap-4">
+      <h2 class="text-4xl md:text-5xl font-black tracking-tight mb-12 flex items-center gap-4 reveal">
         Selected Cases 
         <span class="h-0.5 flex-grow bg-ink max-w-[200px]"></span>
       </h2>
@@ -281,9 +330,9 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
         
         <!-- Project 1 -->
-        <article class="group relative bg-white border-1.5 border-ink rounded-3xl overflow-hidden flex flex-col card-shadow">
+        <article class="group relative bg-white border-1.5 border-ink rounded-3xl overflow-hidden flex flex-col card-shadow reveal delay-100">
           <div class="h-64 sm:h-80 w-full bg-tangerine border-b-1.5 border-ink relative overflow-hidden">
-            <img src="https://placehold.co/800x600/ff5a1f/0e0e0c?text=Fintech+App" alt="Project Thumbnail" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+            <img src="https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?auto=format&fit=crop&q=80&w=800&h=600" loading="lazy" alt="Vault Finance App Interface" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
             <div class="absolute top-4 left-4 flex gap-2">
               <span class="px-3 py-1 bg-white border-1.5 border-ink rounded-full text-xs font-bold uppercase">App Design</span>
             </div>
@@ -307,9 +356,9 @@
         </article>
 
         <!-- Project 2 -->
-        <article class="group relative bg-white border-1.5 border-ink rounded-3xl overflow-hidden flex flex-col card-shadow md:translate-y-12">
+        <article class="group relative bg-white border-1.5 border-ink rounded-3xl overflow-hidden flex flex-col card-shadow md:translate-y-12 reveal delay-200">
           <div class="h-64 sm:h-80 w-full bg-chartreuse border-b-1.5 border-ink relative overflow-hidden">
-            <img src="https://placehold.co/800x600/d8ff3d/0e0e0c?text=E-Commerce" alt="Project Thumbnail" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+            <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&q=80&w=800&h=600" loading="lazy" alt="Aura Studio E-Commerce" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
             <div class="absolute top-4 left-4 flex gap-2">
               <span class="px-3 py-1 bg-white border-1.5 border-ink rounded-full text-xs font-bold uppercase">Web Platform</span>
             </div>
@@ -333,9 +382,9 @@
         </article>
         
         <!-- Project 3 -->
-        <article class="group relative bg-white border-1.5 border-ink rounded-3xl overflow-hidden flex flex-col card-shadow">
+        <article class="group relative bg-white border-1.5 border-ink rounded-3xl overflow-hidden flex flex-col card-shadow reveal delay-100">
           <div class="h-64 sm:h-80 w-full bg-[#f2eee5] border-b-1.5 border-ink relative overflow-hidden">
-            <img src="https://placehold.co/800x600/f2eee5/0e0e0c?text=Branding" alt="Project Thumbnail" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+            <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&q=80&w=800&h=600" loading="lazy" alt="Nova Framework Branding" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
             <div class="absolute top-4 left-4 flex gap-2">
               <span class="px-3 py-1 bg-white border-1.5 border-ink rounded-full text-xs font-bold uppercase">Brand Identity</span>
             </div>
@@ -359,9 +408,9 @@
         </article>
 
         <!-- Project 4 -->
-        <article class="group relative bg-white border-1.5 border-ink rounded-3xl overflow-hidden flex flex-col card-shadow md:translate-y-12">
+        <article class="group relative bg-white border-1.5 border-ink rounded-3xl overflow-hidden flex flex-col card-shadow md:translate-y-12 reveal delay-200">
           <div class="h-64 sm:h-80 w-full bg-ink border-b-1.5 border-ink relative overflow-hidden">
-            <img src="https://placehold.co/800x600/0e0e0c/d8ff3d?text=Interactive" alt="Project Thumbnail" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=800&h=600" loading="lazy" alt="Neon Nights Exhibit" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
             <div class="absolute top-4 left-4 flex gap-2">
               <span class="px-3 py-1 bg-white border-1.5 border-ink rounded-full text-xs font-bold uppercase">Interactive</span>
             </div>
@@ -387,70 +436,70 @@
       </div>
     </section>
 
-    <section id="about" class="mt-20 border-y-1.5 border-ink bg-ink text-paper py-24">
-      <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        <div>
-          <h2 class="text-4xl md:text-6xl font-black tracking-tight mb-8">
-            Design that <br/>
-            <span class="text-chartreuse">works harder.</span>
-          </h2>
-          <p class="text-lg md:text-xl font-medium text-paper/80 leading-relaxed mb-8">
-            I believe good design isn't just about making things look pretty. It's about problem-solving, intuitive user flows, and creating systems that scale. Over the past 5 years, I've partnered with startups and global brands to build digital products that stand out.
-          </p>
-          <div class="flex flex-wrap gap-3">
-            <span class="px-4 py-2 border-1.5 border-paper/30 rounded-full text-sm font-semibold hover:border-chartreuse hover:text-chartreuse transition-colors">Figma</span>
-            <span class="px-4 py-2 border-1.5 border-paper/30 rounded-full text-sm font-semibold hover:border-chartreuse hover:text-chartreuse transition-colors">React / Vercel</span>
-            <span class="px-4 py-2 border-1.5 border-paper/30 rounded-full text-sm font-semibold hover:border-chartreuse hover:text-chartreuse transition-colors">Tailwind CSS</span>
-            <span class="px-4 py-2 border-1.5 border-paper/30 rounded-full text-sm font-semibold hover:border-chartreuse hover:text-chartreuse transition-colors">Creative Coding</span>
-            <span class="px-4 py-2 border-1.5 border-paper/30 rounded-full text-sm font-semibold hover:border-chartreuse hover:text-chartreuse transition-colors">Framer</span>
-          </div>
-        </div>
+    <section id="about" class="mt-20 border-y-1.5 border-ink bg-ink py-24 relative overflow-hidden">
+      <!-- Background decoration -->
+      <div class="absolute top-0 right-0 w-96 h-96 bg-chartreuse/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+      
+      <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <h2 class="text-4xl md:text-5xl font-black tracking-tight mb-12 text-paper flex items-center gap-4 reveal">
+          About Me
+          <span class="h-0.5 flex-grow bg-paper/20 max-w-[200px]"></span>
+        </h2>
         
-        <div class="relative w-full aspect-square max-w-md mx-auto">
-          <!-- Decorative abstract element matching design system -->
-          <div class="absolute inset-0 bg-tangerine rounded-full border-1.5 border-paper translate-x-4 translate-y-4"></div>
-          <div class="absolute inset-0 bg-chartreuse rounded-full border-1.5 border-paper overflow-hidden flex items-center justify-center p-8">
-            <div class="text-center">
-              <span class="block text-8xl font-black text-ink">5+</span>
-              <span class="block text-xl font-bold uppercase tracking-wider text-ink mt-2">Years Exp.</span>
+        <!-- Bento Grid Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[250px]">
+          
+          <!-- Bento Item 1: Main Intro (Large) -->
+          <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-2 bg-paper rounded-3xl border-1.5 border-ink p-8 flex flex-col justify-between card-shadow reveal delay-100">
+            <h3 class="text-3xl md:text-4xl lg:text-5xl font-black leading-tight text-ink mb-4">
+              Design that <span class="text-tangerine">works harder.</span>
+            </h3>
+            <p class="text-lg font-medium text-ink/80 leading-relaxed mb-8 flex-grow">
+              I believe good design isn't just about making things look pretty. It's about problem-solving, intuitive user flows, and creating systems that scale. Over the past 5 years, I've partnered with startups and global brands to build digital products that stand out.
+            </p>
+            <div class="font-handwriting text-4xl text-tangerine transform -rotate-2 self-end mt-4">
+              - Alex
             </div>
           </div>
+
+          <!-- Bento Item 2: Experience -->
+          <div class="col-span-1 bg-chartreuse rounded-3xl border-1.5 border-ink p-8 flex flex-col items-center justify-center text-center card-shadow reveal delay-200">
+            <span class="block text-6xl md:text-7xl font-black text-ink">5+</span>
+            <span class="block text-lg font-bold uppercase tracking-wider text-ink mt-2">Years Exp.</span>
+          </div>
+
+          <!-- Bento Item 3: Skills -->
+          <div class="col-span-1 md:col-span-2 lg:col-span-1 row-span-2 bg-white rounded-3xl border-1.5 border-ink p-8 flex flex-col gap-4 card-shadow reveal delay-300">
+            <h4 class="text-xl font-bold text-ink mb-2">My Toolkit</h4>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-3 py-1.5 bg-paper border-1.5 border-ink rounded-full text-sm font-semibold">Figma</span>
+              <span class="px-3 py-1.5 bg-paper border-1.5 border-ink rounded-full text-sm font-semibold">React</span>
+              <span class="px-3 py-1.5 bg-paper border-1.5 border-ink rounded-full text-sm font-semibold">Tailwind CSS</span>
+              <span class="px-3 py-1.5 bg-paper border-1.5 border-ink rounded-full text-sm font-semibold">Framer</span>
+              <span class="px-3 py-1.5 bg-paper border-1.5 border-ink rounded-full text-sm font-semibold">Webflow</span>
+              <span class="px-3 py-1.5 bg-paper border-1.5 border-ink rounded-full text-sm font-semibold">Next.js</span>
+            </div>
+            <div class="mt-auto pt-6 border-t-1.5 border-ink/20">
+              <p class="font-handwriting text-2xl text-ink/70">Always learning...</p>
+            </div>
+          </div>
+
+          <!-- Bento Item 4: Location -->
+          <div class="col-span-1 bg-tangerine rounded-3xl border-1.5 border-ink p-8 flex flex-col items-start justify-between card-shadow reveal delay-100 text-ink">
+            <svg class="w-10 h-10 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <div>
+              <span class="block text-lg font-bold opacity-80">Based in</span>
+              <span class="block text-2xl font-black tracking-tight">San Francisco, CA</span>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
   </main>
 
   <footer id="contact" class="bg-paper border-t-1.5 border-ink pt-20 pb-10">
-    <div class="max-w-7xl mx-auto px-6">
-      <div class="flex flex-col md:flex-row justify-between items-start gap-12 mb-20">
-        <div class="max-w-2xl">
-          <h2 class="text-5xl md:text-7xl font-black tracking-tight mb-8">
-            Got an idea? <br/>
-            Let's build it.
-          </h2>
-          <!-- Adjusted provided button for contact -->
-          <a href="mailto:hello@example.com" class="bc-cta" style="--bc-cta-bg: var(--color-tangerine);">
-            <span class="bc-cta__label">Get in touch</span>
-            <span class="bc-cta__arrow" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14"></path>
-                <path d="M13 6l6 6-6 6"></path>
-              </svg>
-            </span>
-          </a>
-        </div>
-        
-        <div class="flex flex-col gap-4 text-lg font-semibold">
-          <p class="text-ink/50 text-sm uppercase tracking-widest mb-2">Socials</p>
-          <a href="#" class="hover:text-tangerine transition-colors flex items-center gap-2">
-            Twitter 
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-          </a>
-          <a href="#" class="hover:text-tangerine transition-colors flex items-center gap-2">
-            LinkedIn
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-          </a>
-          <a href="#" class="hover:text-tangerine transition-colors flex items-center gap-2">
+    <div class="max-w-7xl mx-auto px-6 reveal">
             Dribbble
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
           </a>
@@ -466,13 +515,14 @@
         <p class="mt-4 md:mt-0 flex items-center gap-2">
           Designed with 
           <span class="w-3 h-3 bg-tangerine rounded-full inline-block animate-pulse"></span>
-          and precision.
+          and <span class="font-handwriting text-xl text-ink ml-1">precision.</span>
         </p>
       </div>
     </div>
   </footer>
 
   <script>
+    // 1. Smooth Scrolling
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -483,6 +533,72 @@
           });
         }
       });
+    });
+
+    // 2. Intersection Observer for Scroll Animations
+    function initRevealAnimations() {
+      const reveals = document.querySelectorAll('.reveal');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px"
+      });
+      
+      reveals.forEach(reveal => {
+        observer.observe(reveal);
+      });
+    }
+
+    // 3. Typing Effect Logic
+    const typedTextSpan = document.getElementById("typed-text");
+    const cursorSpan = document.querySelector(".typing-cursor");
+    
+    const textArray = ["experiences", "interfaces", "identities", "platforms"];
+    const typingDelay = 120;
+    const erasingDelay = 60;
+    const newTextDelay = 2000;
+    let textArrayIndex = 0;
+    let charIndex = 0;
+
+    function type() {
+      if (!typedTextSpan || !cursorSpan) return;
+      if (charIndex < textArray[textArrayIndex].length) {
+        if(!cursorSpan.classList.contains("typing")) cursorSpan.classList.add("typing");
+        typedTextSpan.textContent += textArray[textArrayIndex].charAt(charIndex);
+        charIndex++;
+        setTimeout(type, typingDelay);
+      } 
+      else {
+        cursorSpan.classList.remove("typing");
+        setTimeout(erase, newTextDelay);
+      }
+    }
+
+    function erase() {
+      if (!typedTextSpan || !cursorSpan) return;
+      if (charIndex > 0) {
+        if(!cursorSpan.classList.contains("typing")) cursorSpan.classList.add("typing");
+        typedTextSpan.textContent = textArray[textArrayIndex].substring(0, charIndex-1);
+        charIndex--;
+        setTimeout(erase, erasingDelay);
+      } 
+      else {
+        cursorSpan.classList.remove("typing");
+        textArrayIndex++;
+        if(textArrayIndex >= textArray.length) textArrayIndex = 0;
+        setTimeout(type, typingDelay + 500);
+      }
+    }
+
+    // Initialize all scripts on DOM load
+    document.addEventListener("DOMContentLoaded", function() {
+      initRevealAnimations();
+      if(textArray.length) setTimeout(type, newTextDelay + 250);
     });
   </script>
 </body>
