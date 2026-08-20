@@ -1,10 +1,311 @@
 // Apple Music Database with High-Fidelity Artwork & Previews
 
-// // Helper to create reliable SVG gradient covers with spinning vinyl disc
-function createGradientCover(text, artist, bgGrad, textColor = '#ffffff', isSpinning = false) {
+// Helper to detect/assign theme based on song characteristics
+function detectCoverStyle(text = '', artist = '') {
+    const combined = `${text} ${artist}`.toLowerCase();
+    if (combined.includes('phonk') || combined.includes('slowed') || combined.includes('funk') || combined.includes('midnight') || combined.includes('v12') || combined.includes('uranium') || combined.includes('blinding') || combined.includes('after hours')) {
+        return 'synthwave';
+    }
+    if (combined.includes('starboy') || combined.includes('boom shaka') || combined.includes('burn') || combined.includes('krsna') || combined.includes('kendrick') || combined.includes('black panther')) {
+        return 'dark';
+    }
+    if (combined.includes('sunflower') || combined.includes('levitating') || combined.includes('bad habits') || combined.includes('stay') || combined.includes('today') || combined.includes('hits') || combined.includes('pegadora')) {
+        return 'bauhaus';
+    }
+    if (combined.includes('tame impala') || combined.includes('watermelon') || combined.includes('harry') || combined.includes('as it was') || combined.includes('west end') || combined.includes('louis')) {
+        return 'retro';
+    }
+    if (combined.includes('timeless') || combined.includes('khat') || combined.includes('peaches') || combined.includes('midnights') || combined.includes('anti-hero') || combined.includes('deep focus') || combined.includes('spider')) {
+        return 'abstract';
+    }
+    return 'landscape'; // Default organic/acoustic
+}
+
+// ════════════════════════════════════════════════════════════════════════════════
+// MULTI-STYLE SKEUOMORPHIC 1:1 SQUARE COVER GENERATOR
+// ════════════════════════════════════════════════════════════════════════════════
+function createGradientCover(text, artist, bgGrad, textColor = '#ffffff', isSpinning = false, customStyle = null) {
     const cleanTitle = (text || 'DAWN').replace(/[^a-zA-Z0-9 ]/g, '').trim();
-    const displayTitle = (cleanTitle.length > 8 ? cleanTitle.slice(0, 8) : cleanTitle || 'DAWN').split('').join(' ').toUpperCase();
+    const displayTitle = (cleanTitle.length > 9 ? cleanTitle.slice(0, 9) : cleanTitle || 'DAWN').split('').join(' ').toUpperCase();
     const displayArtist = (artist || 'ACOUSTIC SESSIONS').toUpperCase().slice(0, 22);
+    const style = customStyle || detectCoverStyle(text, artist);
+
+    const isImage = bgGrad && (bgGrad.startsWith('images/') || bgGrad.startsWith('http'));
+
+    // Style-specific configurations
+    let sleeveBaseGrad = `<linearGradient id="sleevePaper" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f6f3ee" /><stop offset="100%" stop-color="#dfdad1" /></linearGradient>`;
+    let sleeveBorderStroke = 'rgba(255,255,255,0.6)';
+    let sleeveBorderDark = 'rgba(0,0,0,0.15)';
+    let discLabelBg = '#ede9e2';
+    let discLabelBorder = '#d5d0c7';
+    let discLabelText = '#2a2824';
+    let discLabelSub = '#6a6863';
+    let artworkContent = '';
+    let headerContent = '';
+    let overlayContent = '';
+    let discLabelArtwork = '';
+
+    if (style === 'synthwave') {
+        // ── Cyberpunk / Synth-wave / Phonk ─────────────────────────────
+        sleeveBaseGrad = `<linearGradient id="sleevePaper" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#141520" /><stop offset="100%" stop-color="#08090f" /></linearGradient>`;
+        sleeveBorderStroke = 'rgba(0, 243, 255, 0.4)';
+        sleeveBorderDark = 'rgba(255, 0, 128, 0.25)';
+        discLabelBg = '#0d0d14';
+        discLabelBorder = '#ff007f';
+        discLabelText = '#00f3ff';
+        discLabelSub = '#ff007f';
+
+        discLabelArtwork = `
+            <circle cx="218" cy="150" r="26" fill="none" stroke="#00f3ff" stroke-width="0.75" opacity="0.8" />
+            <circle cx="218" cy="150" r="21" fill="none" stroke="#ff007f" stroke-width="0.5" stroke-dasharray="3,2" />
+            <!-- Frequency bars -->
+            <line x1="208" y1="140" x2="208" y2="146" stroke="#00f3ff" stroke-width="1.2" />
+            <line x1="213" y1="137" x2="213" y2="146" stroke="#00f3ff" stroke-width="1.2" />
+            <line x1="218" y1="134" x2="218" y2="146" stroke="#ff007f" stroke-width="1.2" />
+            <line x1="223" y1="137" x2="223" y2="146" stroke="#00f3ff" stroke-width="1.2" />
+            <line x1="228" y1="140" x2="228" y2="146" stroke="#00f3ff" stroke-width="1.2" />
+        `;
+
+        headerContent = `
+            <text x="24" y="72" font-family="'SF Mono', Menlo, monospace" font-size="10.5" font-weight="700" fill="#00f3ff" letter-spacing="2.5">[ ${displayTitle} ]</text>
+            <text x="24" y="82" font-family="'SF Mono', Menlo, monospace" font-size="4.8" font-weight="600" fill="#ff007f" letter-spacing="1.2">DIGITAL MASTER // 48kHz</text>
+            <line x1="24" y1="87" x2="48" y2="87" stroke="#00f3ff" stroke-width="0.8" />
+        `;
+
+        artworkContent = isImage ? `<image href="${bgGrad}" x="0" y="0" width="200" height="158" preserveAspectRatio="xMidYMid slice" />` : `
+            <rect width="200" height="158" fill="url(#artBg)" />
+            <!-- Glowing Grid Floor -->
+            <path d="M 0,110 L 200,110 M 0,122 L 200,122 M 0,136 L 200,136 M 0,152 L 200,152" stroke="rgba(0,243,255,0.4)" stroke-width="0.8" />
+            <path d="M 100,85 L 0,158 M 100,85 L 35,158 M 100,85 L 70,158 M 100,85 L 100,158 M 100,85 L 130,158 M 100,85 L 165,158 M 100,85 L 200,158" stroke="rgba(0,243,255,0.35)" stroke-width="0.8" />
+            <!-- Neon Wire Sun -->
+            <circle cx="100" cy="62" r="30" fill="none" stroke="#ff007f" stroke-width="2" />
+            <line x1="72" y1="52" x2="128" y2="52" stroke="#141520" stroke-width="2" />
+            <line x1="74" y1="60" x2="126" y2="60" stroke="#141520" stroke-width="2.5" />
+            <line x1="78" y1="68" x2="122" y2="68" stroke="#141520" stroke-width="3" />
+            <line x1="84" y1="76" x2="116" y2="76" stroke="#141520" stroke-width="3.5" />
+            <!-- Glowing Laser Horizon -->
+            <line x1="0" y1="85" x2="200" y2="85" stroke="#ff007f" stroke-width="1.5" />
+            <line x1="0" y1="85" x2="200" y2="85" stroke="#ffffff" stroke-width="0.6" opacity="0.8" />
+        `;
+
+        overlayContent = `
+            <text x="24" y="240" font-family="'SF Mono', Menlo, monospace" font-size="4.5" font-weight="600" fill="#00f3ff" letter-spacing="1">SYNTH-84 // RE_EDIT</text>
+        `;
+
+    } else if (style === 'bauhaus') {
+        // ── Modern Pop / Swiss Bauhaus / Colorblock ────────────────────
+        sleeveBaseGrad = `<linearGradient id="sleevePaper" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff" /><stop offset="100%" stop-color="#f0eee9" /></linearGradient>`;
+        sleeveBorderStroke = 'rgba(255,255,255,0.8)';
+        sleeveBorderDark = 'rgba(0,0,0,0.2)';
+        discLabelBg = '#ffe600';
+        discLabelBorder = '#ff2a5f';
+        discLabelText = '#111111';
+        discLabelSub = '#0038ff';
+
+        discLabelArtwork = `
+            <path d="M 218,125 A 25 25 0 0 1 218,175 Z" fill="#0038ff" />
+            <circle cx="218" cy="150" r="24" fill="none" stroke="#111111" stroke-width="0.8" />
+        `;
+
+        headerContent = `
+            <text x="24" y="72" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', Impact, sans-serif" font-size="13" font-weight="900" fill="#111111" letter-spacing="2">${displayTitle}</text>
+            <text x="24" y="82" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="5.2" font-weight="700" fill="#ff2a5f" letter-spacing="1.2">${displayArtist}</text>
+            <rect x="24" y="86" width="22" height="2.5" fill="#0038ff" />
+        `;
+
+        artworkContent = isImage ? `<image href="${bgGrad}" x="0" y="0" width="200" height="158" preserveAspectRatio="xMidYMid slice" />` : `
+            <rect width="200" height="158" fill="url(#artBg)" />
+            <!-- Bauhaus Geometric Color Blocks -->
+            <circle cx="65" cy="80" r="48" fill="#ff2a5f" opacity="0.85" />
+            <polygon points="0,0 130,0 50,158 0,158" fill="#ffe600" opacity="0.65" />
+            <path d="M 120,158 V 65 A 40 40 0 0 1 200,65 V 158 Z" fill="#0038ff" opacity="0.75" />
+            <!-- Halftone Dot Matrix Accent -->
+            <circle cx="160" cy="35" r="2.5" fill="#ffffff" />
+            <circle cx="170" cy="35" r="2.5" fill="#ffffff" />
+            <circle cx="180" cy="35" r="2.5" fill="#ffffff" />
+            <circle cx="160" cy="45" r="2.5" fill="#ffffff" />
+            <circle cx="170" cy="45" r="2.5" fill="#ffffff" />
+            <circle cx="180" cy="45" r="2.5" fill="#ffffff" />
+            <circle cx="65" cy="80" r="14" fill="#ffffff" />
+        `;
+
+        overlayContent = `
+            <!-- Stylized Barcode -->
+            <g transform="translate(24, 225)">
+                <line x1="0" y1="0" x2="0" y2="16" stroke="#111" stroke-width="1" />
+                <line x1="2.5" y1="0" x2="2.5" y2="16" stroke="#111" stroke-width="1.8" />
+                <line x1="6" y1="0" x2="6" y2="16" stroke="#111" stroke-width="0.8" />
+                <line x1="8.5" y1="0" x2="8.5" y2="16" stroke="#111" stroke-width="1.5" />
+                <line x1="12" y1="0" x2="12" y2="16" stroke="#111" stroke-width="1.2" />
+                <line x1="15" y1="0" x2="15" y2="16" stroke="#111" stroke-width="2" />
+                <line x1="19" y1="0" x2="19" y2="16" stroke="#111" stroke-width="0.8" />
+                <line x1="22" y1="0" x2="22" y2="16" stroke="#111" stroke-width="1.5" />
+                <line x1="25" y1="0" x2="25" y2="16" stroke="#111" stroke-width="1" />
+                <text x="32" y="12" font-family="monospace" font-size="4.5" font-weight="700" fill="#111">LP-2026</text>
+            </g>
+        `;
+
+    } else if (style === 'abstract') {
+        // ── Cosmic / Ambient Fluid / Ethereal ──────────────────────────
+        sleeveBaseGrad = `<linearGradient id="sleevePaper" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0c0e1a" /><stop offset="100%" stop-color="#05060d" /></linearGradient>`;
+        sleeveBorderStroke = 'rgba(255,255,255,0.4)';
+        sleeveBorderDark = 'rgba(0,0,0,0.5)';
+        discLabelBg = '#16192b';
+        discLabelBorder = '#8a94b8';
+        discLabelText = '#ffffff';
+        discLabelSub = '#8a94b8';
+
+        discLabelArtwork = `
+            <circle cx="218" cy="150" r="25" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="0.8" />
+            <circle cx="218" cy="150" r="18" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" />
+            <polygon points="218,138 220,143 225,145 220,147 218,152 216,147 211,145 216,143" fill="#ffffff" opacity="0.9" />
+        `;
+
+        headerContent = `
+            <text x="24" y="72" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', serif" font-size="11.5" font-weight="300" fill="#ffffff" letter-spacing="4.5">${displayTitle}</text>
+            <text x="24" y="82" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', serif" font-size="4.8" font-style="italic" fill="#a0a8c2" letter-spacing="1.5">${displayArtist}</text>
+            <line x1="24" y1="87" x2="38" y2="87" stroke="#a0a8c2" stroke-width="0.5" opacity="0.6" />
+        `;
+
+        artworkContent = isImage ? `<image href="${bgGrad}" x="0" y="0" width="200" height="158" preserveAspectRatio="xMidYMid slice" />` : `
+            <rect width="200" height="158" fill="url(#artBg)" />
+            <!-- Fluid Nebula Waves -->
+            <path d="M 0,40 C 60,10 90,80 150,45 C 180,25 190,50 200,40 V 158 H 0 Z" fill="rgba(255,255,255,0.12)" />
+            <path d="M 0,80 C 50,110 110,60 160,105 C 185,125 195,100 200,95 V 158 H 0 Z" fill="rgba(0,0,0,0.3)" />
+            <!-- Luminous Glowing Orb -->
+            <circle cx="130" cy="65" r="32" fill="#ffffff" opacity="0.18" />
+            <circle cx="130" cy="65" r="22" fill="#ffffff" opacity="0.3" />
+            <circle cx="130" cy="65" r="10" fill="#ffffff" opacity="0.75" />
+            <!-- Star Particles -->
+            <polygon points="45,35 46.5,39 50,40.5 46.5,42 45,46 43.5,42 40,40.5 43.5,39" fill="#ffffff" opacity="0.9" />
+            <polygon points="175,120 176,123 179,124 176,125 175,128 174,125 171,124 174,123" fill="#ffffff" opacity="0.7" />
+        `;
+
+        overlayContent = `
+            <text x="24" y="240" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="4.2" font-weight="500" fill="#a0a8c2" letter-spacing="1.5">IMMERSIVE AUDIO // SPATIAL</text>
+        `;
+
+    } else if (style === 'retro') {
+        // ── Vintage Japanese City-Pop / Retro Cassette ─────────────────
+        sleeveBaseGrad = `<linearGradient id="sleevePaper" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#eee6d8" /><stop offset="100%" stop-color="#d8c7b0" /></linearGradient>`;
+        sleeveBorderStroke = 'rgba(255,255,255,0.7)';
+        sleeveBorderDark = 'rgba(0,0,0,0.2)';
+        discLabelBg = '#9c2424';
+        discLabelBorder = '#d4af37';
+        discLabelText = '#ffffff';
+        discLabelSub = '#d4af37';
+
+        discLabelArtwork = `
+            <circle cx="218" cy="150" r="26" fill="none" stroke="#d4af37" stroke-width="1" />
+            <circle cx="218" cy="150" r="23" fill="none" stroke="#d4af37" stroke-width="0.5" stroke-dasharray="2,2" />
+            <text x="218" y="141" font-family="'SF Pro Display', sans-serif" font-size="3.5" font-weight="700" fill="#d4af37" text-anchor="middle" letter-spacing="1">SIDE A</text>
+        `;
+
+        headerContent = `
+            <text x="24" y="71" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="11.5" font-weight="800" fill="#2d251e" letter-spacing="3">${displayTitle}</text>
+            <text x="24" y="81" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="5" font-weight="600" fill="#8c6d48" letter-spacing="1.2">シティ・ポップ // ${displayArtist}</text>
+            <line x1="24" y1="86" x2="45" y2="86" stroke="#b08d57" stroke-width="0.8" />
+        `;
+
+        artworkContent = isImage ? `<image href="${bgGrad}" x="0" y="0" width="200" height="158" preserveAspectRatio="xMidYMid slice" />` : `
+            <rect width="200" height="158" fill="url(#artBg)" />
+            <!-- Sunset Horizon Lines -->
+            <circle cx="100" cy="75" r="34" fill="#ff4e50" opacity="0.9" />
+            <line x1="0" y1="75" x2="200" y2="75" stroke="#f9d423" stroke-width="1.5" />
+            <line x1="0" y1="85" x2="200" y2="85" stroke="#f9d423" stroke-width="1.2" />
+            <line x1="0" y1="97" x2="200" y2="97" stroke="#f9d423" stroke-width="1" />
+            <line x1="0" y1="112" x2="200" y2="112" stroke="#f9d423" stroke-width="0.8" />
+            <!-- Palm Tree Silhouette -->
+            <path d="M 30,158 Q 38,110 32,80 Q 24,65 10,68 M 32,80 Q 45,62 60,65 M 32,80 Q 40,75 55,85 M 32,80 Q 20,75 8,82 M 32,80 Q 32,58 35,48" fill="none" stroke="#2d251e" stroke-width="2.2" stroke-linecap="round" />
+        `;
+
+        overlayContent = `
+            <!-- Vintage Red Stamp Badge -->
+            <g transform="translate(145, 222)">
+                <rect width="48" height="16" rx="3" fill="#9c2424" />
+                <text x="24" y="11" font-family="'SF Pro Display', sans-serif" font-size="4.2" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="0.8">STEREO 33⅓</text>
+            </g>
+            <text x="24" y="240" font-family="'SF Pro Display', sans-serif" font-size="4.5" font-weight="700" fill="#8c6d48" letter-spacing="1">TOKYO FM MASTER</text>
+        `;
+
+    } else if (style === 'dark') {
+        // ── Heavy Hip-Hop / Dark Trap / Metallic ───────────────────────
+        sleeveBaseGrad = `<linearGradient id="sleevePaper" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#19191d" /><stop offset="100%" stop-color="#0a0a0c" /></linearGradient>`;
+        sleeveBorderStroke = 'rgba(255,40,40,0.5)';
+        sleeveBorderDark = 'rgba(0,0,0,0.6)';
+        discLabelBg = '#0a0a0c';
+        discLabelBorder = '#ff2424';
+        discLabelText = '#ffffff';
+        discLabelSub = '#ff2424';
+
+        discLabelArtwork = `
+            <circle cx="218" cy="150" r="26" fill="none" stroke="#ff2424" stroke-width="1.2" />
+            <polygon points="218,136 226,150 218,145 210,150" fill="#ff2424" />
+        `;
+
+        headerContent = `
+            <text x="24" y="72" font-family="'Impact', 'Arial Black', sans-serif" font-size="13" font-weight="900" fill="#ffffff" letter-spacing="2.5">${displayTitle}</text>
+            <text x="24" y="82" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="5" font-weight="700" fill="#ff3333" letter-spacing="1.2">${displayArtist}</text>
+            <rect x="24" y="86" width="30" height="2" fill="#ff3333" />
+        `;
+
+        artworkContent = isImage ? `<image href="${bgGrad}" x="0" y="0" width="200" height="158" preserveAspectRatio="xMidYMid slice" />` : `
+            <rect width="200" height="158" fill="url(#artBg)" />
+            <!-- Heavy Monolith Slashes -->
+            <polygon points="40,0 90,0 50,158 0,158" fill="#000000" opacity="0.6" />
+            <polygon points="120,0 170,0 130,158 80,158" fill="#ff2424" opacity="0.4" />
+            <!-- High Contrast Crosshair -->
+            <circle cx="100" cy="80" r="36" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.7" />
+            <line x1="100" y1="35" x2="100" y2="125" stroke="#ffffff" stroke-width="0.8" opacity="0.7" />
+            <line x1="55" y1="80" x2="145" y2="80" stroke="#ffffff" stroke-width="0.8" opacity="0.7" />
+        `;
+
+        overlayContent = `
+            <!-- Parental Advisory Mini Badge -->
+            <g transform="translate(142, 224)">
+                <rect width="52" height="16" rx="2" fill="#ffffff" />
+                <rect x="1" y="1" width="50" height="14" rx="1" fill="#000000" />
+                <text x="26" y="7.5" font-family="'Arial Black', sans-serif" font-size="3" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">PARENTAL</text>
+                <text x="26" y="12.5" font-family="'Arial Black', sans-serif" font-size="3" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">ADVISORY</text>
+            </g>
+            <text x="24" y="240" font-family="monospace" font-size="4.2" font-weight="700" fill="#ff3333" letter-spacing="1">[EXPLICIT_V2]</text>
+        `;
+
+    } else {
+        // ── Default Organic / Minimalist Landscape ─────────────────────
+        discLabelArtwork = `
+            <path d="M 204,143 L 211,136 L 218,143" fill="none" stroke="#6a6863" stroke-width="1" stroke-linejoin="round" />
+            <path d="M 215,143 L 223,134 L 231,143" fill="none" stroke="#6a6863" stroke-width="1" stroke-linejoin="round" />
+        `;
+
+        headerContent = `
+            <text x="24" y="72" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif" font-size="12" font-weight="700" fill="#1c202a" letter-spacing="3.5">${displayTitle}</text>
+            <text x="24" y="82" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif" font-size="5" font-weight="600" fill="#6a707e" letter-spacing="1.5">${displayArtist}</text>
+            <line x1="24" y1="87" x2="42" y2="87" stroke="#a6abb6" stroke-width="0.7" />
+        `;
+
+        artworkContent = isImage ? `<image href="${bgGrad}" x="0" y="0" width="200" height="158" preserveAspectRatio="xMidYMid slice" />` : `
+            <rect width="200" height="158" fill="url(#artBg)" />
+            <!-- Mountain Silhouettes -->
+            <path d="M 0,70 Q 40,30 70,50 T 140,40 T 200,65 V 158 H 0 Z" fill="#2b323c" opacity="0.85" />
+            <path d="M 0,90 Q 60,55 110,80 T 200,75 V 158 H 0 Z" fill="#1b2027" opacity="0.95" />
+            <!-- Glowing Sun/Dawn Core -->
+            <circle cx="120" cy="45" r="6" fill="#fffbe8" />
+            <circle cx="120" cy="45" r="13" fill="#ffb469" opacity="0.38" />
+        `;
+
+        overlayContent = `
+            <!-- Frosted Glass Wave Ribbon 1 (Upper Translucent Layer) -->
+            <path d="M 10,135 C 50,135 90,170 130,125 C 160,95 180,110 210,105 V 250 H 10 Z" fill="url(#glassWave1)" />
+            <path d="M 10,135 C 50,135 90,170 130,125 C 160,95 180,110 210,105" fill="none" stroke="#ffffff" stroke-width="1.6" opacity="0.85" />
+
+            <!-- Frosted Glass Wave Ribbon 2 (Lower Cream Layer) -->
+            <path d="M 10,165 C 45,168 80,182 112,205 C 148,230 180,205 210,192 V 250 H 10 Z" fill="#ded9d0" opacity="0.92" />
+            <path d="M 10,165 C 45,168 80,182 112,205 C 148,230 180,205 210,192" fill="none" stroke="#ffffff" stroke-width="1.2" opacity="0.9" />
+
+            <text x="24" y="240" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif" font-size="4.8" font-weight="600" fill="#6a707e" letter-spacing="1">VOL. 01</text>
+        `;
+    }
 
     const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
@@ -22,15 +323,11 @@ function createGradientCover(text, artist, bgGrad, textColor = '#ffffff', isSpin
 
             <!-- Inset Scenery / Artwork Gradient -->
             <linearGradient id="artBg" x1="0%" y1="0%" x2="100%" y2="100%">
-                ${bgGrad}
+                ${isImage ? '' : bgGrad}
             </linearGradient>
 
-            <!-- Sleeve Cream Matte Base Gradient -->
-            <linearGradient id="sleevePaper" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#f6f3ee" />
-                <stop offset="45%" stop-color="#eeebe4" />
-                <stop offset="100%" stop-color="#dfdad1" />
-            </linearGradient>
+            <!-- Dynamic Sleeve Base Gradient -->
+            ${sleeveBaseGrad}
 
             <!-- Vinyl Disc Body Gradient -->
             <radialGradient id="vinylBody" cx="50%" cy="50%" r="50%">
@@ -66,32 +363,30 @@ function createGradientCover(text, artist, bgGrad, textColor = '#ffffff', isSpin
             </linearGradient>
 
             <linearGradient id="glassGlare" x1="0%" y1="0%" x2="80%" y2="100%">
-                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.38" />
-                <stop offset="35%" stop-color="#ffffff" stop-opacity="0.1" />
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.35" />
+                <stop offset="35%" stop-color="#ffffff" stop-opacity="0.08" />
                 <stop offset="70%" stop-color="#ffffff" stop-opacity="0" />
             </linearGradient>
 
-            <!-- Sleeve Notch Clip Path -->
+            <!-- Sleeve Notch Clip Path (Square 200x200 Sleeve) -->
             <clipPath id="sleeveClip">
                 <path d="
-                    M 30,10
-                    H 178
-                    Q 200,10 200,32
-                    V 112
-                    C 200,124 178,132 178,150
-                    C 178,168 200,176 200,188
-                    V 268
-                    Q 200,290 178,290
-                    H 30
-                    Q 8,290 8,268
-                    V 32
-                    Q 8,10 30,10
+                    M 26,50
+                    H 194
+                    Q 210,50 210,66
+                    V 122
+                    C 210,132 188,138 188,150
+                    C 188,162 210,168 210,178
+                    V 234
+                    Q 210,250 194,250
+                    H 26
+                    Q 10,250 10,234
+                    V 66
+                    Q 10,50 26,50
                     Z
                 " />
             </clipPath>
         </defs>
-
-        <!-- Transparent Studio Canvas Background (No Black Box) -->
 
         <!-- ════════════════════════════════════════════════════════════════════ -->
         <!-- VINYL RECORD (SLIDING OUT ON THE RIGHT - ROTATES DYNAMICALLY) -->
@@ -122,18 +417,17 @@ function createGradientCover(text, artist, bgGrad, textColor = '#ffffff', isSpin
             <circle cx="218" cy="150" r="37" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="0.75" />
             <circle cx="218" cy="150" r="33" fill="none" stroke="rgba(0,0,0,0.4)" stroke-width="0.75" />
 
-            <!-- Center Paper Label (Cream / Matte Off-White) -->
-            <circle cx="218" cy="150" r="31" fill="#ede9e2" stroke="#d5d0c7" stroke-width="1" />
-            <circle cx="218" cy="150" r="29" fill="none" stroke="#ded9cf" stroke-width="0.5" />
+            <!-- Center Paper Label -->
+            <circle cx="218" cy="150" r="31" fill="${discLabelBg}" stroke="${discLabelBorder}" stroke-width="1" />
+            <circle cx="218" cy="150" r="29" fill="none" stroke="${discLabelBorder}" stroke-width="0.5" />
 
-            <!-- Label Artwork / Minimal Mountain Emblem -->
-            <path d="M 204,143 L 211,136 L 218,143" fill="none" stroke="#6a6863" stroke-width="1" stroke-linejoin="round" />
-            <path d="M 215,143 L 223,134 L 231,143" fill="none" stroke="#6a6863" stroke-width="1" stroke-linejoin="round" />
+            <!-- Label Artwork -->
+            ${discLabelArtwork}
             
             <!-- Label Spindle Text -->
-            <text x="218" y="157" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="4.2" font-weight="700" fill="#2a2824" text-anchor="middle" letter-spacing="1.2">${cleanTitle.slice(0, 10).toUpperCase()}</text>
-            <text x="218" y="162" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="2.8" font-weight="500" fill="#6a6863" text-anchor="middle" letter-spacing="0.5">ACOUSTIC SESSIONS</text>
-            <line x1="212" y1="165" x2="224" y2="165" stroke="#b5b0a6" stroke-width="0.4" />
+            <text x="218" y="157" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="4" font-weight="700" fill="${discLabelText}" text-anchor="middle" letter-spacing="1">${cleanTitle.slice(0, 10).toUpperCase()}</text>
+            <text x="218" y="162" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="2.6" font-weight="500" fill="${discLabelSub}" text-anchor="middle" letter-spacing="0.5">${displayArtist.slice(0, 16)}</text>
+            <line x1="212" y1="165" x2="224" y2="165" stroke="${discLabelBorder}" stroke-width="0.4" />
 
             <!-- Center Metallic Spindle Bushing & Hole -->
             <circle cx="218" cy="150" r="5" fill="url(#spindleHub)" stroke="#55555c" stroke-width="0.6" />
@@ -141,83 +435,59 @@ function createGradientCover(text, artist, bgGrad, textColor = '#ffffff', isSpin
         </g>
 
         <!-- ════════════════════════════════════════════════════════════════════ -->
-        <!-- SLEEVE (FRONT COVER WITH NOTCH CUTOUT) -->
+        <!-- SLEEVE (FRONT COVER WITH NOTCH CUTOUT - 1:1 SQUARE 200x200) -->
         <!-- ════════════════════════════════════════════════════════════════════ -->
         <g id="sleeve-jacket" clip-path="url(#sleeveClip)">
             <!-- Sleeve Base Background -->
-            <rect x="8" y="10" width="192" height="280" fill="url(#sleevePaper)" />
+            <rect x="10" y="50" width="200" height="200" fill="url(#sleevePaper)" />
 
-            <!-- Background Landscape / Vibrant Gradient Artwork Window -->
-            <g transform="translate(8, 75)">
-                ${bgGrad.startsWith('images/') || bgGrad.startsWith('http') 
-                    ? `<image href="${bgGrad}" x="0" y="0" width="192" height="205" preserveAspectRatio="cover" />`
-                    : `<rect width="192" height="205" fill="url(#artBg)" />
-                       <!-- Mountain Silhouettes -->
-                       <path d="M 0,95 Q 40,40 70,65 T 140,55 T 192,85 V 205 H 0 Z" fill="#2b323c" opacity="0.85" />
-                       <path d="M 0,120 Q 60,75 110,105 T 192,95 V 205 H 0 Z" fill="#1b2027" opacity="0.95" />
-                       <!-- Glowing Sun/Dawn Core -->
-                       <circle cx="120" cy="62" r="7.5" fill="#fffbe8" />
-                       <circle cx="120" cy="62" r="15" fill="#ffb469" opacity="0.38" />`
-                }
+            <!-- Background Landscape / Artwork Window -->
+            <g transform="translate(10, 92)">
+                ${artworkContent}
             </g>
 
-            <!-- Frosted Glass Wave Ribbon 1 (Upper Translucent Layer) -->
-            <path d="M 8,130 C 50,130 90,175 130,120 C 160,80 178,95 200,88 V 290 H 8 Z" fill="url(#glassWave1)" />
-            <path d="M 8,130 C 50,130 90,175 130,120 C 160,80 178,95 200,88" fill="none" stroke="#ffffff" stroke-width="1.8" opacity="0.85" />
-
-            <!-- Frosted Glass Wave Ribbon 2 (Lower Cream Layer) -->
-            <path d="M 8,168 C 45,172 80,188 112,218 C 148,252 178,218 200,202 V 290 H 8 Z" fill="#ded9d0" opacity="0.92" />
-            <path d="M 8,168 C 45,172 80,188 112,218 C 148,252 178,218 200,202" fill="none" stroke="#ffffff" stroke-width="1.2" opacity="0.9" />
+            <!-- Dynamic Overlays -->
+            ${overlayContent}
 
             <!-- Diagonal Glass Sheen Glare across Top of Sleeve -->
-            <path d="M 8,10 L 200,10 L 200,40 L 8,150 Z" fill="url(#glassGlare)" />
+            <path d="M 10,50 L 210,50 L 210,75 L 10,150 Z" fill="url(#glassGlare)" />
 
             <!-- ── Editorial Typography ─────────────────────────────────────── -->
-            <!-- Top Title -->
-            <text x="26" y="50" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif" font-size="14.5" font-weight="700" fill="#1c202a" letter-spacing="4">${displayTitle}</text>
-            
-            <!-- Subtitle -->
-            <text x="26" y="62.5" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif" font-size="5.8" font-weight="600" fill="#6a707e" letter-spacing="1.8">${displayArtist}</text>
-            
-            <!-- Horizontal Divider Line -->
-            <line x1="26" y1="70" x2="48" y2="70" stroke="#a6abb6" stroke-width="0.8" />
-
-            <!-- Bottom Left Catalog Number -->
-            <text x="26" y="270" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif" font-size="5.8" font-weight="600" fill="#6a707e" letter-spacing="1.2">VOL. 01</text>
+            ${headerContent}
         </g>
 
-        <!-- Sleeve Perimeter Bevel & Notch Outline Highlight -->
+        <!-- Sleeve Perimeter Bevel & Notch Outline Highlight (Square 200x200) -->
         <path d="
-            M 30,10
-            H 178
-            Q 200,10 200,32
-            V 112
-            C 200,124 178,132 178,150
-            C 178,168 200,176 200,188
-            V 268
-            Q 200,290 178,290
-            H 30
-            Q 8,290 8,268
-            V 32
-            Q 8,10 30,10
+            M 26,50
+            H 194
+            Q 210,50 210,66
+            V 122
+            C 210,132 188,138 188,150
+            C 188,162 210,168 210,178
+            V 234
+            Q 210,250 194,250
+            H 26
+            Q 10,250 10,234
+            V 66
+            Q 10,50 26,50
             Z
-        " fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.2" />
+        " fill="none" stroke="${sleeveBorderStroke}" stroke-width="1.2" />
 
         <path d="
-            M 30,10.6
-            H 178
-            Q 199.4,10.6 199.4,32
-            V 112
-            C 199.4,124 177.4,132 177.4,150
-            C 177.4,168 199.4,176 199.4,188
-            V 268
-            Q 199.4,289.4 178,289.4
-            H 30
-            Q 8.6,289.4 8.6,268
-            V 32
-            Q 8.6,10.6 30,10.6
+            M 26,50.5
+            H 194
+            Q 209.5,50.5 209.5,66
+            V 122
+            C 209.5,132 187.5,138 187.5,150
+            C 187.5,162 209.5,168 209.5,178
+            V 234
+            Q 209.5,249.5 194,249.5
+            H 26
+            Q 10.5,249.5 10.5,234
+            V 66
+            Q 10.5,50.5 26,50.5
             Z
-        " fill="none" stroke="rgba(0,0,0,0.15)" stroke-width="0.8" />
+        " fill="none" stroke="${sleeveBorderDark}" stroke-width="0.8" />
     </svg>`;
     return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }

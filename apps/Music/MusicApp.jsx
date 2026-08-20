@@ -44,9 +44,12 @@ const SafeImage = ({ src, className, style, alt = 'Cover', song = null }) => {
         isSvgData = true;
         try {
             rawSvgContent = decodeURIComponent(imgSrc.replace('data:image/svg+xml;utf8,', ''));
-            // Ensure the SVG fills its container
-            if (!rawSvgContent.includes('width="100%"')) {
-                rawSvgContent = rawSvgContent.replace('<svg ', '<svg width="100%" height="100%" style="display:block; width:100%; height:100%;" ');
+            // Ensure the SVG fills its container seamlessly at 1:1
+            rawSvgContent = rawSvgContent
+                .replace(/width="[0-9]+"/, 'width="100%"')
+                .replace(/height="[0-9]+"/, 'height="100%"');
+            if (!rawSvgContent.includes('style="display:block')) {
+                rawSvgContent = rawSvgContent.replace('<svg ', '<svg style="display:block; width:100%; height:100%;" ');
             }
         } catch(e) {
             isSvgData = false;
@@ -57,7 +60,7 @@ const SafeImage = ({ src, className, style, alt = 'Cover', song = null }) => {
         return (
             <div 
                 className={className} 
-                style={{ ...style, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}
+                style={{ ...style, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', aspectRatio: '1', overflow: 'visible' }}
                 dangerouslySetInnerHTML={{ __html: rawSvgContent }}
             />
         );
