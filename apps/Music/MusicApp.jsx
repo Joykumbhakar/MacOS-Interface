@@ -2,6 +2,223 @@ const { useState, useEffect, useRef, createContext, useContext } = React;
 
 const PlayerContext = createContext();
 
+// Lightweight native Lucide icon component for macOS Apple Music
+const LucideIcon = ({ name, size = 18, color = 'currentColor', strokeWidth = 1.8, className = '', style = {} }) => {
+    const icons = {
+        'search': (
+            <g>
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+            </g>
+        ),
+        'home': (
+            <g>
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+            </g>
+        ),
+        'grid': (
+            <g>
+                <rect width="7" height="7" x="3" y="3" rx="1.5" />
+                <rect width="7" height="7" x="14" y="3" rx="1.5" />
+                <rect width="7" height="7" x="14" y="14" rx="1.5" />
+                <rect width="7" height="7" x="3" y="14" rx="1.5" />
+            </g>
+        ),
+        'radio': (
+            <g>
+                <path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9" />
+                <path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5" />
+                <circle cx="12" cy="12" r="2" />
+                <path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5" />
+                <path d="M19.1 4.9C23 8.8 23 15.1 19.1 19" />
+            </g>
+        ),
+        'pin': (
+            <g>
+                <line x1="12" x2="12" y1="17" y2="22" />
+                <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z" />
+            </g>
+        ),
+        'clock': (
+            <g>
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+            </g>
+        ),
+        'mic': (
+            <g>
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" x2="12" y1="19" y2="22" />
+            </g>
+        ),
+        'disc': (
+            <g>
+                <circle cx="12" cy="12" r="10" />
+                <circle cx="12" cy="12" r="4" />
+                <line x1="12" x2="12.01" y1="12" y2="12" />
+            </g>
+        ),
+        'music': (
+            <g>
+                <path d="M9 18V5l12-2v13" />
+                <circle cx="6" cy="18" r="3" />
+                <circle cx="18" cy="16" r="3" />
+            </g>
+        ),
+        'film': (
+            <g>
+                <rect width="18" height="18" x="3" y="3" rx="2" />
+                <path d="M7 3v18" />
+                <path d="M3 7.5h4" />
+                <path d="M3 12h18" />
+                <path d="M3 16.5h4" />
+                <path d="M17 3v18" />
+                <path d="M17 7.5h4" />
+                <path d="M17 16.5h4" />
+            </g>
+        ),
+        'user': (
+            <g>
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+            </g>
+        ),
+        'shopping-bag': (
+            <g>
+                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+                <path d="M3 6h18" />
+                <path d="M16 10a4 4 0 0 1-8 0" />
+            </g>
+        ),
+        'list-music': (
+            <g>
+                <path d="M21 15V6" />
+                <path d="M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                <path d="M12 12H3" />
+                <path d="M16 6H3" />
+                <path d="M12 18H3" />
+            </g>
+        ),
+        'chevron-right': (
+            <path d="m9 18 6-6-6-6" />
+        ),
+        'chevron-left': (
+            <path d="m15 18-6-6 6-6" />
+        ),
+        'x': (
+            <g>
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+            </g>
+        ),
+        'x-circle': (
+            <g>
+                <circle cx="12" cy="12" r="10" />
+                <path d="m15 9-6 6" />
+                <path d="m9 9 6 6" />
+            </g>
+        ),
+        'heart': (
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+        ),
+        'flame': (
+            <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
+        ),
+        'trending-up': (
+            <g>
+                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                <polyline points="16 7 22 7 22 13" />
+            </g>
+        ),
+        'history': (
+            <g>
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                <path d="M3 3v5h5" />
+                <path d="M12 7v5l4 2" />
+            </g>
+        ),
+        'video': (
+            <g>
+                <path d="m22 8-6 4 6 4V8Z" />
+                <rect width="14" height="12" x="2" y="6" rx="2" />
+            </g>
+        ),
+        'sliders': (
+            <g>
+                <line x1="4" x2="4" y1="21" y2="14" />
+                <line x1="4" x2="4" y1="10" y2="3" />
+                <line x1="12" x2="12" y1="21" y2="12" />
+                <line x1="12" x2="12" y1="8" y2="3" />
+                <line x1="20" x2="20" y1="21" y2="16" />
+                <line x1="20" x2="20" y1="12" y2="3" />
+                <line x1="1" x2="7" y1="14" y2="14" />
+                <line x1="9" x2="15" y1="8" y2="8" />
+                <line x1="17" x2="23" y1="16" y2="16" />
+            </g>
+        ),
+        'calendar': (
+            <g>
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                <line x1="16" x2="16" y1="2" y2="6" />
+                <line x1="8" x2="8" y1="2" y2="6" />
+                <line x1="3" x2="21" y1="10" y2="10" />
+            </g>
+        ),
+        'guitar': (
+            <g>
+                <path d="m14.5 12.5-8 8a2.12 2.12 0 1 1-3-3l8-8" />
+                <path d="m16 9 3-3" />
+                <path d="m19 6 3-3" />
+                <path d="M12 15a4 4 0 0 1 5.66-5.66l.7.7a4 4 0 0 1-5.65 5.66l-.71-.7Z" />
+            </g>
+        ),
+        'cloud': (
+            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
+        ),
+        'zap': (
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+        ),
+        'comment-alt': (
+            <g>
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                <path d="M8 10h8" />
+                <path d="M8 14h4" />
+            </g>
+        ),
+        'list': (
+            <g>
+                <line x1="8" x2="21" y1="6" y2="6" />
+                <line x1="8" x2="21" y1="12" y2="12" />
+                <line x1="8" x2="21" y1="18" y2="18" />
+                <line x1="3" x2="3.01" y1="6" y2="6" />
+                <line x1="3" x2="3.01" y1="12" y2="12" />
+                <line x1="3" x2="3.01" y1="18" y2="18" />
+            </g>
+        )
+    };
+
+    const iconContent = icons[name] || icons['music'];
+
+    return (
+        <svg 
+            width={size} 
+            height={size} 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke={color} 
+            strokeWidth={strokeWidth} 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            className={`lucide lucide-${name} ${className}`}
+            style={{ display: 'inline-block', verticalAlign: 'middle', flexShrink: 0, ...style }}
+        >
+            {iconContent}
+        </svg>
+    );
+};
+
 // Helper fallback cover component with dynamic vinyl rotation
 const SafeImage = ({ src, className, style, alt = 'Cover', song = null }) => {
     const player = useContext(PlayerContext);
@@ -293,20 +510,20 @@ const AppleMusicApp = () => {
    -------------------------------------------------------------------------- */
 const Sidebar = ({ activeTab, setActiveTab }) => {
     const topItems = [
-        { icon: 'fa-search', label: 'Search' },
-        { icon: 'fa-home', label: 'Home' },
-        { icon: 'fa-border-all', label: 'New' },
-        { icon: 'fa-broadcast-tower', label: 'Radio' }
+        { icon: 'search', label: 'Search' },
+        { icon: 'home', label: 'Home' },
+        { icon: 'grid', label: 'New' },
+        { icon: 'radio', label: 'Radio' }
     ];
     
     const libItems = [
-        { icon: 'fa-thumbtack', label: 'Pins' },
-        { icon: 'fa-clock', label: 'Recently Added' },
-        { icon: 'fa-microphone', label: 'Artists' },
-        { icon: 'fa-compact-disc', label: 'Albums' },
-        { icon: 'fa-music', label: 'Songs' },
-        { icon: 'fa-film', label: 'Music Videos' },
-        { icon: 'fa-user-circle', label: 'Made for You' }
+        { icon: 'pin', label: 'Pins' },
+        { icon: 'clock', label: 'Recently Added' },
+        { icon: 'mic', label: 'Artists' },
+        { icon: 'disc', label: 'Albums' },
+        { icon: 'music', label: 'Songs' },
+        { icon: 'film', label: 'Music Videos' },
+        { icon: 'user', label: 'Made for You' }
     ];
 
     return (
@@ -318,7 +535,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                         className={`am-nav-item ${activeTab === item.label ? 'active' : ''}`}
                         onClick={() => setActiveTab(item.label)}
                     >
-                        <i className={`fas ${item.icon}`}></i>
+                        <LucideIcon name={item.icon} size={18} />
                         <span>{item.label}</span>
                     </div>
                 ))}
@@ -332,7 +549,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                         className={`am-nav-item ${activeTab === item.label ? 'active' : ''}`}
                         onClick={() => setActiveTab(item.label)}
                     >
-                        <i className={`fas ${item.icon}`}></i>
+                        <LucideIcon name={item.icon} size={18} />
                         <span>{item.label}</span>
                     </div>
                 ))}
@@ -341,7 +558,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
             <div className="am-sidebar-section">
                 <div className="am-sidebar-title">Store</div>
                 <div className={`am-nav-item ${activeTab === 'iTunes Store' ? 'active' : ''}`} onClick={() => setActiveTab('iTunes Store')}>
-                    <i className="fas fa-shopping-bag"></i>
+                    <LucideIcon name="shopping-bag" size={18} />
                     <span>iTunes Store</span>
                 </div>
             </div>
@@ -349,7 +566,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
             <div className="am-sidebar-section" style={{flex: 1}}>
                 <div className="am-sidebar-title">Playlists</div>
                 <div className={`am-nav-item ${activeTab === 'All Playlists' ? 'active' : ''}`} onClick={() => setActiveTab('All Playlists')}>
-                    <i className="fas fa-th-large"></i>
+                    <LucideIcon name="list-music" size={18} />
                     <span>All Playlists</span>
                 </div>
             </div>
@@ -372,7 +589,7 @@ const MainContent = ({ activeTab, setActiveTab }) => {
         <div className="am-main">
             <div className="am-top-bar window-header">
                 <div className="am-search-bar">
-                    <i className="fas fa-search"></i>
+                    <LucideIcon name="search" size={15} color="#8e8e93" />
                     <input 
                         type="text" 
                         placeholder="Search Apple Music" 
@@ -386,7 +603,7 @@ const MainContent = ({ activeTab, setActiveTab }) => {
                         onFocus={() => setActiveTab('Search')}
                     />
                     {searchQuery && (
-                        <i className="fas fa-times-circle am-search-clear" onClick={() => setSearchQuery('')}></i>
+                        <LucideIcon name="x-circle" size={15} color="#8e8e93" className="am-search-clear" onClick={() => setSearchQuery('')} />
                     )}
                 </div>
                 <div className="am-top-tabs">
@@ -406,7 +623,7 @@ const MainContent = ({ activeTab, setActiveTab }) => {
                 {/* Fallback for other library views */}
                 {!['Search', 'Home', 'New', 'Radio', 'Songs'].includes(activeTab) && (
                     <div style={{textAlign: 'center', marginTop: '80px', color: '#8e8e93'}}>
-                        <i className="fas fa-music" style={{fontSize: '44px', marginBottom: '16px', color: '#fa243c'}}></i>
+                        <LucideIcon name="music" size={44} color="#fa243c" style={{marginBottom: '16px'}} />
                         <h2 style={{color: '#1d1d1f'}}>{activeTab}</h2>
                         <p style={{fontSize: '13px', marginTop: '6px'}}>Your {activeTab.toLowerCase()} will appear here.</p>
                     </div>
@@ -427,7 +644,7 @@ const HomeView = ({ setActiveTab }) => {
             
             <div className="am-section-header">
                 <div className="am-section-title" onClick={() => setActiveTab('Songs')}>
-                    Top Picks for You <i className="fas fa-chevron-right"></i>
+                    Top Picks for You <LucideIcon name="chevron-right" size={15} strokeWidth={2.2} />
                 </div>
             </div>
             <div className="am-scroll-row">
@@ -445,7 +662,7 @@ const HomeView = ({ setActiveTab }) => {
 
             <div className="am-section-header">
                 <div className="am-section-title" onClick={() => setActiveTab('Songs')}>
-                    Recently Played <i className="fas fa-chevron-right"></i>
+                    Recently Played <LucideIcon name="chevron-right" size={15} strokeWidth={2.2} />
                 </div>
             </div>
             <div className="am-scroll-row">
@@ -463,7 +680,7 @@ const HomeView = ({ setActiveTab }) => {
 
             <div className="am-section-header">
                 <div className="am-section-title">
-                    Featured Playlists <i className="fas fa-chevron-right"></i>
+                    Featured Playlists <LucideIcon name="chevron-right" size={15} strokeWidth={2.2} />
                 </div>
             </div>
             <div className="am-scroll-row">
@@ -489,20 +706,20 @@ const SearchView = () => {
     const { data, searchQuery, playSong } = useContext(PlayerContext);
 
     const categories = [
-        { name: 'Apple Music Radio', color: 'linear-gradient(135deg, #fa243c, #ff5e62)', icon: 'fa-broadcast-tower' },
-        { name: 'Pop', color: 'linear-gradient(135deg, #ff416c, #ff4b2b)', icon: 'fa-heart' },
-        { name: 'Hits', color: 'linear-gradient(135deg, #f7971e, #ffd200)', icon: 'fa-fire' },
-        { name: 'R&B', color: 'linear-gradient(135deg, #8e2de2, #4a00e0)', icon: 'fa-compact-disc' },
-        { name: 'Charts', color: 'linear-gradient(135deg, #11998e, #38ef7d)', icon: 'fa-chart-line' },
-        { name: 'Decades', color: 'linear-gradient(135deg, #e65c00, #f9d423)', icon: 'fa-history' },
-        { name: 'Music Videos', color: 'linear-gradient(135deg, #f857a6, #ff5858)', icon: 'fa-video' },
-        { name: 'DJ Mixes', color: 'linear-gradient(135deg, #4776e6, #8e54e9)', icon: 'fa-sliders-h' },
-        { name: 'Coming Soon', color: 'linear-gradient(135deg, #ec008c, #fc6767)', icon: 'fa-calendar-alt' },
-        { name: 'Hip-Hop', color: 'linear-gradient(135deg, #00c6ff, #0072ff)', icon: 'fa-microphone-alt' },
-        { name: 'Country', color: 'linear-gradient(135deg, #d38312, #a83279)', icon: 'fa-guitar' },
-        { name: 'Latin', color: 'linear-gradient(135deg, #ff0844, #ffb199)', icon: 'fa-drum' },
-        { name: 'Chill', color: 'linear-gradient(135deg, #43e97b, #38f9d7)', icon: 'fa-cloud' },
-        { name: 'Fitness', color: 'linear-gradient(135deg, #f83600, #f9d423)', icon: 'fa-running' }
+        { name: 'Apple Music Radio', color: 'linear-gradient(135deg, #fa243c, #ff5e62)', icon: 'radio' },
+        { name: 'Pop', color: 'linear-gradient(135deg, #ff416c, #ff4b2b)', icon: 'heart' },
+        { name: 'Hits', color: 'linear-gradient(135deg, #f7971e, #ffd200)', icon: 'flame' },
+        { name: 'R&B', color: 'linear-gradient(135deg, #8e2de2, #4a00e0)', icon: 'disc' },
+        { name: 'Charts', color: 'linear-gradient(135deg, #11998e, #38ef7d)', icon: 'trending-up' },
+        { name: 'Decades', color: 'linear-gradient(135deg, #e65c00, #f9d423)', icon: 'history' },
+        { name: 'Music Videos', color: 'linear-gradient(135deg, #f857a6, #ff5858)', icon: 'video' },
+        { name: 'DJ Mixes', color: 'linear-gradient(135deg, #4776e6, #8e54e9)', icon: 'sliders' },
+        { name: 'Coming Soon', color: 'linear-gradient(135deg, #ec008c, #fc6767)', icon: 'calendar' },
+        { name: 'Hip-Hop', color: 'linear-gradient(135deg, #00c6ff, #0072ff)', icon: 'mic' },
+        { name: 'Country', color: 'linear-gradient(135deg, #d38312, #a83279)', icon: 'guitar' },
+        { name: 'Latin', color: 'linear-gradient(135deg, #ff0844, #ffb199)', icon: 'zap' },
+        { name: 'Chill', color: 'linear-gradient(135deg, #43e97b, #38f9d7)', icon: 'cloud' },
+        { name: 'Fitness', color: 'linear-gradient(135deg, #f83600, #f9d423)', icon: 'flame' }
     ];
 
     const filteredSongs = searchQuery.trim() === '' 
@@ -552,7 +769,7 @@ const SearchView = () => {
                                 onClick={() => playSong(data.songs[0])}
                             >
                                 <span>{cat.name}</span>
-                                <i className={`fas ${cat.icon} am-category-bg-icon`}></i>
+                                <LucideIcon name={cat.icon} size={64} color="rgba(255,255,255,0.22)" className="am-category-bg-icon" />
                             </div>
                         ))}
                     </div>
@@ -611,7 +828,7 @@ const RadioView = () => {
                 onClick={() => playSong(data.songs[0])}
             >
                 <div style={{textAlign: 'center'}}>
-                    <i className="fas fa-broadcast-tower" style={{fontSize: '52px', marginBottom: '16px'}}></i>
+                    <LucideIcon name="radio" size={52} color="#ffffff" style={{marginBottom: '16px'}} />
                     <h2 style={{fontSize: '26px', fontWeight: '800'}}>Apple Music 1</h2>
                     <p style={{fontSize: '14px', opacity: '0.9', marginTop: '4px'}}>Live 24/7 global broadcast with Zane Lowe</p>
                 </div>
@@ -632,13 +849,13 @@ const SongsView = () => {
                 {data.songs.map((song, idx) => (
                     <div 
                         key={song.id} 
-                        className={`am-song-row ${currentTrack.id === song.id ? 'active' : ''}`}
+                        className={`am-song-row ${currentTrack && currentTrack.id === song.id ? 'active' : ''}`}
                         onClick={() => playSong(song)}
                     >
                         <div className="am-song-index">{idx + 1}</div>
                         <SafeImage src={song.cover} song={song} className="am-song-cover" alt={song.title} />
                         <div className="am-song-info">
-                            <div className="am-song-title">{song.title}</div>
+                            <div className="am-song-title" style={{color: currentTrack && currentTrack.id === song.id ? '#fa243c' : undefined}}>{song.title}</div>
                             <div className="am-song-artist">{song.artist}</div>
                         </div>
                         <div className="am-song-album">{song.album}</div>
@@ -651,149 +868,90 @@ const SongsView = () => {
 };
 
 /* --------------------------------------------------------------------------
-   Floating Player Pill (macOS Sequoia Perfection)
+   Floating Bottom Player
    -------------------------------------------------------------------------- */
-
-const AudioVisualizer = () => {
-    const { audio, isPlaying } = useContext(PlayerContext);
-    const canvasRef = useRef(null);
-    const contextRef = useRef(null);
-    const sourceRef = useRef(null);
-    const analyzerRef = useRef(null);
-    const requestRef = useRef(null);
-
-    useEffect(() => {
-        if (!audio) return;
-        if (!contextRef.current) {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const analyzer = ctx.createAnalyser();
-                analyzer.fftSize = 64;
-                // Important: AudioContext requires explicit resume on user interaction, which we have (playing)
-                const source = ctx.createMediaElementSource(audio);
-                source.connect(analyzer);
-                analyzer.connect(ctx.destination);
-                
-                contextRef.current = ctx;
-                analyzerRef.current = analyzer;
-                sourceRef.current = source;
-            } catch (e) {
-                console.error("Audio visualizer init error (could be CORS or multiple contexts):", e);
-            }
-        }
-    }, [audio]);
-
-    useEffect(() => {
-        if (isPlaying && contextRef.current) {
-            if (contextRef.current.state === 'suspended') {
-                contextRef.current.resume();
-            }
-            const canvas = canvasRef.current;
-            if(!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const analyzer = analyzerRef.current;
-            const bufferLength = analyzer.frequencyBinCount;
-            const dataArray = new Uint8Array(bufferLength);
-            
-            const draw = () => {
-                requestRef.current = requestAnimationFrame(draw);
-                analyzer.getByteFrequencyData(dataArray);
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                const barWidth = (canvas.width / bufferLength) * 2;
-                let x = 0;
-                for (let i = 0; i < bufferLength; i++) {
-                    const barHeight = (dataArray[i] / 255) * canvas.height;
-                    const r = barHeight + (25 * (i/bufferLength));
-                    const g = 250 * (i/bufferLength);
-                    const b = 50 + (200 * (i/bufferLength));
-                    ctx.fillStyle = `rgba(${r},${g},${b}, 0.8)`;
-                    ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-                    x += barWidth + 1;
-                }
-            };
-            draw();
-        } else {
-            if (requestRef.current) cancelAnimationFrame(requestRef.current);
-            // clear canvas when paused
-            const canvas = canvasRef.current;
-            if (canvas) {
-                const ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-            }
-        }
-        return () => {
-            if (requestRef.current) cancelAnimationFrame(requestRef.current);
-        };
-    }, [isPlaying]);
-
-    return <canvas ref={canvasRef} width={80} height={20} style={{ marginLeft: '12px', opacity: 0.9, borderRadius: '2px' }} />;
-};
-
 const FloatingPlayer = () => {
     const { 
         currentTrack, isPlaying, togglePlay, playNext, playPrev, 
-        progress, duration, seek,
-        isShuffle, setIsShuffle, repeatMode, toggleRepeat,
-        volume, setVolume, isMuted, setIsMuted,
+        progress, duration, seek, isShuffle, setIsShuffle, 
+        repeatMode, toggleRepeat, volume, setVolume, isMuted, setIsMuted,
         showLyrics, setShowLyrics, showQueue, setShowQueue,
         showVideo, setShowVideo
     } = useContext(PlayerContext);
-    
+
     if (!currentTrack) return null;
-    
-    const progressPercent = duration > 0 ? (progress / duration) * 100 : 0;
+
+    const handleSeek = (e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const pos = (e.clientX - rect.left) / rect.width;
+        seek(pos * duration);
+    };
 
     const handleVolumeClick = (e) => {
         const rect = e.currentTarget.getBoundingClientRect();
-        const newVol = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-        setVolume(newVol);
+        const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        setVolume(pos);
         if (isMuted) setIsMuted(false);
     };
 
     return (
-        <div className="am-floating-player-wrapper">
-            <div className="am-floating-player">
+        <div className="am-player-bar-container">
+            <div className="am-player-bar">
                 
-                <div className="am-player-controls">
-                    <button className={`am-btn ${isShuffle ? 'active' : ''}`} onClick={() => setIsShuffle(!isShuffle)} title="Shuffle">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+                {/* Visualizer Background */}
+                <AudioVisualizer isPlaying={isPlaying} />
+                
+                {/* Left Controls & Info */}
+                <div className="am-player-controls-left">
+                    <button 
+                        className={`am-btn ${isShuffle ? 'active' : ''}`}
+                        onClick={() => setIsShuffle(!isShuffle)}
+                        title="Shuffle"
+                    >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
                     </button>
                     <button className="am-btn" onClick={playPrev} title="Previous">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11 5L3 12l8 7V5z"/><path d="M19 5l-8 7 8 7V5z"/><rect x="2" y="5" width="2" height="14"/></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"></line></svg>
                     </button>
-                    <button className="am-btn play-pause" onClick={togglePlay} title={isPlaying ? 'Pause' : 'Play'}>
-                        {isPlaying ? 
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg> : 
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style={{marginLeft: '2px'}}><path d="M7 4l12 8-12 8V4z"/></svg>
-                        }
+                    <button className="am-btn am-btn-play" onClick={togglePlay} title={isPlaying ? 'Pause' : 'Play'}>
+                        {isPlaying ? (
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect></svg>
+                        ) : (
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{marginLeft: '2px'}}><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        )}
                     </button>
                     <button className="am-btn" onClick={playNext} title="Next">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13 5l8 7-8 7V5z"/><path d="M5 5l8 7-8 7V5z"/><rect x="20" y="5" width="2" height="14"/></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"></line></svg>
                     </button>
-                    <button className={`am-btn ${repeatMode !== 'off' ? 'active' : ''}`} onClick={toggleRepeat} title={`Repeat: ${repeatMode}`}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                    <button 
+                        className={`am-btn ${repeatMode !== 'off' ? 'active' : ''}`}
+                        onClick={toggleRepeat}
+                        title={`Repeat: ${repeatMode}`}
+                    >
+                        {repeatMode === 'one' ? (
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path><text x="10" y="15" fill="currentColor" fontSize="8" fontWeight="bold">1</text></svg>
+                        ) : (
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+                        )}
                     </button>
                 </div>
-                
+
                 <div className="am-player-divider"></div>
-                
-                {/* Center Now Playing Info + Scrubber */}
-                <div className="am-now-playing-container">
-                    <SafeImage src={currentTrack.cover} song={currentTrack} className="am-np-cover" alt={currentTrack.title} />
-                    <div className="am-np-details">
-                        <div className="am-np-text-row" style={{ display: "flex", alignItems: "center" }}>
-                            <span className="am-np-title">{currentTrack.title}</span>
-                            <span className="am-np-dot">•</span>
-                            <span className="am-np-artist">{currentTrack.artist}</span><AudioVisualizer />
+
+                {/* Center Track Details & Scrub Bar */}
+                <div className="am-player-center">
+                    <SafeImage src={currentTrack.cover} song={currentTrack} className="am-player-art" alt={currentTrack.title} />
+                    <div className="am-player-mid">
+                        <div className="am-player-titles">
+                            <span className="am-player-track-name">{currentTrack.title}</span>
+                            <span className="am-player-artist-name">{currentTrack.artist}</span>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', color: '#8e8e93', marginTop: '6px' }}>
-                            <span style={{ minWidth: '30px', textAlign: 'right' }}>{formatTime(progress)}</span>
-                            <div className="am-scrubber-track" onClick={seek} title="Seek" style={{ flex: 1, marginTop: 0 }}>
-                                <div className="am-scrubber-fill" style={{ width: `${progressPercent}%` }}>
-                                    <div className="am-scrubber-thumb"></div>
-                                </div>
+                        <div className="am-player-timeline">
+                            <span className="am-time-text">{formatTime(progress)}</span>
+                            <div className="am-progress-bar" onClick={handleSeek}>
+                                <div className="am-progress-fill" style={{ width: `${(progress / duration) * 100}%` }}></div>
                             </div>
-                            <span style={{ minWidth: '30px' }}>-{formatTime(duration - progress)}</span>
+                            <span className="am-time-text">-{formatTime(duration - progress)}</span>
                         </div>
                     </div>
                 </div>
@@ -809,7 +967,7 @@ const FloatingPlayer = () => {
                             title="Watch Music Video"
                             style={{color: showVideo ? '#fa243c' : undefined}}
                         >
-                            <i className="fas fa-video"></i>
+                            <LucideIcon name="video" size={16} />
                         </button>
                     )}
                     <button 
@@ -817,14 +975,14 @@ const FloatingPlayer = () => {
                         onClick={() => { setShowLyrics(!showLyrics); setShowQueue(false); setShowVideo(false); }}
                         title="Lyrics"
                     >
-                        <i className="far fa-comment-alt"></i>
+                        <LucideIcon name="comment-alt" size={16} />
                     </button>
                     <button 
                         className={`am-btn ${showQueue ? 'active' : ''}`} 
                         onClick={() => { setShowQueue(!showQueue); setShowLyrics(false); setShowVideo(false); }}
                         title="Playing Next"
                     >
-                        <i className="fas fa-list-ul"></i>
+                        <LucideIcon name="list" size={16} />
                     </button>
                     
                     <div className="am-volume-container">
@@ -860,7 +1018,7 @@ const LyricsPopover = () => {
         <div className="am-popover-card">
             <div className="am-popover-title">
                 <span>Lyrics</span>
-                <i className="fas fa-times" style={{cursor: 'pointer', color: '#8e8e93'}} onClick={() => setShowLyrics(false)}></i>
+                <LucideIcon name="x" size={16} color="#8e8e93" style={{cursor: 'pointer'}} onClick={() => setShowLyrics(false)} />
             </div>
             <div className="am-lyrics-scroll">
                 {lyrics.map((l, i) => {
@@ -886,13 +1044,13 @@ const QueuePopover = () => {
         <div className="am-popover-card">
             <div className="am-popover-title">
                 <span>Playing Next</span>
-                <i className="fas fa-times" style={{cursor: 'pointer', color: '#8e8e93'}} onClick={() => setShowQueue(false)}></i>
+                <LucideIcon name="x" size={16} color="#8e8e93" style={{cursor: 'pointer'}} onClick={() => setShowQueue(false)} />
             </div>
             <div className="am-queue-scroll">
                 {data.songs.map((song) => (
                     <div 
                         key={song.id} 
-                        className={`am-queue-item ${currentTrack.id === song.id ? 'active' : ''}`}
+                        className={`am-queue-item ${currentTrack && currentTrack.id === song.id ? 'active' : ''}`}
                         onClick={() => playSong(song)}
                     >
                         <SafeImage src={song.cover} song={song} className="am-queue-cover" alt={song.title} />
@@ -900,7 +1058,7 @@ const QueuePopover = () => {
                             <div className="am-queue-title">{song.title}</div>
                             <div className="am-queue-artist">{song.artist}</div>
                         </div>
-                        {currentTrack.id === song.id && (
+                        {currentTrack && currentTrack.id === song.id && (
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fa243c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
                         )}
                     </div>
@@ -944,10 +1102,10 @@ const VideoPopover = () => {
                 borderBottom: '1px solid rgba(255,255,255,0.1)'
             }}>
                 <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}>
-                    <i className="fab fa-youtube" style={{color: '#ff0000', fontSize: '14px'}}></i>
+                    <LucideIcon name="video" size={14} color="#ff3b30" />
                     <span style={{fontSize: '11.5px', fontWeight: '600', color: 'white'}}>{currentTrack.title} - Music Video</span>
                 </div>
-                <i className="fas fa-times" style={{cursor: 'pointer', color: 'rgba(255,255,255,0.6)', fontSize: '12px'}} onClick={() => setShowVideo(false)}></i>
+                <LucideIcon name="x" size={14} color="rgba(255,255,255,0.6)" style={{cursor: 'pointer'}} onClick={() => setShowVideo(false)} />
             </div>
             <iframe 
                 src={`https://www.youtube.com/embed/${currentTrack.youtubeId}?autoplay=1&enablejsapi=1`} 

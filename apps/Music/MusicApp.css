@@ -84,16 +84,18 @@
     font-weight: 600;
 }
 
-.am-nav-item i {
-    font-size: 14px;
+.am-nav-item i,
+.am-nav-item svg {
     color: #8e8e93;
-    width: 18px;
-    text-align: center;
-    transition: color 0.15s ease;
+    stroke: #8e8e93;
+    flex-shrink: 0;
+    transition: color 0.15s ease, stroke 0.15s ease;
 }
 
-.am-nav-item.active i {
+.am-nav-item.active i,
+.am-nav-item.active svg {
     color: #fa243c;
+    stroke: #fa243c;
 }
 
 .am-sidebar-profile {
@@ -270,15 +272,19 @@
     cursor: pointer;
 }
 
-.am-section-title i {
+.am-section-title i,
+.am-section-title svg {
     font-size: 12px;
     color: #8e8e93;
-    transition: transform 0.2s ease;
+    stroke: #8e8e93;
+    transition: transform 0.2s ease, stroke 0.2s ease;
 }
 
-.am-section-title:hover i {
+.am-section-title:hover i,
+.am-section-title:hover svg {
     transform: translateX(3px);
     color: #fa243c;
+    stroke: #fa243c;
 }
 
 /* --------------------------------------------------------------------------
