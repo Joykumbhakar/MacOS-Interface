@@ -681,56 +681,67 @@
 /* Control Center */
 .mac-control-center {
     position: absolute; top: 38px; right: 10px; width: 320px;
-    background: rgba(30, 30, 32, 0.45);
-    backdrop-filter: blur(40px) saturate(180%); -webkit-backdrop-filter: blur(40px) saturate(180%);
-    border: 0.5px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px; padding: 14px;
+    background: rgba(30, 30, 35, 0.4);
+    backdrop-filter: blur(50px) saturate(200%); -webkit-backdrop-filter: blur(50px) saturate(200%);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
+    border-radius: 24px; padding: 14px;
     color: white; z-index: 8000;
     opacity: 0; pointer-events: none; transform: translateY(-10px) scale(0.98);
-    transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .mac-control-center.active {
     opacity: 1; pointer-events: auto; transform: translateY(0) scale(1);
 }
 
 .cc-block {
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    border: 0.5px solid rgba(255,255,255,0.05);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.1);
+    transition: background 0.2s, transform 0.1s;
+}
+.cc-block:active {
+    transform: scale(0.98);
 }
 
 .cc-row {
-    display: flex; align-items: center; gap: 10px;
+    display: flex; align-items: center; gap: 12px;
 }
 
 .cc-icon-circle {
-    width: 28px; height: 28px; border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
+    width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s; cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer;
 }
 .cc-icon-circle.active {
-    background: #0a84ff;
+    background: #007AFF;
+    box-shadow: 0 1px 4px rgba(0, 122, 255, 0.4);
 }
-.cc-icon-circle svg { width: 14px; height: 14px; }
+.cc-icon-circle svg { width: 15px; height: 15px; }
 
 .cc-text-col {
     display: flex; flex-direction: column; justify-content: center;
 }
-.cc-title { font-size: 13px; font-weight: 600; letter-spacing: 0.2px; }
-.cc-sub { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.5); margin-top: 1px; }
+.cc-title { font-size: 13px; font-weight: 600; letter-spacing: -0.1px; }
+.cc-sub { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.55); margin-top: 2px; }
 
 .cc-slider-container {
-    width: 100%; height: 22px; background: rgba(255, 255, 255, 0.1);
-    border-radius: 11px; position: relative; overflow: hidden;
-    border: 0.5px solid rgba(255,255,255,0.05); cursor: pointer;
+    width: 100%; height: 24px; background: rgba(0, 0, 0, 0.15);
+    border-radius: 12px; position: relative; overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1), inset 0 0 0 0.5px rgba(255,255,255,0.05);
+    cursor: pointer;
 }
 .cc-slider-fill {
-    height: 100%; background: #ffffff; border-radius: 11px;
+    height: 100%; background: #ffffff; border-radius: 12px;
+    box-shadow: 0 0 2px rgba(0,0,0,0.2), inset 0 0 0 0.5px rgba(255,255,255,0.5);
+    transition: width 0.15s ease-out;
 }
 .cc-slider-icon {
-    position: absolute; top: 0; left: 0; width: 22px; height: 22px;
+    position: absolute; top: 0; left: 0; width: 26px; height: 24px;
     display: flex; align-items: center; justify-content: center;
+    pointer-events: none;
 }
 
 .set-section-header {
