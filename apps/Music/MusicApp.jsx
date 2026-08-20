@@ -37,6 +37,31 @@ const SafeImage = ({ src, className, style, alt = 'Cover', song = null }) => {
 
     const [imgSrc, setImgSrc] = useState(finalSrc);
     useEffect(() => { setImgSrc(finalSrc); }, [finalSrc]);
+    let isSvgData = false;
+    let rawSvgContent = '';
+    
+    if (imgSrc && typeof imgSrc === 'string' && imgSrc.startsWith('data:image/svg+xml;utf8,')) {
+        isSvgData = true;
+        try {
+            rawSvgContent = decodeURIComponent(imgSrc.replace('data:image/svg+xml;utf8,', ''));
+            // Ensure the SVG fills its container
+            if (!rawSvgContent.includes('width="100%"')) {
+                rawSvgContent = rawSvgContent.replace('<svg ', '<svg width="100%" height="100%" style="display:block; width:100%; height:100%;" ');
+            }
+        } catch(e) {
+            isSvgData = false;
+        }
+    }
+
+    if (isSvgData) {
+        return (
+            <div 
+                className={className} 
+                style={{ ...style, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}
+                dangerouslySetInnerHTML={{ __html: rawSvgContent }}
+            />
+        );
+    }
 
     const fallbackSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="%23fa243c"><rect width="100" height="100" rx="12" fill="%23ff3b30"/><circle cx="50" cy="50" r="22" fill="%23ffffff" opacity="0.2"/><path d="M46 38v24l16-12z" fill="%23ffffff"/></svg>`;
 

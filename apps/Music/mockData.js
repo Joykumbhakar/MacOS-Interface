@@ -149,13 +149,16 @@ function createGradientCover(text, artist, bgGrad, textColor = '#ffffff', isSpin
 
             <!-- Background Landscape / Vibrant Gradient Artwork Window -->
             <g transform="translate(8, 75)">
-                <rect width="192" height="205" fill="url(#artBg)" />
-                <!-- Mountain Silhouettes -->
-                <path d="M 0,95 Q 40,40 70,65 T 140,55 T 192,85 V 205 H 0 Z" fill="#2b323c" opacity="0.85" />
-                <path d="M 0,120 Q 60,75 110,105 T 192,95 V 205 H 0 Z" fill="#1b2027" opacity="0.95" />
-                <!-- Glowing Sun/Dawn Core -->
-                <circle cx="120" cy="62" r="7.5" fill="#fffbe8" />
-                <circle cx="120" cy="62" r="15" fill="#ffb469" opacity="0.38" />
+                ${bgGrad.startsWith('images/') || bgGrad.startsWith('http') 
+                    ? `<image href="${bgGrad}" x="0" y="0" width="192" height="205" preserveAspectRatio="cover" />`
+                    : `<rect width="192" height="205" fill="url(#artBg)" />
+                       <!-- Mountain Silhouettes -->
+                       <path d="M 0,95 Q 40,40 70,65 T 140,55 T 192,85 V 205 H 0 Z" fill="#2b323c" opacity="0.85" />
+                       <path d="M 0,120 Q 60,75 110,105 T 192,95 V 205 H 0 Z" fill="#1b2027" opacity="0.95" />
+                       <!-- Glowing Sun/Dawn Core -->
+                       <circle cx="120" cy="62" r="7.5" fill="#fffbe8" />
+                       <circle cx="120" cy="62" r="15" fill="#ffb469" opacity="0.38" />`
+                }
             </g>
 
             <!-- Frosted Glass Wave Ribbon 1 (Upper Translucent Layer) -->
@@ -407,7 +410,7 @@ const mockSongs = [
         genre: 'Synth-wave / Pop',
         youtubeUrl: 'https://www.youtube.com/watch?v=XXYlCGsToLI',
         youtubeId: 'XXYlCGsToLI',
-        cover: 'images/Music_Alums/album2.png',
+        cover: createGradientCover('Save Your Tears', 'The Weeknd', 'images/Music_Alums/album2.png'),
         lyrics: [
             { time: 0, text: "I saw you dancing in a crowded room" }
         ],
@@ -439,7 +442,7 @@ const mockSongs = [
         youtubeUrl: 'https://www.youtube.com/watch?v=4NRXx6U8ABQ',
         youtubeId: '4NRXx6U8ABQ',
         previewUrl: mp3,
-        cover: 'images/Music_Alums/album2.png',
+        cover: createGradientCover('Blinding Lights', 'The Weeknd', 'images/Music_Alums/album2.png'),
         lyrics: [
             { time: 0, text: "Yeah..." },
             { time: 8, text: "I've been tryin' to call" },
@@ -465,7 +468,7 @@ const mockSongs = [
         album: 'Dawn Vol. 01', 
         duration: '3:45', 
         genre: 'Acoustic / Indie',
-        cover: 'images/Music_Alums/album1.png',
+        cover: createGradientCover('Dawn', 'Acoustic', 'images/Music_Alums/album1.png'),
         lyrics: [
             { time: 0, text: "(Gentle acoustic guitar strums)" },
             { time: 12, text: "Sun rising over misty mountain peaks" },
@@ -621,8 +624,8 @@ const mockSongs = [
 ];
 
 const mockPlaylists = [
-    { id: 101, name: 'Dawn Acoustic', description: 'Relaxing acoustic sessions & organic chill vibes', cover: 'images/Music_Alums/album1.png' },
-    { id: 102, name: 'After Hours Radio', description: 'Synth-wave, late night drives & pop hits', cover: 'images/Music_Alums/album2.png' },
+    { id: 101, name: 'Dawn Acoustic', description: 'Relaxing acoustic sessions & organic chill vibes', cover: createGradientCover('Dawn Acoustic', 'Playlist', 'images/Music_Alums/album1.png') },
+    { id: 102, name: 'After Hours Radio', description: 'Synth-wave, late night drives & pop hits', cover: createGradientCover('After Hours', 'Playlist', 'images/Music_Alums/album2.png') },
     { id: 103, name: 'Deep Focus', description: 'Ambient soundscapes & electronic flow', cover: createGradientCover('Deep Focus', 'Apple Music', '<stop offset="0%" stop-color="#30cfd0"/><stop offset="100%" stop-color="#330867"/>') },
     { id: 104, name: 'Today\'s Hits', description: 'The biggest songs on Apple Music right now', cover: createGradientCover('Today\'s Hits', 'Apple Music', '<stop offset="0%" stop-color="#fa709a"/><stop offset="100%" stop-color="#fee140"/>', '#111111') }
 ];
