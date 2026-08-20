@@ -5,90 +5,119 @@ function createGradientCover(text, artist, bgGrad, textColor = '#ffffff') {
     const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
         <defs>
-            <!-- Rich Base Gradient -->
-            <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <!-- Album Art Inset Gradient -->
+            <linearGradient id="artBg" x1="0%" y1="0%" x2="100%" y2="100%">
                 ${bgGrad}
             </linearGradient>
 
-            <!-- Anisotropic Vinyl Light Sheen (Hourglass reflections) -->
-            <linearGradient id="aniso1" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.3" />
-                <stop offset="30%" stop-color="#ffffff" stop-opacity="0.08" />
+            <!-- Book Spine Leather/Cloth Gradient -->
+            <linearGradient id="spineLeather" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#18181c" />
+                <stop offset="35%" stop-color="#303036" />
+                <stop offset="70%" stop-color="#222228" />
+                <stop offset="100%" stop-color="#121215" />
+            </linearGradient>
+
+            <!-- Gold Foil Accent Gradient -->
+            <linearGradient id="goldFoil" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffe4a0" />
+                <stop offset="25%" stop-color="#ffd07b" />
+                <stop offset="50%" stop-color="#fff2c8" />
+                <stop offset="75%" stop-color="#d49c43" />
+                <stop offset="100%" stop-color="#f5c767" />
+            </linearGradient>
+
+            <!-- Anisotropic Vinyl Sheen -->
+            <linearGradient id="aniso" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.28" />
+                <stop offset="30%" stop-color="#ffffff" stop-opacity="0.06" />
                 <stop offset="50%" stop-color="#ffffff" stop-opacity="0.2" />
                 <stop offset="70%" stop-color="#ffffff" stop-opacity="0.04" />
                 <stop offset="100%" stop-color="#ffffff" stop-opacity="0.22" />
             </linearGradient>
 
-            <!-- CD / Jewel Case Glass Flare -->
-            <linearGradient id="glassGlare" x1="0%" y1="0%" x2="70%" y2="100%">
-                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.45" />
-                <stop offset="25%" stop-color="#ffffff" stop-opacity="0.16" />
-                <stop offset="55%" stop-color="#ffffff" stop-opacity="0.02" />
-                <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+            <!-- Spine Crease Shadow -->
+            <linearGradient id="creaseShadow" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#000000" stop-opacity="0.5" />
+                <stop offset="40%" stop-color="#000000" stop-opacity="0.18" />
+                <stop offset="100%" stop-color="#000000" stop-opacity="0" />
             </linearGradient>
 
-            <!-- Spine Gloss -->
-            <linearGradient id="spineHighlight" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.5" />
-                <stop offset="25%" stop-color="#ffffff" stop-opacity="0.12" />
-                <stop offset="85%" stop-color="#ffffff" stop-opacity="0" />
-                <stop offset="100%" stop-color="#000000" stop-opacity="0.25" />
-            </linearGradient>
-
-            <!-- 3D Note Gradients -->
-            <linearGradient id="noteSurface" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.98" />
-                <stop offset="60%" stop-color="#ffffff" stop-opacity="0.85" />
-                <stop offset="100%" stop-color="#f0f0f5" stop-opacity="0.72" />
-            </linearGradient>
-
-            <linearGradient id="noteRim" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
-                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.35" />
+            <!-- Layered Page Edge Stack -->
+            <linearGradient id="pageEdges" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#e2e2e6" />
+                <stop offset="50%" stop-color="#fafafc" />
+                <stop offset="100%" stop-color="#c8c8cc" />
             </linearGradient>
         </defs>
 
-        <!-- Base Cover -->
-        <rect width="300" height="300" fill="url(#bg)" />
+        <!-- Hardcover Base Jacket -->
+        <rect width="300" height="300" rx="6" fill="#18181c" />
 
-        <!-- Anisotropic Vinyl Light Reflection Cones -->
-        <path d="M 0,0 L 150,150 L 300,0 Z" fill="url(#aniso1)" opacity="0.4" />
-        <path d="M 0,300 L 150,150 L 300,300 Z" fill="url(#aniso1)" opacity="0.4" />
-        <path d="M 0,0 L 150,150 L 0,300 Z" fill="url(#aniso1)" opacity="0.18" />
-        <path d="M 300,0 L 150,150 L 300,300 Z" fill="url(#aniso1)" opacity="0.18" />
+        <!-- Visible Layered Paper Pages Stack on Right Edge -->
+        <rect x="292" y="6" width="5" height="288" rx="1.5" fill="url(#pageEdges)" />
+        <line x1="293.5" y1="6" x2="293.5" y2="294" stroke="#bcbcc2" stroke-width="0.5" />
+        <line x1="295" y1="7" x2="295" y2="293" stroke="#dcdce2" stroke-width="0.5" />
 
-        <!-- High-Precision Concentric Vinyl Grooves -->
-        <circle cx="150" cy="150" r="140" fill="none" stroke="rgba(255,255,255,0.09)" stroke-width="1" />
-        <circle cx="150" cy="150" r="132" fill="none" stroke="rgba(0,0,0,0.07)" stroke-width="0.75" />
-        <circle cx="150" cy="150" r="124" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
-        <circle cx="150" cy="150" r="115" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="0.75" />
-        <circle cx="150" cy="150" r="106" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1" />
-        <circle cx="150" cy="150" r="96" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="0.75" />
-        <circle cx="150" cy="150" r="86" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
-        <circle cx="150" cy="150" r="74" fill="none" stroke="rgba(0,0,0,0.07)" stroke-width="0.75" />
-        <circle cx="150" cy="150" r="62" fill="none" stroke="rgba(255,255,255,0.09)" stroke-width="1" />
-
-        <!-- Center Record Spindle Badge -->
-        <circle cx="150" cy="150" r="48" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)" stroke-width="1" />
-
-        <!-- 3D Liquid Glass Apple Music Note Depth -->
-        <path d="M120 200 C 120 216.5, 106.5 230, 90 230 C 73.5 230, 60 216.5, 60 200 C 60 183.5, 73.5 170, 90 170 C 100 170, 108 175, 113 183 L 113 70 L 243 40 L 243 170 C 243 186.5, 229.5 200, 213 200 C 196.5 200, 183 186.5, 183 170 C 183 153.5, 196.5 140, 213 140 C 223 140, 231 145, 236 153 L 236 55 L 120 82 Z" fill="#000000" opacity="0.22" transform="translate(0, 3)" />
+        <!-- Front Hardcover Board Surface -->
+        <rect x="0" y="0" width="292" height="300" rx="5" fill="#202028" />
         
-        <!-- Main 3D Note Body -->
-        <path d="M120 200 C 120 216.5, 106.5 230, 90 230 C 73.5 230, 60 216.5, 60 200 C 60 183.5, 73.5 170, 90 170 C 100 170, 108 175, 113 183 L 113 70 L 243 40 L 243 170 C 243 186.5, 229.5 200, 213 200 C 196.5 200, 183 186.5, 183 170 C 183 153.5, 196.5 140, 213 140 C 223 140, 231 145, 236 153 L 236 55 L 120 82 Z" fill="url(#noteSurface)" stroke="url(#noteRim)" stroke-width="1.5" />
+        <!-- Bound Book Spine (Left Strip) -->
+        <rect x="0" y="0" width="24" height="300" rx="4" fill="url(#spineLeather)" />
+        <line x1="0.75" y1="0" x2="0.75" y2="300" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" />
+
+        <!-- Gold Foil Thread Stitching along Spine Hinge -->
+        <g stroke="url(#goldFoil)" stroke-width="1.5" stroke-linecap="round" opacity="0.9">
+            <line x1="12" y1="14" x2="12" y2="24" />
+            <line x1="12" y1="38" x2="12" y2="48" />
+            <line x1="12" y1="62" x2="12" y2="72" />
+            <line x1="12" y1="86" x2="12" y2="96" />
+            <line x1="12" y1="110" x2="12" y2="120" />
+            <line x1="12" y1="134" x2="12" y2="144" />
+            <line x1="12" y1="158" x2="12" y2="168" />
+            <line x1="12" y1="182" x2="12" y2="192" />
+            <line x1="12" y1="206" x2="12" y2="216" />
+            <line x1="12" y1="230" x2="12" y2="240" />
+            <line x1="12" y1="254" x2="12" y2="264" />
+            <line x1="12" y1="278" x2="12" y2="288" />
+        </g>
+
+        <!-- Spine Hinge Crease Line & Depth Shadow -->
+        <line x1="24" y1="0" x2="24" y2="300" stroke="#000000" stroke-width="1.5" />
+        <rect x="24" y="0" width="14" height="300" fill="url(#creaseShadow)" />
+        <line x1="25.5" y1="0" x2="25.5" y2="300" stroke="rgba(255,255,255,0.14)" stroke-width="1" />
+
+        <!-- Debossed Artwork Inset Picture Window -->
+        <rect x="34" y="14" width="248" height="272" rx="6" fill="#121215" />
+        <rect x="35" y="15" width="246" height="270" rx="5" fill="url(#artBg)" />
+
+        <!-- High-Fidelity Vinyl Sound Grooves inside Art Window -->
+        <circle cx="158" cy="150" r="105" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+        <circle cx="158" cy="150" r="90" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="0.75" />
+        <circle cx="158" cy="150" r="75" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1" />
+        <circle cx="158" cy="150" r="60" fill="none" stroke="rgba(0,0,0,0.07)" stroke-width="0.75" />
+        <circle cx="158" cy="150" r="46" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+
+        <!-- Anisotropic Light Reflections in Inset Art -->
+        <path d="M 35,15 L 158,150 L 281,15 Z" fill="url(#aniso)" opacity="0.38" />
+        <path d="M 35,285 L 158,150 L 281,285 Z" fill="url(#aniso)" opacity="0.38" />
+
+        <!-- 3D Gold-Foil Apple Music Emblem -->
+        <!-- Drop Shadow -->
+        <path d="M136 195 C 136 209, 124.5 220, 110 220 C 95.5 220, 84 209, 84 195 C 84 181, 95.5 170, 110 170 C 119 170, 126 174, 130 181 L 130 85 L 230 62 L 230 170 C 230 184, 218.5 195, 204 195 C 189.5 195, 178 184, 178 170 C 178 156, 189.5 145, 204 145 C 213 145, 220 149, 224 156 L 224 96 L 136 117 Z" fill="#000000" opacity="0.32" transform="translate(0, 3)" />
         
-        <!-- Crisp Top Beam Refraction -->
-        <path d="M113 70 L 243 40 L 243 45 L 113 75 Z" fill="#ffffff" opacity="0.9" />
+        <!-- Gold Foil Note Body -->
+        <path d="M136 195 C 136 209, 124.5 220, 110 220 C 95.5 220, 84 209, 84 195 C 84 181, 95.5 170, 110 170 C 119 170, 126 174, 130 181 L 130 85 L 230 62 L 230 170 C 230 184, 218.5 195, 204 195 C 189.5 195, 178 184, 178 170 C 178 156, 189.5 145, 204 145 C 213 145, 220 149, 224 156 L 224 96 L 136 117 Z" fill="url(#goldFoil)" stroke="rgba(255,255,255,0.75)" stroke-width="1.2" />
+        
+        <!-- Top Beam Specular Light -->
+        <path d="M130 85 L 230 62 L 230 66 L 130 89 Z" fill="#ffffff" opacity="0.95" />
 
-        <!-- Diagonal Glass Sheen Glare across Top Half -->
-        <path d="M 0,0 L 300,0 L 300,110 L 0,230 Z" fill="url(#glassGlare)" />
+        <!-- Inset Frame Deboss Border -->
+        <rect x="35" y="15" width="246" height="270" rx="5" fill="none" stroke="rgba(0,0,0,0.35)" stroke-width="1.5" />
+        <rect x="36" y="16" width="244" height="268" rx="4" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" />
 
-        <!-- Left Spine Acrylic Jewel-Case Highlight -->
-        <rect x="0" y="0" width="10" height="300" fill="url(#spineHighlight)" />
-
-        <!-- Crisp Perimeter Bevel Outline -->
-        <rect x="0.75" y="0.75" width="298.5" height="298.5" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" />
-        <rect x="1.5" y="1.5" width="297" height="297" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="1" />
+        <!-- Outer Hardcover Book Edge Bevel Highlight -->
+        <rect x="0.75" y="0.75" width="298.5" height="298.5" rx="5.5" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" />
     </svg>`;
     return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
