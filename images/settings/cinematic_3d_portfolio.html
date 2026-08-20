@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinematic 3D Interactive Portfolio</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        dark: '#030305',
+                        brand: {
+                            teal: '#00f3ff',
+                            orange: '#ff4d00'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: #030305;
+            color: white;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Fixed 3D Canvas */
+        #webgl-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none; /* Allows scrolling and clicking through to UI */
+        }
+
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(20, 20, 25, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-text {
+            background: linear-gradient(180deg, #ffffff 0%, #a0a0a0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030305;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Section Layouts */
+        .scroll-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand-teal selection:text-black">
+
+    <!-- 3D Background Container -->
+    <canvas id="webgl-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full top-0 z-50 glass-panel border-b-0 py-4 px-8 md:px-16 flex justify-between items-center transition-all duration-300" id="navbar">
+        <div class="text-xl font-bold tracking-widest uppercase">
+            <span class="text-brand-teal">X</span> // Core
+        </div>
+        <div class="hidden md:flex space-x-8 text-sm font-semibold tracking-wider text-gray-400">
+            <a href="#hero" class="hover:text-white transition-colors">Home</a>
+            <a href="#about" class="hover:text-white transition-colors">About</a>
+            <a href="#work" class="hover:text-white transition-colors">Work</a>
+            <a href="#contact" class="hover:text-white transition-colors">Contact</a>
+        </div>
+    </nav>
+
+    <main class="relative z-10 px-6 md:px-24">
+        
+        <!-- Section 1: Hero -->
+        <section id="hero" class="scroll-section">
+            <div class="max-w-4xl pt-20">
+                <p class="text-brand-teal font-semibold tracking-[0.2em] mb-4 text-sm md:text-base uppercase">Interactive Developer & 3D Artist</p>
+                <h1 class="text-6xl md:text-8xl font-bold mb-6 font-serif leading-tight">
+                    Crafting <span class="glass-text">Cinematic</span><br> Digital Worlds
+                </h1>
+                <p class="text-gray-400 text-lg md:text-xl max-w-xl font-light mb-10">
+                    Blurring the line between physical engineering and digital artistry through immersive storytelling and WebGL architectures.
+                </p>
+                <div class="flex items-center space-x-6">
+                    <a href="#work" class="px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-brand-teal transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,243,255,0.4)]">
+                        Explore Work
+                    </a>
+                    <a href="#contact" class="px-8 py-4 glass-panel font-semibold rounded-full hover:bg-white/10 transition-all duration-300 border border-white/10">
+                        Get in Touch
+                    </a>
+                </div>
+            </div>
+            
+            <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-bounce opacity-50">
+                <span class="text-xs tracking-widest uppercase mb-2">Scroll</span>
+                <div class="w-[1px] h-12 bg-gradient-to-b from-white to-transparent"></div>
+            </div>
+        </section>
+
+        <!-- Section 2: About -->
+        <section id="about" class="scroll-section items-end">
+            <div class="max-w-2xl text-right py-20">
+                <h2 class="text-4xl md:text-6xl font-serif font-bold mb-8 glass-text">The Intersection of Logic & Art</h2>
+                <div class="glass-panel p-8 rounded-2xl border-r-4 border-brand-orange text-left backdrop-blur-xl">
+                    <p class="text-gray-300 text-lg leading-relaxed mb-6">
+                        I specialize in building performant, visually striking 3D experiences directly in the browser. By treating code as a medium for artistic expression, I create interfaces that feel alive, responsive, and cinematic.
+                    </p>
+                    <div class="grid grid-cols-2 gap-6 pt-6 border-t border-white/10">
+                        <div>
+                            <h3 class="text-white font-semibold mb-2 uppercase tracking-wider text-sm">Core Stack</h3>
+                            <ul class="text-gray-400 text-sm space-y-2">
+                                <li>Three.js / WebGL</li>
+                                <li>React Three Fiber</li>
+                                <li>GLSL Shaders</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-semibold mb-2 uppercase tracking-wider text-sm">Design</h3>
+                            <ul class="text-gray-400 text-sm space-y-2">
+                                <li>Cinematic Lighting</li>
+                                <li>Motion Physics</li>
+                                <li>Procedural Geometry</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Work -->
+        <section id="work" class="scroll-section justify-center pt-20">
+            <div class="w-full">
+                <h2 class="text-4xl md:text-5xl font-serif font-bold mb-16 glass-text">Featured Simulations</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Project 1 -->
+                    <div class="glass-panel group rounded-xl overflow-hidden cursor-pointer animate-float" style="animation-delay: 0s;">
+                        <div class="h-48 bg-black/50 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-tr from-brand-teal/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <!-- Mock UI for project thumbnail -->
+                            <div class="absolute inset-4 border border-white/10 rounded flex items-center justify-center">
+                                <span class="text-white/20 font-serif text-3xl">01</span>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">Quantum Visualizer</h3>
+                            <p class="text-sm text-gray-400">Real-time particle fluid dynamics rendered with custom GLSL shaders.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Project 2 -->
+                    <div class="glass-panel group rounded-xl overflow-hidden cursor-pointer animate-float" style="animation-delay: 1s;">
+                        <div class="h-48 bg-black/50 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-tr from-brand-orange/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <div class="absolute inset-4 border border-white/10 rounded flex items-center justify-center">
+                                <span class="text-white/20 font-serif text-3xl">02</span>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">Void E-Commerce</h3>
+                            <p class="text-sm text-gray-400">Interactive 3D product configurator using high-end PBR materials.</p>
+                        </div>
+                    </div>
+
+                    <!-- Project 3 -->
+                    <div class="glass-panel group rounded-xl overflow-hidden cursor-pointer animate-float" style="animation-delay: 2s;">
+                        <div class="h-48 bg-black/50 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-tr from-purple-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <div class="absolute inset-4 border border-white/10 rounded flex items-center justify-center">
+                                <span class="text-white/20 font-serif text-3xl">03</span>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">Neon Architect</h3>
+                            <p class="text-sm text-gray-400">Generative citybuilder focusing on volumetric lighting and post-processing.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Contact -->
+        <section id="contact" class="scroll-section items-center text-center pb-20">
+            <div class="glass-panel p-12 md:p-20 rounded-3xl max-w-3xl w-full border-t-4 border-white/20 relative overflow-hidden">
+                <!-- Decorative background glow -->
+                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] bg-radial-gradient from-brand-teal/10 to-transparent rounded-full pointer-events-none blur-3xl"></div>
+                
+                <h2 class="text-5xl md:text-7xl font-serif font-bold mb-6 relative z-10">Initialize<br>Sequence.</h2>
+                <p class="text-gray-400 text-lg mb-10 max-w-lg mx-auto relative z-10">
+                    Currently accepting freelance projects and open to exciting full-time opportunities. Let's create something extraordinary together.
+                </p>
+                <a href="mailto:hello@example.com" class="relative z-10 inline-block px-12 py-5 bg-white text-black font-bold tracking-widest uppercase rounded-full hover:scale-105 transition-transform duration-300 shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+                    Transmit Signal
+                </a>
+            </div>
+            
+            <footer class="absolute bottom-6 w-full text-center text-gray-600 text-sm">
+                &copy; 2026 X-Core Digital. Crafted with Three.js & Tailwind.
+            </footer>
+        </section>
+    </main>
+
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r132/three.min.js"></script>
+    
+    <script>
+        // --- Core Three.js Setup ---
+        const canvas = document.getElementById('webgl-canvas');
+        const scene = new THREE.Scene();
+        
+        // Add subtle fog for depth
+        scene.fog = new THREE.FogExp2('#030305', 0.015);
+
+        const sizes = {
+            width: window.innerWidth,
+            height: window.innerHeight
+        };
+
+        const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 1000);
+        camera.position.z = 12;
+        scene.add(camera);
+
+        const renderer = new THREE.WebGLRenderer({
+            canvas: canvas,
+            alpha: true,
+            antialias: true,
+            powerPreference: "high-performance"
+        });
+        renderer.setSize(sizes.width, sizes.height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        
+        // Enhance lighting calculations
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
+
+        // --- 3D Objects Construction ---
+        const objectsGroup = new THREE.Group();
+        scene.add(objectsGroup);
+
+        // 1. The Core (Inner glowing solid)
+        const coreGeometry = new THREE.OctahedronGeometry(1.2, 0);
+        const coreMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0xffffff,
+            emissive: 0x00f3ff,
+            emissiveIntensity: 0.5,
+            roughness: 0.2,
+            metalness: 1.0,
+            clearcoat: 1.0,
+            clearcoatRoughness: 0.1
+        });
+        const core = new THREE.Mesh(coreGeometry, coreMaterial);
+        objectsGroup.add(core);
+
+        // 2. The Cage (Wireframe Icosahedron)
+        const cageGeometry = new THREE.IcosahedronGeometry(2.2, 1);
+        const cageMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0x111111,
+            metalness: 0.9,
+            roughness: 0.1,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.6
+        });
+        const cage = new THREE.Mesh(cageGeometry, cageMaterial);
+        objectsGroup.add(cage);
+
+        // 3. Orbiting Rings (Torus)
+        const ringGeo1 = new THREE.TorusGeometry(3.5, 0.02, 16, 100);
+        const ringMat1 = new THREE.MeshBasicMaterial({ color: 0xff4d00, transparent: true, opacity: 0.5 });
+        const ring1 = new THREE.Mesh(ringGeo1, ringMat1);
+        ring1.rotation.x = Math.PI / 2;
+        objectsGroup.add(ring1);
+
+        const ringGeo2 = new THREE.TorusGeometry(4.5, 0.01, 16, 100);
+        const ringMat2 = new THREE.MeshBasicMaterial({ color: 0x00f3ff, transparent: true, opacity: 0.3 });
+        const ring2 = new THREE.Mesh(ringGeo2, ringMat2);
+        ring2.rotation.y = Math.PI / 3;
+        objectsGroup.add(ring2);
+
+        // --- Lighting ---
+        const ambientLight = new THREE.AmbientLight(0x0a0a0a); // Very dim base
+        scene.add(ambientLight);
+
+        // Cinematic Teal Spotlight (Main Key Light)
+        const spotLight1 = new THREE.SpotLight(0x00f3ff, 5);
+        spotLight1.position.set(5, 5, 5);
+        spotLight1.angle = Math.PI / 4;
+        spotLight1.penumbra = 0.5;
+        scene.add(spotLight1);
+
+        // Cinematic Orange Point Light (Fill Light)
+        const pointLight1 = new THREE.PointLight(0xff4d00, 4, 20);
+        pointLight1.position.set(-5, -5, 2);
+        scene.add(pointLight1);
+        
+        // Rim Light for edge definition
+        const rimLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        rimLight.position.set(0, 5, -10);
+        scene.add(rimLight);
+
+        // --- Cinematic Particles (Dust/Stars) ---
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 700;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for(let i = 0; i < particlesCount * 3; i++) {
+            // Spread particles over a large volume
+            posArray[i] = (Math.random() - 0.5) * 30; 
+        }
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        // Custom circle texture for particles (created via canvas for self-containment)
+        const createCircleTexture = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            const context = canvas.getContext('2d');
+            const gradient = context.createRadialGradient(16, 16, 0, 16, 16, 16);
+            gradient.addColorStop(0, 'rgba(255,255,255,1)');
+            gradient.addColorStop(0.2, 'rgba(0, 243, 255, 0.8)');
+            gradient.addColorStop(1, 'rgba(0,0,0,0)');
+            context.fillStyle = gradient;
+            context.fillRect(0, 0, 32, 32);
+            return new THREE.CanvasTexture(canvas);
+        };
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.15,
+            map: createCircleTexture(),
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        // --- Interaction & Scroll Logic ---
+        
+        // Track Scroll
+        let scrollY = window.scrollY;
+        let currentSection = 0;
+        
+        window.addEventListener('scroll', () => {
+            scrollY = window.scrollY;
+        });
+
+        // Track Mouse for Parallax
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - windowHalfX);
+            mouseY = (event.clientY - windowHalfY);
+        });
+
+        // Resize Handler
+        window.addEventListener('resize', () => {
+            sizes.width = window.innerWidth;
+            sizes.height = window.innerHeight;
+            camera.aspect = sizes.width / sizes.height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(sizes.width, sizes.height);
+        });
+
+        // Helper function for linear interpolation
+        const lerp = (start, end, amt) => {
+            return (1 - amt) * start + amt * end;
+        };
+
+        // Configuration for Object states per section
+        // 0 = Hero, 1 = About, 2 = Work, 3 = Contact
+        const sectionData = [
+            { pos: {x: 3.5, y: 0, z: 0}, rot: {x: 0, y: 0, z: 0}, emissive: 0x00f3ff }, // Hero: Off center right
+            { pos: {x: -3.5, y: -1, z: 2}, rot: {x: 0.5, y: 1.5, z: 0.2}, emissive: 0xff4d00 }, // About: Moved left, rotated, orange
+            { pos: {x: 0, y: 1.5, z: -2}, rot: {x: -0.5, y: -0.5, z: 0}, emissive: 0xa855f7 },  // Work: Center top, purple
+            { pos: {x: 0, y: -2, z: 6}, rot: {x: 1.5, y: 0, z: 0}, emissive: 0xffffff }     // Contact: Zoomed in close at bottom
+        ];
+
+        // Mobile override config
+        if (window.innerWidth < 768) {
+            sectionData[0].pos = {x: 0, y: -2, z: -2}; // Hero mobile
+            sectionData[1].pos = {x: 0, y: 2, z: -2};  // About mobile
+            sectionData[2].pos = {x: 0, y: 0, z: -4};  // Work mobile
+        }
+
+        const clock = new THREE.Clock();
+
+        // --- Main Animation Loop ---
+        const tick = () => {
+            const elapsedTime = clock.getElapsedTime();
+
+            // 1. Calculate Scroll Progress (Normalized 0 to 1 based on total scrollable height)
+            // Divide by viewport height to get the current 'section index' as a float
+            let scrollNormalized = scrollY / sizes.height;
+            if (isNaN(scrollNormalized)) scrollNormalized = 0; // Prevent NaN errors
+            
+            // Determine which two sections we are interpolating between
+            // Clamp startIndex to prevent out-of-bounds errors on elastic overscroll
+            const maxIndex = sectionData.length - 1;
+            let startIndex = Math.floor(scrollNormalized);
+            if (isNaN(startIndex)) startIndex = 0;
+            startIndex = Math.min(maxIndex, Math.max(0, startIndex));
+            
+            const endIndex = Math.min(maxIndex, startIndex + 1);
+            
+            // Calculate local progress between the two sections (0.0 to 1.0)
+            let localProgress = scrollNormalized - startIndex;
+            if (isNaN(localProgress)) localProgress = 0;
+
+            const startState = sectionData[startIndex];
+            const endState = sectionData[endIndex];
+            
+            // Fail-safe to ensure state exists before accessing 'pos'
+            if (!startState || !endState) {
+                window.requestAnimationFrame(tick);
+                return;
+            }
+
+            // 2. Interpolate Position
+            const targetPosX = lerp(startState.pos.x, endState.pos.x, localProgress);
+            const targetPosY = lerp(startState.pos.y, endState.pos.y, localProgress);
+            const targetPosZ = lerp(startState.pos.z, endState.pos.z, localProgress);
+            
+            // Smoothly move the group towards the target
+            objectsGroup.position.x = lerp(objectsGroup.position.x, targetPosX, 0.05);
+            objectsGroup.position.y = lerp(objectsGroup.position.y, targetPosY, 0.05);
+            objectsGroup.position.z = lerp(objectsGroup.position.z, targetPosZ, 0.05);
+
+            // 3. Constant Rotations + Scroll Rotations
+            // Core spins continuously
+            core.rotation.y = elapsedTime * 0.2;
+            core.rotation.x = elapsedTime * 0.1;
+            
+            // Cage spins opposite
+            cage.rotation.y = -elapsedTime * 0.1;
+            cage.rotation.z = elapsedTime * 0.05;
+
+            // Rings continuous rotation
+            ring1.rotation.z = elapsedTime * 0.3;
+            ring2.rotation.x = elapsedTime * 0.2;
+
+            // Apply base scroll rotations to the entire group
+            const targetRotX = lerp(startState.rot.x, endState.rot.x, localProgress);
+            const targetRotY = lerp(startState.rot.y, endState.rot.y, localProgress);
+            
+            objectsGroup.rotation.x = lerp(objectsGroup.rotation.x, targetRotX, 0.05);
+            objectsGroup.rotation.y = lerp(objectsGroup.rotation.y, targetRotY, 0.05);
+
+            // 4. Color Transition (Core Emissive)
+            // Interpolate colors natively in Three.js
+            const startColor = new THREE.Color(startState.emissive);
+            const endColor = new THREE.Color(endState.emissive);
+            const lerpedColor = startColor.clone().lerp(endColor, localProgress);
+            
+            // Apply color smoothly
+            coreMaterial.emissive.lerp(lerpedColor, 0.1);
+            pointLight1.color.lerp(lerpedColor, 0.1);
+
+            // 5. Mouse Parallax Effect
+            targetX = mouseX * 0.001;
+            targetY = mouseY * 0.001;
+            
+            // Shift camera slightly based on mouse
+            camera.position.x += (targetX - camera.position.x) * 0.05;
+            camera.position.y += (-targetY - camera.position.y) * 0.05;
+            camera.lookAt(scene.position);
+
+            // Animate Particles
+            particlesMesh.rotation.y = elapsedTime * -0.02;
+            particlesMesh.rotation.x = elapsedTime * 0.01;
+
+            // Navbar Glass Effect based on scroll
+            const nav = document.getElementById('navbar');
+            if(scrollY > 50) {
+                nav.classList.add('border-b', 'border-white/10', 'bg-dark/80');
+                nav.classList.remove('border-b-0');
+            } else {
+                nav.classList.remove('border-b', 'border-white/10', 'bg-dark/80');
+                nav.classList.add('border-b-0');
+            }
+
+            // Render
+            renderer.render(scene, camera);
+
+            // Loop
+            window.requestAnimationFrame(tick);
+        };
+
+        // Start Animation
+        tick();
+    </script>
+</body>
+</html>

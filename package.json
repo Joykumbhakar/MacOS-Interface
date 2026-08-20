@@ -1,0 +1,17 @@
+﻿{
+  "name": "macos-interface",
+  "version": "1.0.0",
+  "description": "A pixel-perfect macOS desktop experience built for the web. Full Finder, Settings, Apple Music, Dynamic Island, and more — running entirely in the browser.",
+  "private": true,
+  "scripts": {
+    "dev": "python -m http.server 3000",
+    "start": "python -m http.server 3000",
+    "preview": "npx serve . -p 3000"
+  },
+  "keywords": ["macos", "web", "simulation", "apple", "finder", "ui"],
+  "author": "macOS Interface",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

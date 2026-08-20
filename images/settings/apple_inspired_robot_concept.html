@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple-Inspired Robot Concept</title>
+    <!-- Tailwind for overlay UI styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #f5f5f7; /* Apple neutral light gray */
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none; /* Let clicks pass through to canvas */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            border-radius: 16px;
+            pointer-events: auto; /* Allow interactions on panels */
+        }
+
+        /* Loading Screen */
+        #loader {
+            position: absolute;
+            inset: 0;
+            z-index: 50;
+            background-color: #f5f5f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease-out;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(0,0,0,0.1);
+            border-radius: 50%;
+            border-top-color: #1d1d1f;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="flex flex-col items-center gap-4">
+            <div class="spinner"></div>
+            <div class="text-sm text-gray-500 font-medium tracking-widest uppercase">Assembling Hardware</div>
+        </div>
+    </div>
+
+    <div id="ui-layer">
+        <header class="flex justify-between items-start">
+            <div>
+                <h1 class="text-3xl font-semibold text-gray-900 tracking-tight">iBot Concept</h1>
+                <p class="text-gray-500 font-medium mt-1">Industrial Design Study</p>
+            </div>
+            <div class="glass-panel px-4 py-2 flex items-center gap-3 hidden sm:flex">
+                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                <span class="text-xs font-semibold text-gray-700 tracking-wider">SYSTEM ONLINE</span>
+            </div>
+        </header>
+
+        <footer class="flex justify-between items-end">
+            <div class="glass-panel p-4 max-w-sm">
+                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Design Philosophy</h3>
+                <p class="text-sm text-gray-700 leading-relaxed">
+                    Restrained geometry, premium materials, and limited color accents. 
+                    <br><br>Drag to rotate. Scroll to zoom.
+                </p>
+            </div>
+            
+            <div class="glass-panel p-3 flex gap-4">
+                <div class="text-center">
+                    <div class="text-xs font-semibold text-gray-500">Chassis</div>
+                    <div class="text-sm font-bold text-gray-900">Satin White</div>
+                </div>
+                <div class="w-px bg-gray-300"></div>
+                <div class="text-center">
+                    <div class="text-xs font-semibold text-gray-500">Joints</div>
+                    <div class="text-sm font-bold text-gray-900">Matte Black</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <!-- Load Three.js and OrbitControls via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        if (!THREE.CapsuleGeometry) {
+            THREE.CapsuleGeometry = function(radius, length, capSegments, radialSegments) {
+                radius = radius || 1;
+                length = length || 1;
+                capSegments = capSegments || 4;
+                radialSegments = radialSegments || 8;
+                
+                const points = [];
+                const halfLength = length / 2;
+                
+                // Bottom cap (from south pole to equator)
+                for (let i = 0; i <= capSegments; i++) {
+                    const theta = -Math.PI / 2 + (i / capSegments) * (Math.PI / 2);
+                    points.push(new THREE.Vector2(
+                        Math.cos(theta) * radius,
+                        -halfLength + Math.sin(theta) * radius
+                    ));
+                }
+                
+                // Top cap (from equator to north pole)
+                for (let i = 0; i <= capSegments; i++) {
+                    const theta = (i / capSegments) * (Math.PI / 2);
+                    points.push(new THREE.Vector2(
+                        Math.cos(theta) * radius,
+                        halfLength + Math.sin(theta) * radius
+                    ));
+                }
+                
+                return new THREE.LatheGeometry(points, radialSegments);
+            };
+        }
+
+        // Scene setup
+        const scene = new THREE.Scene();
+        // Soft, neutral studio background
+        scene.background = new THREE.Color(0xf5f5f7); 
+        // Add subtle fog to blend into the infinite studio space
+        scene.fog = new THREE.Fog(0xf5f5f7, 10, 30);
+
+        const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.set(0, 1, 8); // Positioned slightly above ground level
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Optimize for retina displays
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Super soft, expensive shadows
+        // Premium Apple-like tone mapping
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.0;
+        
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.maxPolarAngle = Math.PI / 2 + 0.1; // Don't allow going too far below the floor
+        controls.minDistance = 3;
+        controls.maxDistance = 15;
+        controls.target.set(0, 0.5, 0);
+
+        // Lighting - Studio Setup
+        
+        // Soft overall ambient fill
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+
+        // Main Key Light (Large, soft, positioned top-right-front)
+        const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
+        keyLight.position.set(5, 8, 5);
+        keyLight.castShadow = true;
+        keyLight.shadow.mapSize.width = 2048; // High res shadows
+        keyLight.shadow.mapSize.height = 2048;
+        keyLight.shadow.camera.near = 0.5;
+        keyLight.shadow.camera.far = 25;
+        keyLight.shadow.camera.left = -5;
+        keyLight.shadow.camera.right = 5;
+        keyLight.shadow.camera.top = 5;
+        keyLight.shadow.camera.bottom = -5;
+        keyLight.shadow.bias = -0.001; // Reduce shadow acne
+        scene.add(keyLight);
+
+        // Soft Fill Light (Left side, slightly bluish/cool)
+        const fillLight = new THREE.DirectionalLight(0xe0e8ff, 0.5);
+        fillLight.position.set(-5, 3, 3);
+        scene.add(fillLight);
+
+        // Strong Rim Light (Back, slightly warm to separate from background)
+        const rimLight = new THREE.DirectionalLight(0xfff5e6, 1.5);
+        rimLight.position.set(0, 5, -8);
+        scene.add(rimLight);
+
+        // Floor for contact shadows
+        const floorGeo = new THREE.PlaneGeometry(100, 100);
+        const floorMat = new THREE.MeshStandardMaterial({ 
+            color: 0xf5f5f7,
+            roughness: 0.8,
+            metalness: 0.1
+        });
+        const floor = new THREE.Mesh(floorGeo, floorMat);
+        floor.rotation.x = -Math.PI / 2;
+        floor.position.y = -2.1;
+        floor.receiveShadow = true;
+        scene.add(floor);
+
+        // Materials Library - The core of the "Apple" aesthetic
+        
+        // 70% Satin White: Smooth polymer/aluminum with subtle roughness and clearcoat
+        const matWhite = new THREE.MeshPhysicalMaterial({
+            color: 0xffffff,
+            metalness: 0.15,
+            roughness: 0.25,
+            clearcoat: 0.8,
+            clearcoatRoughness: 0.2,
+            envMapIntensity: 1.0
+        });
+
+        // 20% Matte Black: Structural elements, joints, sensors
+        const matBlack = new THREE.MeshPhysicalMaterial({
+            color: 0x151515, // Not pure black to preserve details
+            metalness: 0.6,
+            roughness: 0.7,
+            clearcoat: 0.1
+        });
+
+        // Deep Black Glass: Displays and visors
+        const matGlass = new THREE.MeshPhysicalMaterial({
+            color: 0x050505,
+            metalness: 0.9,
+            roughness: 0.05,
+            clearcoat: 1.0,
+            clearcoatRoughness: 0.05
+        });
+
+        // Emissive Materials (The 5-10% color rule)
+        const matEyeLeft = new THREE.MeshStandardMaterial({
+            color: 0x000000,
+            emissive: 0x0066ff, // Precision Blue
+            emissiveIntensity: 2.5
+        });
+
+        const matEyeRight = new THREE.MeshStandardMaterial({
+            color: 0x000000,
+            emissive: 0x00ff66, // Precision Green
+            emissiveIntensity: 2.5
+        });
+
+        const matStatus = new THREE.MeshStandardMaterial({
+            color: 0x000000,
+            emissive: 0xffffff, // Will be animated
+            emissiveIntensity: 1.5
+        });
+
+        const matRedIndicator = new THREE.MeshStandardMaterial({
+            color: 0x000000,
+            emissive: 0xff3300,
+            emissiveIntensity: 1.0
+        });
+        
+        const matYellowIndicator = new THREE.MeshStandardMaterial({
+            color: 0x000000,
+            emissive: 0xffcc00,
+            emissiveIntensity: 1.0
+        });
+
+        // Robot Construction - Using hierarchical groups for perfect kinematics
+        const robot = new THREE.Group();
+        scene.add(robot);
+        
+        // Global floating group to keep feet on ground while breathing
+        const robotBody = new THREE.Group(); 
+        robot.add(robotBody);
+
+        // --- TORSO ---
+        // A rounded, premium body shape using CapsuleGeometry scaled for width
+        const torsoGroup = new THREE.Group();
+        robotBody.add(torsoGroup);
+
+        const torsoGeo = new THREE.CapsuleGeometry(0.7, 1.2, 32, 64);
+        const torsoMesh = new THREE.Mesh(torsoGeo, matWhite);
+        torsoMesh.scale.set(1, 1, 0.65); // Flattened front-to-back
+        torsoMesh.castShadow = true;
+        torsoMesh.receiveShadow = true;
+        torsoGroup.add(torsoMesh);
+
+        // Torso central black glass interface
+        const chestGlassGeo = new THREE.CapsuleGeometry(0.35, 0.4, 32, 32);
+        const chestGlassMesh = new THREE.Mesh(chestGlassGeo, matGlass);
+        chestGlassMesh.scale.set(1, 1, 0.2);
+        chestGlassMesh.position.set(0, 0.2, 0.42);
+        torsoGroup.add(chestGlassMesh);
+
+        // Central tiny status indicator inside the glass
+        const statusGeo = new THREE.SphereGeometry(0.04, 16, 16);
+        const statusMesh = new THREE.Mesh(statusGeo, matStatus);
+        statusMesh.position.set(0, 0.2, 0.48);
+        torsoGroup.add(statusMesh);
+
+        // Small black structural details / seams on torso
+        const seamGeo = new THREE.CylinderGeometry(0.71, 0.71, 0.02, 64);
+        const seamMesh = new THREE.Mesh(seamGeo, matBlack);
+        seamMesh.scale.set(1, 1, 0.65);
+        seamMesh.position.set(0, -0.4, 0);
+        torsoGroup.add(seamMesh);
+
+        // --- HEAD ---
+        // Wide, smooth capsule (1.3-1.5x torso width)
+        const headGroup = new THREE.Group();
+        headGroup.position.set(0, 2.05, 0); // Raised above torso to prevent overlapping and reveal the neck
+        torsoGroup.add(headGroup);
+
+        // Neck joint (Slightly tapered matte black cylinder)
+        const neckGeo = new THREE.CylinderGeometry(0.2, 0.28, 0.35, 32);
+        const neckMesh = new THREE.Mesh(neckGeo, matBlack);
+        neckMesh.position.set(0, -0.65, 0); // Positioned halfway between the head bottom and torso top
+        headGroup.add(neckMesh);
+
+        // Main head casing (Horizontal Capsule)
+        const headGeo = new THREE.CapsuleGeometry(0.65, 0.9, 32, 64);
+        const headMesh = new THREE.Mesh(headGeo, matWhite);
+        headMesh.rotation.z = Math.PI / 2; // Make it horizontal
+        headMesh.scale.set(1, 1, 0.75); // Flatten front-to-back for a sleeker profile
+        headMesh.castShadow = true;
+        headMesh.receiveShadow = true;
+        headGroup.add(headMesh);
+
+        // Black glass visor panel embedded in front
+        const visorGeo = new THREE.CapsuleGeometry(0.48, 0.8, 32, 64);
+        const visorMesh = new THREE.Mesh(visorGeo, matGlass);
+        visorMesh.rotation.z = Math.PI / 2;
+        visorMesh.position.set(0, 0, 0.38); // Push it forward so it's not buried
+        visorMesh.scale.set(1, 1, 0.25); // Flatten to create a sleek glass screen that protrudes slightly
+        headGroup.add(visorMesh);
+
+        // Eyes / Sensors (Left Blue, Right Green) behind glass
+        const eyeGeo = new THREE.SphereGeometry(0.06, 16, 16);
+        
+        const eyeLeft = new THREE.Mesh(eyeGeo, matEyeLeft);
+        eyeLeft.scale.set(1, 1, 0.2); // Make it a flat glowing disc
+        eyeLeft.position.set(-0.35, 0, 0.49); // Positioned perfectly behind the glass surface
+        headGroup.add(eyeLeft);
+        
+        const eyeRight = new THREE.Mesh(eyeGeo, matEyeRight);
+        eyeRight.scale.set(1, 1, 0.2);
+        eyeRight.position.set(0.35, 0, 0.49);
+        headGroup.add(eyeRight);
+
+        // Tiny subtle camera lens between eyes
+        const tinyLens = new THREE.Mesh(new THREE.SphereGeometry(0.015, 16, 16), matWhite);
+        tinyLens.scale.set(1, 1, 0.5);
+        tinyLens.position.set(0, 0.15, 0.50); // Flush with glass surface
+        headGroup.add(tinyLens);
+
+        // --- ARMS ---
+        // Helper function to build segmented limbs with proper pivots
+        function createArm(isLeft) {
+            const armSide = isLeft ? -1 : 1;
+            const armRoot = new THREE.Group();
+            
+            // Position at shoulder socket
+            armRoot.position.set(armSide * 0.9, 0.7, 0); 
+            
+            // Shoulder Joint
+            const shoulderJoint = new THREE.Mesh(new THREE.SphereGeometry(0.25, 32, 32), matBlack);
+            armRoot.add(shoulderJoint);
+
+            // Tiny actuator indicator on shoulder
+            const indGeo = new THREE.SphereGeometry(0.02, 16, 16);
+            const shoulderInd = new THREE.Mesh(indGeo, isLeft ? matRedIndicator : matYellowIndicator);
+            shoulderInd.position.set(armSide * 0.26, 0, 0);
+            armRoot.add(shoulderInd);
+
+            // Upper Arm
+            const upperArm = new THREE.Mesh(new THREE.CapsuleGeometry(0.18, 0.7, 16, 32), matWhite);
+            upperArm.position.set(0, -0.45, 0); // Pivot down from shoulder
+            upperArm.castShadow = true;
+            armRoot.add(upperArm);
+
+            // Elbow Group
+            const elbowGroup = new THREE.Group();
+            elbowGroup.position.set(0, -0.9, 0);
+            armRoot.add(elbowGroup);
+
+            // Elbow Joint
+            const elbowJoint = new THREE.Mesh(new THREE.SphereGeometry(0.2, 32, 32), matBlack);
+            elbowGroup.add(elbowJoint);
+
+            // Forearm
+            const forearm = new THREE.Mesh(new THREE.CapsuleGeometry(0.15, 0.6, 16, 32), matWhite);
+            forearm.position.set(0, -0.4, 0);
+            forearm.castShadow = true;
+            elbowGroup.add(forearm);
+
+            // Wrist/Hand Group
+            const handGroup = new THREE.Group();
+            handGroup.position.set(0, -0.8, 0);
+            elbowGroup.add(handGroup);
+
+            // Wrist Joint
+            const wristJoint = new THREE.Mesh(new THREE.SphereGeometry(0.12, 32, 32), matBlack);
+            handGroup.add(wristJoint);
+
+            // Hand (Precision Tool / Rounded shape)
+            const palmGeo = new THREE.CapsuleGeometry(0.14, 0.15, 16, 32);
+            const palm = new THREE.Mesh(palmGeo, matWhite);
+            palm.position.set(0, -0.15, 0);
+            palm.castShadow = true;
+            handGroup.add(palm);
+
+            // Fingers (3 precision capsule fingers)
+            const fingerGeo = new THREE.CapsuleGeometry(0.04, 0.15, 16, 16);
+            
+            const thumb = new THREE.Mesh(fingerGeo, matWhite);
+            thumb.position.set(armSide * 0.1, -0.28, 0);
+            thumb.rotation.z = armSide * -0.3;
+            handGroup.add(thumb);
+
+            const index = new THREE.Mesh(fingerGeo, matWhite);
+            index.position.set(armSide * -0.05, -0.32, 0.06);
+            handGroup.add(index);
+
+            const middle = new THREE.Mesh(fingerGeo, matWhite);
+            middle.position.set(armSide * -0.05, -0.32, -0.06);
+            handGroup.add(middle);
+
+            // Store references for animation
+            armRoot.userData = { elbow: elbowGroup, hand: handGroup, side: armSide };
+
+            return armRoot;
+        }
+
+        const armLeft = createArm(true);
+        const armRight = createArm(false);
+        robotBody.add(armLeft);
+        robotBody.add(armRight);
+
+        // Relaxed initial posture for arms
+        armLeft.rotation.z = -0.15;
+        armLeft.rotation.x = 0.1;
+        armLeft.userData.elbow.rotation.x = -0.2;
+        
+        armRight.rotation.z = 0.15;
+        armRight.rotation.x = 0.1;
+        armRight.userData.elbow.rotation.x = -0.2;
+
+        // --- LEGS ---
+        function createLeg(isLeft) {
+            const legSide = isLeft ? -1 : 1;
+            const legRoot = new THREE.Group();
+            
+            // Position at hip socket (below torso)
+            legRoot.position.set(legSide * 0.45, -1.0, 0);
+            
+            // Hip Joint
+            const hipJoint = new THREE.Mesh(new THREE.SphereGeometry(0.28, 32, 32), matBlack);
+            legRoot.add(hipJoint);
+
+            // Thigh
+            const thigh = new THREE.Mesh(new THREE.CapsuleGeometry(0.22, 0.8, 16, 32), matWhite);
+            thigh.position.set(0, -0.5, 0);
+            thigh.castShadow = true;
+            legRoot.add(thigh);
+
+            // Knee Group
+            const kneeGroup = new THREE.Group();
+            kneeGroup.position.set(0, -1.0, 0);
+            legRoot.add(kneeGroup);
+
+            // Knee Joint
+            const kneeJoint = new THREE.Mesh(new THREE.SphereGeometry(0.22, 32, 32), matBlack);
+            kneeGroup.add(kneeJoint);
+            
+            // Tiny actuator indicator on knee
+            const kneeInd = new THREE.Mesh(new THREE.SphereGeometry(0.02, 16, 16), matRedIndicator);
+            kneeInd.position.set(0, 0, 0.23);
+            kneeGroup.add(kneeInd);
+
+            // Calf
+            const calf = new THREE.Mesh(new THREE.CapsuleGeometry(0.18, 0.7, 16, 32), matWhite);
+            calf.position.set(0, -0.45, 0);
+            calf.castShadow = true;
+            kneeGroup.add(calf);
+
+            // Ankle Group
+            const ankleGroup = new THREE.Group();
+            ankleGroup.position.set(0, -0.9, 0);
+            kneeGroup.add(ankleGroup);
+
+            // Ankle Joint
+            const ankleJoint = new THREE.Mesh(new THREE.SphereGeometry(0.15, 32, 32), matBlack);
+            ankleGroup.add(ankleJoint);
+
+            // Foot (Stable, wide base)
+            const footGeo = new THREE.CapsuleGeometry(0.25, 0.4, 16, 32);
+            const foot = new THREE.Mesh(footGeo, matWhite);
+            foot.rotation.x = Math.PI / 2; // Flat on ground
+            foot.position.set(0, -0.15, 0.15); // Offset forward
+            foot.scale.set(1, 1, 0.6); // Flatten height
+            foot.castShadow = true;
+            ankleGroup.add(foot);
+            
+            // Black rubber-like sole
+            const soleGeo = new THREE.CapsuleGeometry(0.26, 0.41, 16, 32);
+            const sole = new THREE.Mesh(soleGeo, matBlack);
+            sole.rotation.x = Math.PI / 2;
+            sole.position.set(0, -0.22, 0.15);
+            sole.scale.set(1, 1, 0.1);
+            ankleGroup.add(sole);
+
+            legRoot.userData = { knee: kneeGroup, ankle: ankleGroup, side: legSide };
+            return legRoot;
+        }
+
+        const legLeft = createLeg(true);
+        const legRight = createLeg(false);
+        // We attach legs to the main robot, not robotBody, so they stay planted while torso breathes
+        robot.add(legLeft);
+        robot.add(legRight);
+
+        // Adjust overall height to stand on floor
+        robot.position.y = 1.0; 
+        
+        // Minor leg adjustments for stable stance
+        legLeft.rotation.z = -0.05;
+        legRight.rotation.z = 0.05;
+
+        // --- ANIMATION SYSTEM ---
+        const clock = new THREE.Clock();
+        
+        // Remove loader when ready
+        window.onload = function() {
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => document.getElementById('loader').remove(), 800);
+            }, 500);
+            animate();
+        };
+
+        // Window resize handler
+        window.addEventListener('resize', onWindowResize, false);
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const time = clock.getElapsedTime();
+
+            // 1. Subtle, calm breathing animation (Torso Y-axis hover)
+            // Legs stay planted, only torso/arms/head move
+            robotBody.position.y = Math.sin(time * 1.5) * 0.03;
+
+            // 2. Intelligent head movement (Looking around slowly)
+            // Sine waves with prime multipliers create organic, non-repeating movement
+            headGroup.rotation.y = Math.sin(time * 0.7) * 0.3 + Math.sin(time * 0.3) * 0.2;
+            headGroup.rotation.x = Math.sin(time * 1.1) * 0.1;
+            headGroup.rotation.z = Math.sin(time * 0.5) * 0.05;
+
+            // 3. Relaxed arm swinging (inverse to each other for balance)
+            armLeft.rotation.x = Math.sin(time * 1.5) * 0.05 + 0.1;
+            armLeft.userData.elbow.rotation.x = Math.sin(time * 1.5) * 0.05 - 0.2;
+            
+            armRight.rotation.x = Math.sin(time * 1.5 + Math.PI) * 0.05 + 0.1;
+            armRight.userData.elbow.rotation.x = Math.sin(time * 1.5 + Math.PI) * 0.05 - 0.2;
+
+            // 4. Chest Status Indicator Color Cycle
+            // Slowly interpolates through Apple-like hues (cyan, blue, magenta, orange)
+            const hue = (Math.sin(time * 0.5) * 0.5 + 0.5) * 0.8; // Range 0 to 0.8
+            matStatus.emissive.setHSL(hue, 0.9, 0.5);
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
+</html>

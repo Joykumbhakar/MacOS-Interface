@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>macOS Interface — Web Simulation</title>
+
+    <!-- SEO -->
+    <meta name="description" content="A pixel-perfect macOS desktop experience built for the web. Full Finder, Settings, Apple Music, Dynamic Island, and more — running entirely in the browser.">
+    <meta name="keywords" content="macOS, web, simulation, Apple, Finder, interface, design, UI">
+    <meta name="author" content="macOS Interface">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Social Preview -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="macOS Interface — Web Simulation">
+    <meta property="og:description" content="A pixel-perfect macOS desktop experience built for the web. Full Finder, Settings, Apple Music, Dynamic Island, and more.">
+    <meta property="og:image" content="images/Wallpapers/27-Golden-Gate.jpg">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="macOS Interface — Web Simulation">
+    <meta name="twitter:description" content="A pixel-perfect macOS desktop experience built entirely in the browser.">
+    <meta name="twitter:image" content="images/Wallpapers/27-Golden-Gate.jpg">
+
+    <!-- PWA / Mobile -->
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="macOS Interface">
+
+    <!-- Favicon (Apple logo inline SVG) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'><path fill='%23000' d='M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z'/></svg>">
+    <link rel="shortcut icon" type="image/x-icon" href="data:,">
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css?v=29">
+    <link rel="stylesheet" href="apps/Music/MusicApp.css?v=3">
+
+    <!-- Tailwind (utility classes) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+
+    <!-- Lock Screen -->
+    <div id="lock-screen" style="position:fixed; inset:0; z-index:10000; display:flex; flex-direction:column; align-items:center; justify-content:space-between; background: url('images/Wallpapers/lockscreen_wallpaper_defualt.jpg') no-repeat center center / cover; transition: opacity 0.6s ease, transform 0.6s ease; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
+        
+        <!-- Top Status Bar Area -->
+        <div style="width: 100%; padding: 6px 20px; display:flex; justify-content:flex-end; color:#ffffff; font-size: 13px; font-weight: 500;">
+            <div style="display:flex; gap:14px; align-items:center;">
+                <span>ABC</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><circle cx="12" cy="20" r="1.5" fill="#ffffff" stroke="none"></circle></svg>
+                <svg width="22" height="11" viewBox="0 0 20 11" fill="none">
+                    <rect x="0.5" y="0.5" width="17" height="10" rx="2" stroke="#ffffff" stroke-opacity="0.6"/>
+                    <rect x="1" y="1" width="13" height="9" rx="1.5" fill="#ffffff"/>
+                    <path d="M18.5 3.5v4" stroke="#ffffff" stroke-opacity="0.6" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <span id="ls-top-time">9:41 AM</span>
+            </div>
+        </div>
+
+        <!-- Clock & Date -->
+        <div style="text-align:center; color:#ffffff; margin-top: 6vh; flex-shrink:0;">
+            <div id="ls-date" style="font-size: 22px; font-weight: 500; letter-spacing: 0.5px; margin-bottom: -12px;">Monday, 20 May</div>
+            <div id="ls-time" style="font-size: 110px; font-weight: 600; letter-spacing: -3px;">9:41</div>
+        </div>
+
+        <!-- Center Auth Area -->
+        <div style="display:flex; flex-direction:column; align-items:center; flex: 1; justify-content: flex-start; padding-top: 5vh; transform: none;">
+            <!-- Avatar -->
+            <div style="width: 150px; height: 150px; border-radius: 50%; overflow: hidden; margin-bottom: 8px; background: transparent;">
+                <img src="images/Avatars/Profile-avatar.png" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
+            </div>
+
+            <!-- Name -->
+            <div class="user-name-display" style="color:#ffffff; font-size: 22px; font-weight: 500; margin-bottom: 12px; letter-spacing: 0.3px;">Joy Kumbhakar</div>
+
+            <!-- Password Field -->
+            <div id="ls-pwd-container" style="display:none; position:relative; margin-top:50px; margin-bottom:20px;">
+                <input type="password" id="lock-password" placeholder="Enter Password" style="width: 180px; padding: 8px 30px 8px 14px; border-radius: 20px; border: none; background: rgba(255,255,255,0.2); backdrop-filter: blur(20px); color: #ffffff; font-size: 14px; outline: none; text-align: center;">
+                <div id="unlock-btn" style="position:absolute; right:6px; top:50%; transform:translateY(-50%); width:22px; height:22px; border-radius:50%; background:rgba(255,255,255,0.3); display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="unlock()">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </div>
+            </div>
+
+            <!-- Fingerprint & Prompt -->
+            <div id="ls-fingerprint-container" style="display:flex; flex-direction:column; align-items:center; cursor:pointer; margin-top:50px;">
+                <div id="scanner-container" onclick="authenticateTouchID()" style="width: 64px; height: 64px; position: relative; margin: 0 auto;">
+                    <svg class="w-full h-full absolute inset-0 pointer-events-none" viewBox="0 0 100 100" fill="none" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%;position:absolute;top:0;left:0;">
+                        <g id="fingerprint-group" class="icon-group scanning-pulse" stroke="rgba(255,255,255,0.8)" stroke-width="3.5">
+                            <path d="M 46 76 V 50 A 4 4 0 0 1 54 50 V 76" class="draw-path" style="animation-delay: 0.0s" />
+                            <path d="M 38 78 V 50 A 12 12 0 0 1 62 50 V 62 M 62 68 V 78" class="draw-path" style="animation-delay: 0.1s" />
+                            <path d="M 30 74 V 62 M 30 54 V 50 A 20 20 0 0 1 70 50 V 74" class="draw-path" style="animation-delay: 0.2s" />
+                            <path d="M 22 70 V 50 A 28 28 0 0 1 70 30 M 74 35 A 28 28 0 0 1 78 50 V 55 M 78 61 V 70" class="draw-path" style="animation-delay: 0.3s" />
+                            <path d="M 14 62 V 50 A 36 36 0 0 1 68 19 M 74 24 A 36 36 0 0 1 86 50 V 62" class="draw-path" style="animation-delay: 0.4s" />
+                        </g>
+                        <g id="tick-group" class="icon-group opacity-0" style="transform: scale(0.5); display: none;" stroke="#32D74B">
+                            <circle cx="50" cy="50" r="40" class="tick-circle" stroke-width="5" id="circle-anim" />
+                            <path d="M 30 52 l 12 12 l 28 -26" class="tick-check" stroke-width="6" id="check-anim" />
+                        </g>
+                    </svg>
+                </div>
+                <div style="color: rgba(255,255,255,0.7); font-size: 13px; font-weight: 400; margin-top:10px;" onclick="document.getElementById('ls-pwd-container').style.display='block'; document.getElementById('lock-password').focus(); this.parentElement.style.display='none';">Touch ID or Enter Password</div>
+            </div>
+        </div>
+
+        <!-- Bottom Cancel Button -->
+        <div style="margin-bottom: 40px; display:flex; flex-direction:column; align-items:center; cursor:pointer;" onclick="unlock()">
+            <div style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255, 255, 255, 0.22); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.25); display:flex; align-items:center; justify-content:center; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </div>
+            <span style="color: #ffffff; font-size: 13px; font-weight: 400;">Cancel</span>
+        </div>
+    </div>
+    <!-- End Lock Screen -->
+
+    <div class="macos-body" id="macos-container">
+        
+        <div class="desktop-widgets">
+            <div class="mac-widget widget-calendar">
+                <div>
+                    <div class="cal-day">TUESDAY</div>
+                    <div class="cal-date">18</div>
+                </div>
+                <div class="cal-desc">No more events today</div>
+            </div>
+            
+            <div class="mac-widget widget-weather">
+                <div class="wea-city">Durgapur</div>
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                    <circle cx="12" cy="12" r="5" fill="#ffd60a" stroke="none"></circle>
+                    <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+                </svg>
+                <div>
+                    <div class="wea-temp">32&deg;</div>
+                    <div class="wea-desc">Mostly Clear<br>H:35&deg; L:26&deg;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="desktop-icons" id="desktop-icons-container">
+            <div class="desktop-item" data-id="macintosh-hd" data-target="root">
+                <img src="https://s3-new.macosicons.com/macosicons/parse/Macintosh_HD__Mojave__MYS50DK6jo_lowResPng-b955678089.png" onerror="this.src='images/Icons/Finder.png'" alt="Macintosh HD">
+                <span>Macintosh HD</span>
+            </div>
+            <div class="desktop-item" data-id="source-code" data-target="folder-projects">
+                <img src="images/Icons/Github_Folder.png" onerror="this.src='https://s3-new.macosicons.com/macosicons/parse/Folder___Github_FI9lOpkTDG_lowResPng-48a698180c.png'" alt="Source Code">
+                <span>Source Code</span>
+            </div>
+            <div class="desktop-item" data-id="onedrive" data-target="icloud">
+                <img src="images/Icons/OneDrive_Folder.png" onerror="this.src='https://s3-new.macosicons.com/macosicons/parse/OneDrive_Folder_5DWVgsKD3Y_lowResPng-52aae6872f.png'" alt="OneDrive">
+                <span>OneDrive</span>
+            </div>
+            <div class="desktop-item" data-id="documents" data-target="documents">
+                <img src="images/Icons/WordFolder.png" onerror="this.src='https://s3-new.macosicons.com/macosicons/parse/Word_Folder_YOdTnzQHW6_lowResPng-a41bbd93fa.png'" alt="Documents">
+                <span>Documents</span>
+            </div>
+            <div class="desktop-item" data-id="google-drive" data-target="downloads">
+                <img src="images/Icons/Google_Drive.png" onerror="this.src='https://s3-new.macosicons.com/macosicons/parse/Google_Drive_7cqRJOqTfH_lowResPng-029200c239.png'" alt="Google Drive">
+                <span>Google Drive</span>
+            </div>
+        </div>
+
+        <div id="windows-container"></div>
+
+        <div id="finder-window" class="mac-window" style="width: 880px; max-width: 90vw; height: 560px; max-height: 82vh; margin-top: -20px; margin-left: -20px; flex-direction: row;">
+            <div class="mac-sidebar">
+                <div class="traffic-lights window-header" style="height: 52px;">
+                    <div class="tl-btn tl-close" id="finder-close"></div>
+                    <div class="tl-btn tl-min" id="finder-min"></div>
+                    <div class="tl-btn tl-max" id="finder-max"></div>
+                </div>
+                <div class="sidebar-content">
+                    <div class="sb-section">
+                        <div class="sb-title">Favorites</div>
+                        <div class="sb-item" data-target="airdrop" onclick="Finder.navigateTo('airdrop')">
+                            <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1.5" fill="#0a84ff" stroke="none"/></svg>
+                            AirDrop
+                        </div>
+                        <div class="sb-item active" data-target="recents" onclick="Finder.navigateTo('recents')">
+                            <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            Recents
+                        </div>
+                        <div class="sb-item" data-target="desktop" onclick="Finder.navigateTo('desktop')">
+                            <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                            Desktop
+                        </div>
+                        <div class="sb-item" data-target="documents" onclick="Finder.navigateTo('documents')">
+                            <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                            Documents
+                        </div>
+                        <div class="sb-item" data-target="downloads" onclick="Finder.navigateTo('downloads')">
+                            <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="8 12 12 16 16 12"></polyline><line x1="12" y1="8" x2="12" y2="16"></line></svg>
+                            Downloads
+                        </div>
+                        <div class="sb-item" data-target="applications" onclick="Finder.navigateTo('applications')">
+                            <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                            Applications
+                        </div>
+                        <div class="sb-item" data-target="pictures" onclick="Finder.navigateTo('pictures')">
+                            <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                            Pictures
+                        </div>
+                        <div class="sb-item" data-target="music-folder" onclick="Finder.navigateTo('music-folder')">
+                            <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                            Music
+                        </div>
+                        <div class="sb-item" data-target="movies" onclick="Finder.navigateTo('movies')">
+                            <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+                            Movies
+                        </div>
+                    </div>
+                    <div class="sb-section">
+                        <div class="sb-title">iCloud</div>
+                        <div class="sb-item" data-target="icloud" onclick="Finder.navigateTo('icloud')">
+                            <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2"><path d="M17.5 19C19.9853 19 22 16.9853 22 14.5C22 12.1384 20.1983 10.2014 17.886 10.0116C17.3879 6.6127 14.4716 4 11 4C7.13401 4 4 7.13401 4 11C4 11.2333 4.0114 11.4639 4.03358 11.6908C2.29871 12.3551 1 14.0256 1 16C1 18.7614 3.23858 21 6 21H16"></path></svg>
+                            iCloud Drive
+                        </div>
+                        <div class="sb-item" data-target="shared" onclick="Finder.navigateTo('shared')">
+                            <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                            Shared
+                        </div>
+                    </div>
+                    <div class="sb-section">
+                        <div class="sb-title">Locations</div>
+                        <div class="sb-item" data-target="root" onclick="Finder.navigateTo('root')">
+                            <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                            Macintosh HD
+                        </div>
+                        <div class="sb-item" data-target="network" onclick="Finder.navigateTo('network')">
+                            <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                            Network
+                        </div>
+                    </div>
+                    <div class="sb-section">
+                        <div class="sb-title">Tags</div>
+                        <div class="sb-item sb-tag" data-tag="red" onclick="Finder&&Finder.filterByTag&&Finder.filterByTag('red')"><div class="sb-tag-dot" style="width:10px;height:10px;border-radius:50%;background:#ff3b30;flex-shrink:0;"></div> Red</div>
+                        <div class="sb-item sb-tag" data-tag="orange" onclick="Finder&&Finder.filterByTag&&Finder.filterByTag('orange')"><div class="sb-tag-dot" style="width:10px;height:10px;border-radius:50%;background:#ff9500;flex-shrink:0;"></div> Orange</div>
+                        <div class="sb-item sb-tag" data-tag="yellow" onclick="Finder&&Finder.filterByTag&&Finder.filterByTag('yellow')"><div class="sb-tag-dot" style="width:10px;height:10px;border-radius:50%;background:#ffcc00;flex-shrink:0;"></div> Yellow</div>
+                        <div class="sb-item sb-tag" data-tag="green" onclick="Finder&&Finder.filterByTag&&Finder.filterByTag('green')"><div class="sb-tag-dot" style="width:10px;height:10px;border-radius:50%;background:#34c759;flex-shrink:0;"></div> Green</div>
+                        <div class="sb-item sb-tag" data-tag="blue" onclick="Finder&&Finder.filterByTag&&Finder.filterByTag('blue')"><div class="sb-tag-dot" style="width:10px;height:10px;border-radius:50%;background:#0a84ff;flex-shrink:0;"></div> Blue</div>
+                        <div class="sb-item sb-tag" data-tag="purple" onclick="Finder&&Finder.filterByTag&&Finder.filterByTag('purple')"><div class="sb-tag-dot" style="width:10px;height:10px;border-radius:50%;background:#af52de;flex-shrink:0;"></div> Purple</div>
+                        <div class="sb-item sb-tag" data-tag="gray" onclick="Finder&&Finder.filterByTag&&Finder.filterByTag('gray')"><div class="sb-tag-dot" style="width:10px;height:10px;border-radius:50%;background:#8e8e93;flex-shrink:0;"></div> Gray</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mac-main" id="finder-main">
+                <div class="mac-toolbar window-header">
+                    <div class="tb-left" style="display:flex; gap:14px; align-items:center;">
+                        <div class="tb-nav">
+                            <button class="nav-btn" id="nav-back" onclick="Finder.navigateBack()" title="Back (⌘[)" disabled>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                            </button>
+                            <button class="nav-btn" id="nav-forward" onclick="Finder.navigateForward()" title="Forward (⌘])" disabled>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </button>
+                        </div>
+                        <span class="tb-title" id="finder-title" title="Current Folder">Recents</span>
+                    </div>
+                    
+                    <div class="tb-controls">
+                        <div class="view-toggles" role="group" aria-label="View switch">
+                            <div class="view-btn active" id="view-icon" onclick="Finder.setViewMode('icon')" title="Icons View (⌘1)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                            </div>
+                            <div class="view-btn" id="view-list" onclick="Finder.setViewMode('list')" title="List View (⌘2)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                            </div>
+                            <div class="view-btn" id="view-col" onclick="Finder.setViewMode('column')" title="Columns View (⌘3)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="5" height="18" rx="1"></rect><rect x="10" y="3" width="5" height="18" rx="1"></rect><rect x="17" y="3" width="4" height="18" rx="1"></rect></svg>
+                            </div>
+                            <div class="view-btn" id="view-gal" onclick="Finder.setViewMode('gallery')" title="Gallery View (⌘4)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="12" rx="1"></rect><rect x="3" y="17" width="5" height="4" rx="0.5"></rect><rect x="9.5" y="17" width="5" height="4" rx="0.5"></rect><rect x="16" y="17" width="5" height="4" rx="0.5"></rect></svg>
+                            </div>
+                        </div>
+                        
+                        <div class="tb-action-btn" id="finder-btn-group" title="Group and Sort items" onclick="Finder.toggleGroupMenu(event)">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:3px;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </div>
+                        
+                        <div class="tb-action-btn" id="finder-btn-action" title="Action Menu" onclick="Finder.toggleActionMenu(event)">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:3px;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </div>
+                        
+                        <div class="tb-action-btn" id="finder-btn-share" title="Share Selected Items" onclick="Finder.toggleShareMenu(event)">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+                        </div>
+                        
+                        <div class="tb-action-btn" id="finder-btn-tag" title="Edit Tags" onclick="Finder.toggleTagMenu(event)">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                        </div>
+                    </div>
+                    
+                    <div class="tb-right" style="display:flex; align-items:center; position:relative;">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.4)" stroke-width="2.5" style="position:absolute; left:8px; pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" class="tb-search" placeholder="Search" style="padding-left:26px; padding-right:22px;">
+                        <span id="finder-search-clear" onclick="Finder.search(''); document.querySelector('.tb-search').value='';" style="position:absolute; right:7px; cursor:pointer; font-size:12px; color:#8e8e93; display:none;">✕</span>
+                    </div>
+                </div>
+                
+                <div class="mac-content" id="mac-content">
+                    <!-- Folders rendered here by JS -->
+                </div>
+                
+                <!-- Authentic macOS Pathbar and Statusbar -->
+                <div class="mac-pathbar" id="finder-pathbar"></div>
+                <div class="mac-statusbar">
+                    <span id="finder-status-text">7 items, 45.2 GB available</span>
+                    <div class="finder-zoom-wrapper">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        <input type="range" class="finder-zoom" min="32" max="128" value="72" title="Adjust Icon Size">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="safari-window" class="mac-window" style="width: 900px; max-width: 90vw; height: 600px; max-height: 80vh; background: #ffffff; color: #000; flex-direction: column; margin-top: 20px; margin-left: 20px;">
+            <div class="window-header" style="display:flex; align-items:center; padding: 12px 20px; background: rgba(245, 245, 247, 0.9); border-bottom: 1px solid #d2d2d7; gap: 20px; backdrop-filter: blur(20px);">
+                <div class="traffic-lights" style="padding:0;">
+                    <div class="tl-btn tl-close"></div>
+                    <div class="tl-btn tl-min"></div>
+                    <div class="tl-btn tl-max"></div>
+                </div>
+                <div style="display:flex; gap:14px; color:#999;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" opacity="0.3"><path d="M9 18l6-6-6-6"/></svg>
+                </div>
+                <div style="flex:1; background:rgba(0,0,0,0.06); padding: 6px 12px; border-radius: 8px; text-align:center; font-size: 13px; color: #111; font-weight: 500;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px; display:inline-block; vertical-align:middle; opacity: 0.6;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                    apple.com/macbook-pro
+                </div>
+                <div style="display:flex; gap:14px; color:#999;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                </div>
+            </div>
+            <div style="flex: 1; display:flex; flex-direction:column; align-items:center; justify-content:center; background: linear-gradient(180deg, #fbfbfd 0%, #ffffff 100%); overflow-y: auto;">
+                <h1 style="font-size: 56px; font-weight: 700; letter-spacing: -1.5px; margin-bottom: 5px;">MacBook Pro</h1>
+                <p style="font-size: 26px; color: #86868b; margin-bottom: 40px; font-weight: 500;">Mind-blowing. Head-turning.</p>
+                <img src="https://www.apple.com/v/macbook-pro-14-and-16/b/images/overview/hero/hero_intro_endframe__e6khcva4hkeq_large.jpg" style="width: 75%; max-width: 600px; border-radius: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.08);" onerror="this.style.display='none'">
+            </div>
+        </div>
+
+        <div id="terminal-window" class="mac-window" style="width: 700px; max-width: 90vw; height: 450px; max-height: 80vh; background: rgba(30,30,30,0.95); flex-direction: column; margin-top: 40px; margin-left: -40px;">
+            <div class="window-header" style="display:flex; align-items:center; padding: 12px 20px; background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <div class="traffic-lights" style="padding:0;">
+                    <div class="tl-btn tl-close"></div>
+                    <div class="tl-btn tl-min"></div>
+                    <div class="tl-btn tl-max"></div>
+                </div>
+                <div style="flex:1; text-align:center; font-size: 13px; color: #888; font-family: ui-monospace, SFMono-Regular, monospace;">
+                    david@MacBook-Pro: ~ — zsh — 80x24
+                </div>
+            </div>
+            <div style="padding: 16px 20px; font-family: ui-monospace, SFMono-Regular, monospace; color: #4af626; font-size: 14px; line-height: 1.6; letter-spacing: 0px; overflow-y: auto;">
+                <span style="color: #aaa">Last login: Tue Aug 18 09:41:00 on ttys000</span><br>
+                <span style="color: #007aff">david@MacBook-Pro</span> <span style="color: #fff">~ %</span> npm run dev<br>
+                > portfolio@1.0.0 dev<br>
+                > vite<br><br>
+                <span style="color: #4af626; font-weight: bold;">VITE v4.3.9</span>  <span style="color: #aaa">ready in 320 ms</span><br><br>
+                <span style="color: #34c759">➜</span>  <span style="color: #fff; font-weight: bold;">Local:</span>   <span style="color: #38bdf8; text-decoration: underline;">http://localhost:5173/</span><br>
+                <span style="color: #34c759">➜</span>  <span style="color: #fff; font-weight: bold;">Network:</span> <span style="color: #aaa">use --host to expose</span><br>
+                <span style="color: #34c759">➜</span>  <span style="color: #aaa">press h to show help</span><br>
+                <span style="color: #007aff">david@MacBook-Pro</span> <span style="color: #fff">~ %</span> <span style="display:inline-block; width:8px; height:15px; background:#4af626; animation: blink 1s step-end infinite; vertical-align: middle;"></span>
+            </div>
+        </div>
+
+        <div id="settings-window" class="mac-window">
+            <div class="settings-sidebar">
+                <div class="window-header" style="height: 52px; display: flex; align-items: center; padding-left: 20px;">
+                    <div class="traffic-lights" style="padding: 0;">
+                        <div class="tl-btn tl-close"></div>
+                        <div class="tl-btn tl-min"></div>
+                        <div class="tl-btn tl-max"></div>
+                    </div>
+                </div>
+                
+                <div class="window-header" style="padding: 0 16px;">
+                    <div style="background: rgba(255,255,255,0.8); border: 0.5px solid rgba(0,0,0,0.1); box-shadow: 0 1px 2px rgba(0,0,0,0.02); padding: 5px 8px; border-radius: 6px; font-size: 13px; display:flex; align-items:center; color: #888; margin-bottom: 16px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px; opacity:0.6;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        Search
+                    </div>
+                    
+                    <div style="display:flex; align-items:center; gap: 12px; margin-bottom: 16px; padding: 4px;">
+                        <div style="width: 48px; height: 48px; border-radius: 50%; overflow: hidden; background: #ddd; flex-shrink: 0;">
+                            <img src="images/Avatars/Profile-avatar.png" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div style="color: #111; line-height: 1.3;">
+                            <div style="font-weight: 700; font-size: 14px;">Joy Kumbhakar</div>
+                            <div style="font-size: 12px; color: #555;">Apple Account</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="flex: 1; overflow-y: auto; padding: 0 8px 20px;">
+
+                    <!-- Apple Account -->
+                    <div class="set-nav-item" id="nav-apple-account" onclick="appState.setSettingsView('apple-account')">
+                        <div class="set-nav-icon" style="background: linear-gradient(180deg, #44A6FF 0%, #007AFF 100%);">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2a7.2 7.2 0 0 1-6-3.22c.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08a7.2 7.2 0 0 1-6 3.22z"/></svg>
+                        </div>Apple Account</div>
+
+                    <div style="height:1px; background:rgba(0,0,0,0.06); margin: 8px 4px;"></div>
+
+                    <!-- Connectivity group -->
+                    <div class="set-nav-item" id="nav-wifi" onclick="appState.setSettingsView('wifi')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #44A6FF 0%, #007AFF 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1.5" fill="white" stroke="none"/></svg></div>Wi-Fi</div>
+                    <div class="set-nav-item" id="nav-bluetooth" onclick="appState.setSettingsView('bluetooth')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #44A6FF 0%, #007AFF 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polyline points="6.5 6.5 17.5 17.5 12 23 12 1 17.5 6.5 6.5 17.5"/></svg></div>Bluetooth</div>
+                    <div class="set-nav-item" id="nav-network" onclick="appState.setSettingsView('network')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #44A6FF 0%, #007AFF 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>Network</div>
+                    <div class="set-nav-item" id="nav-vpn" onclick="appState.setSettingsView('vpn')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #44A6FF 0%, #007AFF 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>VPN</div>
+
+                    <div style="height:1px; background:rgba(0,0,0,0.06); margin: 8px 4px;"></div>
+
+                    <!-- Alerts/Focus group -->
+                    <div class="set-nav-item" id="nav-notifications" onclick="appState.setSettingsView('notifications')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #FF665A 0%, #FF3B30 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5S10.5 3.17 10.5 4v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg></div>Notifications</div>
+                    <div class="set-nav-item" id="nav-sound" onclick="appState.setSettingsView('sound')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #FF665A 0%, #FF3B30 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></div>Sound</div>
+                    <div class="set-nav-item" id="nav-focus" onclick="appState.setSettingsView('focus')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #7868E6 0%, #5856D6 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>Focus</div>
+                    <div class="set-nav-item" id="nav-screen-time" onclick="appState.setSettingsView('screen-time')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #7868E6 0%, #5856D6 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>Screen Time</div>
+
+                    <div style="height:1px; background:rgba(0,0,0,0.06); margin: 8px 4px;"></div>
+
+                    <!-- System group -->
+                    <div class="set-nav-item" id="nav-general" onclick="appState.setSettingsView('general')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #A3AAB2 0%, #8A919B 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>General</div>
+                    <div class="set-nav-item" id="nav-appearance" onclick="appState.setSettingsView('appearance')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #5E5E62 0%, #3A3A3C 100%);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.5" stroke="white" stroke-width="2.2"/><path d="M12 2.5 A9.5 9.5 0 0 1 12 21.5 Z" fill="white"/></svg></div>Appearance</div>
+                    <div class="set-nav-item" id="nav-accessibility" onclick="appState.setSettingsView('accessibility')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #44A6FF 0%, #007AFF 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="4" r="2"/><path d="M15.89 8.11C15.5 7.72 14.83 7 14 7h-4c-.83 0-1.5.72-1.89 1.11l-3.06 3.05 1.42 1.41 2.43-2.42V12l-2 5.5 1.87.68L10.5 14h3l1.63 3.68 1.87-.68L15 12V10.15l2.43 2.42 1.42-1.41-2.96-3.05z"/></svg></div>Accessibility</div>
+                    <div class="set-nav-item" id="nav-control-center-settings" onclick="appState.setSettingsView('control-center-settings')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #A3AAB2 0%, #8A919B 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>Control Center</div>
+                    <div class="set-nav-item" id="nav-siri-spotlight" onclick="appState.setSettingsView('siri-spotlight')"><img class="set-nav-icon" src="images/Icons/siri.png" style="object-fit: cover; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255, 255, 255, 0.3);">Apple Intelligence &amp; Siri</div>
+                    <div class="set-nav-item" id="nav-desktop-dock" onclick="appState.setSettingsView('desktop-dock')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #48484A 0%, #2C2C2E 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>Desktop &amp; Dock</div>
+                    <div class="set-nav-item" id="nav-displays" onclick="appState.setSettingsView('displays')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #44A6FF 0%, #007AFF 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>Displays</div>
+                    <div class="set-nav-item" id="nav-wallpaper" onclick="appState.setSettingsView('wallpaper')"><img class="set-nav-icon" src="images/Icons/Apple_MacOS_Big_Sur.png" style="object-fit: cover; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255, 255, 255, 0.3);">Wallpaper</div>
+                    <div class="set-nav-item" id="nav-screen-saver" onclick="appState.setSettingsView('screen-saver')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #48484A 0%, #2C2C2E 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M20 3H4C2.9 3 2 3.9 2 5v11c0 1.1.9 2 2 2h3l-1 1v2h12v-2l-1-1h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 13H4V5h16v11z"/></svg></div>Screen Saver</div>
+                    <div class="set-nav-item" id="nav-lock-screen-settings" onclick="appState.setSettingsView('lock-screen-settings')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #A3AAB2 0%, #8A919B 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>Lock Screen</div>
+
+                    <div style="height:1px; background:rgba(0,0,0,0.06); margin: 8px 4px;"></div>
+
+                    <!-- Privacy / Auth group -->
+                    <div class="set-nav-item" id="nav-privacy-security" onclick="appState.setSettingsView('privacy-security')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #44A6FF 0%, #007AFF 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg></div>Privacy &amp; Security</div>
+                    <div class="set-nav-item" id="nav-face-id" onclick="appState.setSettingsView('face-id')"><img class="set-nav-icon" src="images/Icons/Face_ID.png" style="object-fit: cover; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255, 255, 255, 0.3);">Face ID &amp; Password</div>
+                    <div class="set-nav-item" id="nav-touch-id" onclick="appState.setSettingsView('touch-id')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #FF665A 0%, #FF3B30 100%);"><img src="images/Icons/fingerprint.png" style="width:14px;height:14px;object-fit:contain;"></div>Touch ID &amp; Password</div>
+
+                    <div style="height:1px; background:rgba(0,0,0,0.06); margin: 8px 4px;"></div>
+
+                    <!-- Users/Accounts group -->
+                    <div class="set-nav-item" id="nav-users-groups" onclick="appState.setSettingsView('users-groups')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #A3AAB2 0%, #8A919B 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></div>Users &amp; Groups</div>
+                    <div class="set-nav-item" id="nav-internet-accounts" onclick="appState.setSettingsView('internet-accounts')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #44A6FF 0%, #007AFF 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>Internet Accounts</div>
+                    <div class="set-nav-item" id="nav-game-center" onclick="appState.setSettingsView('game-center')"><img class="set-nav-icon" src="images/Icons/low_res_Games_macOS_Golden_Gate.png" style="object-fit: cover; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255, 255, 255, 0.3);">Game Center</div>
+                    <div class="set-nav-item" id="nav-wallet-pay" onclick="appState.setSettingsView('wallet-pay')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #3A3A3C 0%, #1C1C1E 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M21 7H3c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-1 12H4c-.55 0-1-.45-1-1v-7h18v7c0 .55-.45 1-1 1zm-9-1h2v-2h2v-2h-2v-2h-2v2H8v2h2v2zM3 6h18V5H3zM5 4h14V3H5z"/></svg></div>Wallet &amp; Apple Pay</div>
+
+                    <div style="height:1px; background:rgba(0,0,0,0.06); margin: 8px 4px;"></div>
+
+                    <!-- Hardware group -->
+                    <div class="set-nav-item" id="nav-keyboard" onclick="appState.setSettingsView('keyboard')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #A3AAB2 0%, #8A919B 100%);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="10" x2="6" y2="10"/><line x1="10" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="14" y2="10"/><line x1="18" y1="10" x2="18" y2="10"/><line x1="6" y1="14" x2="6" y2="14"/><line x1="18" y1="14" x2="18" y2="14"/><line x1="10" y1="14" x2="14" y2="14"/></svg></div>Keyboard</div>
+                    <div class="set-nav-item" id="nav-trackpad" onclick="appState.setSettingsView('trackpad')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #A3AAB2 0%, #8A919B 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="3"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>Trackpad</div>
+                    <div class="set-nav-item" id="nav-mouse" onclick="appState.setSettingsView('mouse')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #A3AAB2 0%, #8A919B 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="5"/><line x1="12" y1="2" x2="12" y2="10"/></svg></div>Mouse</div>
+                    <div class="set-nav-item" id="nav-printers-scanners" onclick="appState.setSettingsView('printers-scanners')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #A3AAB2 0%, #8A919B 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></div>Printers &amp; Scanners</div>
+                    <div class="set-nav-item" id="nav-battery" onclick="appState.setSettingsView('battery')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #4CD964 0%, #34C759 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="1" y="7" width="18" height="11" rx="2"/><path d="M23 11v3"/><line x1="5" y1="12" x2="12" y2="12" stroke="white" stroke-width="2"/></svg></div>Battery</div>
+                    <div class="set-nav-item" id="nav-sharing" onclick="appState.setSettingsView('sharing')"><div class="set-nav-icon" style="background: linear-gradient(180deg, #44A6FF 0%, #007AFF 100%);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>Sharing</div>
+
+                </div>
+            </div>
+            <div class="settings-main">
+                <div class="window-header" style="height: 52px; display: flex; align-items: center; padding: 0 20px; position: relative;">
+                    <div style="display:flex; gap: 8px; color: #999; background: #ffffff; padding: 4px 8px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 0.5px solid rgba(0,0,0,0.05);">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:var(--default-cursor);"><path d="M15 18l-6-6 6-6"/></svg>
+                        <div style="width: 1px; background: #e5e5ea; height: 14px;"></div>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" opacity="0.3" style="cursor:var(--default-cursor);"><path d="M9 18l6-6-6-6"/></svg>
+                    </div>
+                    <div style="position: absolute; left: 0; right: 0; text-align: center; font-weight: 600; font-size: 13px; color: #1d1d1f; pointer-events: none;" id="settings-main-title">Appearance</div>
+                </div>
+                <div id="settings-content-area" style="flex: 1; overflow-y: auto; padding-bottom: 30px;"></div>
+            </div>
+        </div>
+
+        <div id="context-menu" class="context-menu">
+            <div id="cm-finder-item">
+                <div class="menu-item" id="menu-open"><span>Open</span></div>
+                <div class="menu-divider"></div>
+                <div class="menu-item" id="menu-quicklook"><span>Quick Look</span> <span class="menu-shortcut">Space</span></div>
+                <div class="menu-divider"></div>
+                <div class="menu-item" id="menu-getinfo"><span>Get Info</span> <span class="menu-shortcut">⌘I</span></div>
+                <div class="menu-divider"></div>
+                <div class="menu-item" id="menu-copy"><span>Copy</span> <span class="menu-shortcut">⌘C</span></div>
+                <div class="menu-item" id="menu-cut"><span>Cut</span> <span class="menu-shortcut">⌘X</span></div>
+                <div class="menu-item" id="menu-paste"><span>Paste</span> <span class="menu-shortcut">⌘V</span></div>
+                <div class="menu-item" id="menu-duplicate"><span>Duplicate</span> <span class="menu-shortcut">⌘D</span></div>
+                <div class="menu-divider"></div>
+                <div class="menu-item" id="menu-rename"><span>Rename</span></div>
+                <div class="menu-item" id="menu-delete" style="color: #ff453a;"><span>Move to Trash</span> <span class="menu-shortcut">⌘⌫</span></div>
+            </div>
+            <div id="cm-finder-bg" style="display:none;">
+                <div class="menu-item" onclick="document.getElementById('desktop-icons-container').style.opacity='0'; setTimeout(()=>document.getElementById('desktop-icons-container').style.opacity='1', 150); const cm = document.getElementById('context-menu'); if(cm) cm.classList.remove('active');"><span>Refresh</span></div>
+                <div class="menu-divider"></div>
+                <div class="menu-item" onclick="document.getElementById('context-menu').classList.remove('active'); window.dispatchEvent(new CustomEvent('finder-new-folder'))"><span>New Folder</span></div>
+                <div class="menu-divider"></div>
+                <div class="menu-item" onclick="document.getElementById('context-menu').classList.remove('active'); document.getElementById('menu-paste').click()"><span>Paste Item</span></div>
+            </div>
+            <div id="cm-desktop" style="display:none;">
+                <div class="menu-item" onclick="appState.openApp('finder'); document.getElementById('context-menu').classList.remove('active');"><span>New Folder</span></div>
+                <div class="menu-item disabled"><span>Get Info</span></div>
+                <div class="menu-item" onclick="appState.setSettingsView('wallpaper'); appState.openApp('settings'); document.getElementById('context-menu').classList.remove('active');"><span>Change Wallpaper…</span></div>
+                <div class="menu-divider"></div>
+                <div class="menu-item disabled"><span>Use Stacks</span></div>
+                <div class="menu-item has-submenu disabled"><span>Group Stacks By</span></div>
+                <div class="menu-item has-submenu disabled"><span>Sort By</span></div>
+                <div class="menu-divider"></div>
+                <div class="menu-item" onclick="if(window.DesktopIcons) DesktopIcons.cleanUp(); const cm = document.getElementById('context-menu'); if(cm) cm.classList.remove('active');"><span>Clean Up</span></div>
+                <div class="menu-item has-submenu disabled"><span>Clean Up By</span></div>
+                <div class="menu-divider"></div>
+                <div class="menu-item disabled"><span>Show View Options</span></div>
+            </div>
+            <div id="cm-dock" style="display:none;">
+                <div class="menu-item disabled"><span>Options</span></div>
+                <div class="menu-divider"></div>
+                <div class="menu-item disabled"><span>Show All Windows</span></div>
+            </div>
+            <div id="cm-window" style="display:none;">
+                <div class="menu-item disabled"><span>Minimize</span></div>
+                <div class="menu-item disabled"><span>Move to Center</span></div>
+                <div class="menu-divider"></div>
+                <div class="menu-item disabled"><span>Full Screen</span></div>
+            </div>
+        </div>
+
+        <div id="custom-prompt" class="mac-window" style="width: 300px; height: 160px; flex-direction: column; z-index: 6000; align-items:center; justify-content:center; text-align:center; padding: 20px; background: rgba(255, 255, 255, 0.72); backdrop-filter: blur(45px) saturate(190%); -webkit-backdrop-filter: blur(45px) saturate(190%);">
+            <div style="font-weight: 600; font-size: 15px; margin-bottom: 8px;">Rename Item</div>
+            <input type="text" id="prompt-input" style="width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #555; background: rgba(0,0,0,0.5); color: white; margin-bottom: 16px; outline:none; font-family:inherit;">
+            <div style="display:flex; gap:10px; width: 100%;">
+                <button onclick="appState.closeApp('custom-prompt')" style="flex:1; padding: 6px; border-radius: 6px; background: rgba(255,255,255,0.1); color:white; border:none; cursor:pointer;">Cancel</button>
+                <button id="prompt-confirm" style="flex:1; padding: 6px; border-radius: 6px; background: #0a84ff; color:white; border:none; cursor:pointer; font-weight:500;">OK</button>
+            </div>
+        </div>
+
+        <!-- Quick Look Overlay -->
+        <div id="quicklook-overlay" class="quicklook-overlay" onclick="if(event.target===this) toggleQuickLook()">
+            <div class="quicklook-modal">
+                <div class="ql-header">
+                    <button class="ql-close" onclick="toggleQuickLook()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                    <div class="ql-title" id="ql-title">Preview</div>
+                    <div style="width: 24px;"></div>
+                </div>
+                <div class="ql-content">
+                    <img id="ql-icon" class="ql-icon" src="" alt="Icon">
+                    <div class="ql-info-name" id="ql-name">Name</div>
+                    <div class="ql-info-meta" id="ql-meta">Kind<br>Size<br>Modified</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="macos-topbar" id="macos-topbar">
+            <div class="topbar-left" id="topbar-left-menus">
+            </div>
+            <div class="topbar-right">
+                <div class="menu-right" style="position: absolute; right: 16px; top: 0; height: 100%; display: flex; align-items: center; gap: 14px; color: white; font-size: 13px; font-weight: 500;">
+                    <i class="fas fa-wifi" style="cursor:pointer;" onclick="if(window.MacIsland) MacIsland.dispatch({type:'notification', data:{title:'Wi-Fi', subtitle:'Connected to Network', icon:'fas fa-wifi'}, duration: 2000})"></i>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="cursor:pointer;" onclick="if(window.MacIsland) MacIsland.dispatch({type:'notification', data:{title:'Display', subtitle:'AirPlay active', icon:'fas fa-desktop'}, duration: 2000})"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                    <div style="display:flex; align-items:center; gap:4px; cursor:pointer;" onclick="if(window.MacIsland) MacIsland.battery(100)">
+                        <i class="fas fa-battery-full" style="font-size:14px; transform:rotate(-90deg); margin-right:2px;"></i>
+                        <span>100%</span>
+                    </div>
+                    <div id="cc-toggle" style="display:flex; flex-direction:column; gap:3px; cursor:pointer; padding: 0 6px; align-items:center; justify-content:center;" onclick="if(window.MacIsland) MacIsland.focus('Do Not Disturb')">
+                        <div style="width:12px; height:5px; border-radius:2.5px; border:1px solid rgba(255,255,255,0.9); position:relative;"><div style="width:3px; height:3px; background:white; border-radius:50%; position:absolute; top:0px; left:1px;"></div></div>
+                        <div style="width:12px; height:5px; border-radius:2.5px; border:1px solid rgba(255,255,255,0.9); position:relative;"><div style="width:3px; height:3px; background:white; border-radius:50%; position:absolute; top:0px; right:1px;"></div></div>
+                    </div>
+                    <span id="clock" style="cursor:pointer;" onclick="if(window.MacIsland) MacIsland.dispatch({type:'timer', data:{time:'05:00'}, autoDismiss:false})">Tue 9:41 AM</span>
+                </div>
+            </div>
+        </div>
+        <div id="dropdown-menus-container"></div>
+
+        <div class="island-system" id="islandSystem">
+            <div class="dynamic-island" id="dynamicIsland">
+                <div class="island-camera-cluster">
+                    <div class="island-privacy-dot"></div>
+                    <div class="island-camera-cutout"></div>
+                </div>
+                <div class="island-idle-content" id="islandIdle"></div>
+                <div class="island-content-wrapper" id="islandContent"></div>
+            </div>
+            <div class="dynamic-island-bubble" id="islandBubble">
+                <img src="images/Avatars/Profile-avatar.png" alt="Profile">
+                <span class="bubble-text">Joy Kumbhakar</span>
+            </div>
+        </div>
+
+        <div id="dock-context-menu" class="dock-context-menu">
+            <div class="dock-context-caret"></div>
+            <div id="dock-context-items"></div>
+        </div>
+        <div class="dock-wrapper">
+            <div class="dock-panel" id="dockPanel">
+                <div class="dock-stage" id="dockStage"></div>
+            </div>
+        </div>
+
+        <div id="launchpad" class="launchpad-overlay" onclick="if(event.target===this || event.target.classList.contains('launchpad-content')) toggleLaunchpad()">
+            <div class="launchpad-content">
+                <div class="launchpad-search-container">
+                    <svg class="launchpad-search-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" class="launchpad-search" id="launchpad-search" placeholder="Search Applications" oninput="filterLaunchpad(this.value)">
+                </div>
+                <div class="launchpad-grid" id="launchpad-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- Control Center Panel -->
+    <div id="control-center" class="mac-control-center">
+        <!-- Top Row: Network & Focus -->
+        <div style="display:flex; gap: 12px; margin-bottom: 12px;">
+            
+            <!-- Network Block -->
+            <div class="cc-block" style="flex:1; padding: 12px; display:flex; flex-direction:column; gap:12px;">
+                <div class="cc-row">
+                    <div class="cc-icon-circle active"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><circle cx="12" cy="20" r="1" fill="white" stroke="none"></circle></svg></div>
+                    <div class="cc-text-col"><span class="cc-title">Wi-Fi</span><span class="cc-sub">Home_Network</span></div>
+                </div>
+                <div class="cc-row" style="cursor:pointer;" onclick="const s=MacSettings.state.bluetoothOn; MacSettings.setBluetooth(!s); this.querySelector('.cc-icon-circle').classList.toggle('active', !s); this.querySelector('.cc-sub').innerText = !s ? 'On' : 'Off';">
+                    <div class="cc-icon-circle active"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M6.5 6.5l11 11L12 23V1l5.5 5.5-11 11"></path></svg></div>
+                    <div class="cc-text-col"><span class="cc-title">Bluetooth</span><span class="cc-sub" id="cc-bt-status">On</span></div>
+                </div>
+                <div class="cc-row">
+                    <div class="cc-icon-circle active"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 3"></path></svg></div>
+                    <div class="cc-text-col"><span class="cc-title">AirDrop</span><span class="cc-sub">Contacts Only</span></div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div style="flex:1; display:flex; flex-direction:column; gap: 12px;">
+                <!-- Focus -->
+                <div class="cc-block" style="flex:1; display:flex; align-items:center; gap: 10px; padding: 0 12px;">
+                    <div class="cc-icon-circle" style="background: rgba(255,255,255,0.1);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></div>
+                    <span class="cc-title">Focus</span>
+                </div>
+                <!-- Small toggles grid -->
+                <div style="display:flex; gap: 12px; height: 60px;">
+                    <div class="cc-block" style="flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap: 4px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                    </div>
+                    <div class="cc-block" style="flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap: 4px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><path d="M6 8h.01"></path><path d="M10 8h.01"></path><path d="M14 8h.01"></path><path d="M18 8h.01"></path><path d="M8 12h8"></path></svg>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Display Slider -->
+        <div class="cc-block" style="margin-bottom: 12px; padding: 12px; display:flex; flex-direction:column; gap: 10px;">
+            <span class="cc-title">Display</span>
+            <div class="cc-slider-container">
+                <div class="cc-slider-fill" style="width: 70%;"></div>
+                <div class="cc-slider-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></div>
+            </div>
+        </div>
+
+        <!-- Sound Slider -->
+        <div class="cc-block" style="margin-bottom: 12px; padding: 12px; display:flex; flex-direction:column; gap: 10px;">
+            <span class="cc-title">Sound</span>
+            <div class="cc-slider-container">
+                <div class="cc-slider-fill" style="width: 45%;"></div>
+                <div class="cc-slider-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg></div>
+            </div>
+        </div>
+
+        <!-- Now Playing -->
+        <div class="cc-block" style="padding: 12px; display:flex; align-items:center; gap: 12px;">
+            <div style="width: 48px; height: 48px; background: rgba(255,255,255,0.1); border-radius: 8px; display:flex; align-items:center; justify-content:center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+            </div>
+            <div class="cc-text-col" style="flex:1;">
+                <span class="cc-title">Not Playing</span>
+            </div>
+            <div style="display:flex; gap:12px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5" stroke="white" stroke-width="2"></line></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19" stroke="white" stroke-width="2"></line></svg>
+            </div>
+        </div>
+
+        <div id="selection-box" class="selection-box"></div>
+    </div>
+
+    <script src="finder.js?v=12"></script>
+    <script src="settings_engine.js?v=12"></script>
+    <script src="script.js?v=23"></script>
+    <script src="island.js?v=13"></script>
+    <!-- YouTube Iframe API for Real Audio Playback -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <!-- React & Babel for Apple Music App -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+        <!-- System Overlay for Shutdown / Restart / Boot -->
+        <div id="system-overlay" style="position:fixed; inset:0; z-index:20000; background:#000000; display:none; flex-direction:column; align-items:center; justify-content:center; opacity:0; transition: opacity 0.5s ease;">
+            <!-- Boot Logo & Progress Bar -->
+            <div id="boot-container" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap: 40px; margin-bottom: 80px;">
+                <svg viewBox="0 0 384 512" width="72" height="96" fill="white"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+                <div style="width: 220px; height: 5px; background: #333333; border-radius: 4px; overflow: hidden;">
+                    <div id="boot-progress" style="width: 0%; height: 100%; background: #ffffff; border-radius: 4px; transition: width 0.1s linear;"></div>
+                </div>
+            </div>
+            <div id="system-spinner" style="display:none; width:36px; height:36px; border:4px solid rgba(255,255,255,0.15); border-radius:50%; border-top-color:#ffffff; animation:spin 1s ease-in-out infinite;"></div>
+        </div>
+
+    <!-- Apple Music App Components -->
+    <script src="apps/Music/mockData.js?v=4"></script>
+    <script type="text/babel" src="apps/Music/MusicApp.jsx?v=7"></script>
+
+    <!-- Brightness overlay -->
+    <div id="brightness-overlay" style="position:fixed;inset:0;background:black;opacity:0;pointer-events:none;z-index:99999;transition:opacity 0.3s;"></div>
+    <!-- Night Shift warm tint overlay -->
+    <div id="nightshift-overlay" style="position:fixed;inset:0;background:rgba(255,147,0,1);opacity:0;pointer-events:none;z-index:99998;transition:opacity 0.5s;mix-blend-mode:multiply;"></div>
+
+</body>
+</html>

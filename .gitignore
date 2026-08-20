@@ -1,0 +1,53 @@
+﻿# Dependencies
+node_modules/
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V8
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.kate-swp
+
+# Python
+__pycache__/
+*.py[cod]
+*.class
+*.egg-info/
+dist/
+build/
+.env
+.venv
+venv/
+*.pyc
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local dev / temp
+*.bak
+*.tmp
+*.orig
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Audio tracks (too large for git — host on CDN in production)
+Tracks/
+
+# Dev prototype HTML files
+htmls/
