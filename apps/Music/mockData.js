@@ -5,55 +5,90 @@ function createGradientCover(text, artist, bgGrad, textColor = '#ffffff') {
     const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
         <defs>
+            <!-- Rich Base Gradient -->
             <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
                 ${bgGrad}
             </linearGradient>
-            <linearGradient id="gloss" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.4" />
-                <stop offset="38%" stop-color="#ffffff" stop-opacity="0.12" />
-                <stop offset="70%" stop-color="#ffffff" stop-opacity="0" />
+
+            <!-- Anisotropic Vinyl Light Sheen (Hourglass reflections) -->
+            <linearGradient id="aniso1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.3" />
+                <stop offset="30%" stop-color="#ffffff" stop-opacity="0.08" />
+                <stop offset="50%" stop-color="#ffffff" stop-opacity="0.2" />
+                <stop offset="70%" stop-color="#ffffff" stop-opacity="0.04" />
+                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.22" />
             </linearGradient>
-            <linearGradient id="spine" x1="0%" y1="0%" x2="100%" y2="0%">
+
+            <!-- CD / Jewel Case Glass Flare -->
+            <linearGradient id="glassGlare" x1="0%" y1="0%" x2="70%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.45" />
+                <stop offset="25%" stop-color="#ffffff" stop-opacity="0.16" />
+                <stop offset="55%" stop-color="#ffffff" stop-opacity="0.02" />
+                <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+            </linearGradient>
+
+            <!-- Spine Gloss -->
+            <linearGradient id="spineHighlight" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stop-color="#ffffff" stop-opacity="0.5" />
-                <stop offset="30%" stop-color="#ffffff" stop-opacity="0.1" />
-                <stop offset="100%" stop-color="#000000" stop-opacity="0.3" />
+                <stop offset="25%" stop-color="#ffffff" stop-opacity="0.12" />
+                <stop offset="85%" stop-color="#ffffff" stop-opacity="0" />
+                <stop offset="100%" stop-color="#000000" stop-opacity="0.25" />
             </linearGradient>
-            <linearGradient id="noteGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
-                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.6" />
+
+            <!-- 3D Note Gradients -->
+            <linearGradient id="noteSurface" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.98" />
+                <stop offset="60%" stop-color="#ffffff" stop-opacity="0.85" />
+                <stop offset="100%" stop-color="#f0f0f5" stop-opacity="0.72" />
+            </linearGradient>
+
+            <linearGradient id="noteRim" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.35" />
             </linearGradient>
         </defs>
 
-        <!-- Base Cover Surface -->
+        <!-- Base Cover -->
         <rect width="300" height="300" fill="url(#bg)" />
 
-        <!-- Skeuomorphic Vinyl Record Grooves -->
-        <circle cx="150" cy="150" r="135" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5" />
-        <circle cx="150" cy="150" r="118" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="1" />
-        <circle cx="150" cy="150" r="100" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1.5" />
-        <circle cx="150" cy="150" r="82" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="1" />
-        <circle cx="150" cy="150" r="65" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5" />
+        <!-- Anisotropic Vinyl Light Reflection Cones -->
+        <path d="M 0,0 L 150,150 L 300,0 Z" fill="url(#aniso1)" opacity="0.4" />
+        <path d="M 0,300 L 150,150 L 300,300 Z" fill="url(#aniso1)" opacity="0.4" />
+        <path d="M 0,0 L 150,150 L 0,300 Z" fill="url(#aniso1)" opacity="0.18" />
+        <path d="M 300,0 L 150,150 L 300,300 Z" fill="url(#aniso1)" opacity="0.18" />
 
-        <!-- 3D Embossed Music Note Shadow -->
-        <g transform="translate(0, 4)" opacity="0.35">
-            <path d="M120 200 C 120 216.5, 106.5 230, 90 230 C 73.5 230, 60 216.5, 60 200 C 60 183.5, 73.5 170, 90 170 C 100 170, 108 175, 113 183 L 113 70 L 243 40 L 243 170 C 243 186.5, 229.5 200, 213 200 C 196.5 200, 183 186.5, 183 170 C 183 153.5, 196.5 140, 213 140 C 223 140, 231 145, 236 153 L 236 55 L 120 82 Z" fill="#000000" />
-        </g>
+        <!-- High-Precision Concentric Vinyl Grooves -->
+        <circle cx="150" cy="150" r="140" fill="none" stroke="rgba(255,255,255,0.09)" stroke-width="1" />
+        <circle cx="150" cy="150" r="132" fill="none" stroke="rgba(0,0,0,0.07)" stroke-width="0.75" />
+        <circle cx="150" cy="150" r="124" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+        <circle cx="150" cy="150" r="115" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="0.75" />
+        <circle cx="150" cy="150" r="106" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1" />
+        <circle cx="150" cy="150" r="96" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="0.75" />
+        <circle cx="150" cy="150" r="86" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+        <circle cx="150" cy="150" r="74" fill="none" stroke="rgba(0,0,0,0.07)" stroke-width="0.75" />
+        <circle cx="150" cy="150" r="62" fill="none" stroke="rgba(255,255,255,0.09)" stroke-width="1" />
 
-        <!-- 3D Embossed Music Note Core -->
-        <path d="M120 200 C 120 216.5, 106.5 230, 90 230 C 73.5 230, 60 216.5, 60 200 C 60 183.5, 73.5 170, 90 170 C 100 170, 108 175, 113 183 L 113 70 L 243 40 L 243 170 C 243 186.5, 229.5 200, 213 200 C 196.5 200, 183 186.5, 183 170 C 183 153.5, 196.5 140, 213 140 C 223 140, 231 145, 236 153 L 236 55 L 120 82 Z" fill="url(#noteGrad)" />
+        <!-- Center Record Spindle Badge -->
+        <circle cx="150" cy="150" r="48" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)" stroke-width="1" />
+
+        <!-- 3D Liquid Glass Apple Music Note Depth -->
+        <path d="M120 200 C 120 216.5, 106.5 230, 90 230 C 73.5 230, 60 216.5, 60 200 C 60 183.5, 73.5 170, 90 170 C 100 170, 108 175, 113 183 L 113 70 L 243 40 L 243 170 C 243 186.5, 229.5 200, 213 200 C 196.5 200, 183 186.5, 183 170 C 183 153.5, 196.5 140, 213 140 C 223 140, 231 145, 236 153 L 236 55 L 120 82 Z" fill="#000000" opacity="0.22" transform="translate(0, 3)" />
         
-        <!-- Top Rim Light on 3D Note Beam -->
-        <path d="M113 70 L 243 40 L 243 44 L 113 74 Z" fill="#ffffff" opacity="0.8" />
+        <!-- Main 3D Note Body -->
+        <path d="M120 200 C 120 216.5, 106.5 230, 90 230 C 73.5 230, 60 216.5, 60 200 C 60 183.5, 73.5 170, 90 170 C 100 170, 108 175, 113 183 L 113 70 L 243 40 L 243 170 C 243 186.5, 229.5 200, 213 200 C 196.5 200, 183 186.5, 183 170 C 183 153.5, 196.5 140, 213 140 C 223 140, 231 145, 236 153 L 236 55 L 120 82 Z" fill="url(#noteSurface)" stroke="url(#noteRim)" stroke-width="1.5" />
+        
+        <!-- Crisp Top Beam Refraction -->
+        <path d="M113 70 L 243 40 L 243 45 L 113 75 Z" fill="#ffffff" opacity="0.9" />
 
-        <!-- Glass Jewel Case Diagonal Gloss Reflection -->
-        <path d="M 0,0 L 300,0 L 300,90 L 0,220 Z" fill="url(#gloss)" />
+        <!-- Diagonal Glass Sheen Glare across Top Half -->
+        <path d="M 0,0 L 300,0 L 300,110 L 0,230 Z" fill="url(#glassGlare)" />
 
-        <!-- Left Spine Acrylic / Bevel Highlight -->
-        <rect x="0" y="0" width="10" height="300" fill="url(#spine)" />
+        <!-- Left Spine Acrylic Jewel-Case Highlight -->
+        <rect x="0" y="0" width="10" height="300" fill="url(#spineHighlight)" />
 
-        <!-- Outer Inset Bevel Frame -->
-        <rect x="1" y="1" width="298" height="298" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="2" />
-        <rect x="2" y="2" width="296" height="296" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="1" />
+        <!-- Crisp Perimeter Bevel Outline -->
+        <rect x="0.75" y="0.75" width="298.5" height="298.5" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" />
+        <rect x="1.5" y="1.5" width="297" height="297" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="1" />
     </svg>`;
     return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
