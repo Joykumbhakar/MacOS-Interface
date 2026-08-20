@@ -316,12 +316,8 @@
 .am-card-img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.am-card:hover .am-card-img {
-    transform: scale(1.04);
+    object-fit: contain;
+    aspect-ratio: 1;
 }
 
 .am-card-play {
