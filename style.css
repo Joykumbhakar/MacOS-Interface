@@ -192,7 +192,7 @@
             position: relative; display: flex; align-items: flex-end; background: rgba(30, 30, 35, 0.4);
             backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%);
             border: 0.5px solid rgba(255, 255, 255, 0.18);
-            border-radius: 20px; padding: 5px 7px; box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            border-radius: 20px; padding: 5px 7px; box-shadow: none;
             transition: width 0.12s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease;
         }
         .dock-stage { position: relative; height: 50px; width: 100%; display: flex; align-items: flex-end; justify-content: center; }
