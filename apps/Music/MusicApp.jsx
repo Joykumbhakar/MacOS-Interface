@@ -962,7 +962,7 @@ const FloatingPlayer = () => {
 
                 {/* Center Track Details & Scrub Bar */}
                 <div className="am-player-center">
-                    <SafeImage src={currentTrack.cover} song={currentTrack} className="am-player-art" alt={currentTrack.title} />
+                    <SafeImage src={currentTrack.cover} song={currentTrack} className="am-np-cover" alt={currentTrack.title} />
                     <div className="am-player-mid">
                         <div className="am-player-titles">
                             <span className="am-player-track-name">{currentTrack.title}</span>
