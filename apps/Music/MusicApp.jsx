@@ -870,6 +870,28 @@ const SongsView = () => {
 /* --------------------------------------------------------------------------
    Floating Bottom Player
    -------------------------------------------------------------------------- */
+const AudioVisualizer = ({ isPlaying }) => {
+    const bars = [3, 5, 7, 4, 6, 8, 5, 3, 7, 6, 4, 5, 8, 3, 6, 7, 4, 5, 6, 3];
+    return (
+        <div style={{
+            position: 'absolute', inset: 0,
+            display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+            gap: '2px', padding: '0 16px', opacity: isPlaying ? 0.07 : 0.03,
+            transition: 'opacity 0.4s ease', pointerEvents: 'none', overflow: 'hidden'
+        }}>
+            {bars.map((h, i) => (
+                <div key={i} style={{
+                    width: '3px', borderRadius: '2px 2px 0 0',
+                    background: '#fa243c', flex: '1',
+                    height: isPlaying ? `${20 + h * 8}%` : '8%',
+                    transition: `height ${0.3 + (i % 5) * 0.1}s ease-in-out`,
+                    animation: isPlaying ? `visualizerPulse ${0.6 + (i % 4) * 0.2}s ease-in-out infinite alternate` : 'none'
+                }} />
+            ))}
+        </div>
+    );
+};
+
 const FloatingPlayer = () => {
     const { 
         currentTrack, isPlaying, togglePlay, playNext, playPrev, 
