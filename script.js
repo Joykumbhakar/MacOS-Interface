@@ -1099,12 +1099,12 @@ const SETTINGS_VIEWS = {
                 <span>Output volume</span>
                 <div style="display:flex;align-items:center;gap:8px;width:100%;">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/></svg>
-                    <input type="range" min="0" max="100" value="${MacSettings.state.outputVolume}" oninput="MacSettings.setVolume(+this.value);" style="flex:1;accent-color:${MacSettings.state.accentColor};">
+                    <input type="range" min="0" max="100" value="${MacSettings.state.outputVolume}" oninput="MacSettings.setVolume(+this.value);" style="flex:1">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
                 </div>
             </div>
             
-            ${setRow('Balance', '<input type="range" min="0" max="100" value="50" style="width:100px;accent-color:'+MacSettings.state.accentColor+';">')}
+            ${setRow('Balance', '<input type="range" min="0" max="100" value="50" style="width:100px">')}
             
             ${setRow('Play sound on startup', toggleHTML('t-startup-sound', false))}
         `)}
@@ -1120,7 +1120,7 @@ const SETTINGS_VIEWS = {
             
             <div class="set-row" style="flex-direction:column;align-items:flex-start;gap:8px;padding:12px 16px;">
                 <span>Input volume</span>
-                <input type="range" min="0" max="100" value="${MacSettings.state.inputVolume}" oninput="MacSettings.state.inputVolume=+this.value;MacSettings.save();" style="width:100%;accent-color:${MacSettings.state.accentColor};">
+                <input type="range" min="0" max="100" value="${MacSettings.state.inputVolume}" oninput="MacSettings.state.inputVolume=+this.value;MacSettings.save();" style="width:100%">
             </div>
         `)}
         ${setSection('Sound Effects', `
@@ -1292,7 +1292,7 @@ const SETTINGS_VIEWS = {
         ${setSection('Dock', `
             <div class="set-row" style="flex-direction:column;align-items:flex-start;gap:8px;padding:12px 16px;">
                 <span>Size</span>
-                <input type="range" min="24" max="80" value="${MacSettings.state.dockSize}" oninput="MacSettings.setDockSize(+this.value);" style="width:100%;accent-color:${MacSettings.state.accentColor};">
+                <input type="range" min="24" max="80" value="${MacSettings.state.dockSize}" oninput="MacSettings.setDockSize(+this.value);" style="width:100%">
             </div>
             
             ${setRow('Magnification', toggleHTML('t-magnify', MacSettings.state.dockMagnify))}
@@ -1558,12 +1558,12 @@ const SETTINGS_VIEWS = {
         ${setSection('', `
             <div class="set-row" style="flex-direction:column;align-items:flex-start;gap:8px;padding:12px 16px;">
                 <span>Key repeat rate</span>
-                <div style="display:flex;align-items:center;gap:8px;width:100%;"><span style="font-size:11px;color:#999;">Slow</span><input type="range" min="0" max="100" value="70" style="flex:1;accent-color:#0a84ff;"><span style="font-size:11px;color:#999;">Fast</span></div>
+                <div style="display:flex;align-items:center;gap:8px;width:100%;"><span style="font-size:11px;color:#999;">Slow</span><input type="range" min="0" max="100" value="70" style="flex:1"><span style="font-size:11px;color:#999;">Fast</span></div>
             </div>
             
             <div class="set-row" style="flex-direction:column;align-items:flex-start;gap:8px;padding:12px 16px;">
                 <span>Delay until repeat</span>
-                <div style="display:flex;align-items:center;gap:8px;width:100%;"><span style="font-size:11px;color:#999;">Long</span><input type="range" min="0" max="100" value="60" style="flex:1;accent-color:#0a84ff;"><span style="font-size:11px;color:#999;">Short</span></div>
+                <div style="display:flex;align-items:center;gap:8px;width:100%;"><span style="font-size:11px;color:#999;">Long</span><input type="range" min="0" max="100" value="60" style="flex:1"><span style="font-size:11px;color:#999;">Short</span></div>
             </div>
             
             ${setRow('Adjust keyboard brightness in low light', toggleHTML('t-kbd-brightness', true))}
@@ -1592,7 +1592,7 @@ const SETTINGS_VIEWS = {
         ${setSection('Point & Click', `
             <div class="set-row" style="flex-direction:column;align-items:flex-start;gap:8px;padding:12px 16px;">
                 <span>Tracking speed</span>
-                <div style="display:flex;align-items:center;gap:8px;width:100%;"><span style="font-size:11px;color:#999;">Slow</span><input type="range" min="0" max="100" value="60" style="flex:1;accent-color:#0a84ff;"><span style="font-size:11px;color:#999;">Fast</span></div>
+                <div style="display:flex;align-items:center;gap:8px;width:100%;"><span style="font-size:11px;color:#999;">Slow</span><input type="range" min="0" max="100" value="60" style="flex:1"><span style="font-size:11px;color:#999;">Fast</span></div>
             </div>
             
             ${setRow('Click', setSelect('Light'))}
@@ -1830,7 +1830,7 @@ const SETTINGS_VIEWS = {
         ${setSection('', `
             <div class="set-row" style="flex-direction:column;align-items:flex-start;gap:8px;padding:12px 16px;">
                 <span>Tracking speed</span>
-                <div style="display:flex;align-items:center;gap:8px;width:100%;"><span style="font-size:11px;color:#999;">Slow</span><input type="range" min="0" max="100" value="55" style="flex:1;accent-color:#0a84ff;"><span style="font-size:11px;color:#999;">Fast</span></div>
+                <div style="display:flex;align-items:center;gap:8px;width:100%;"><span style="font-size:11px;color:#999;">Slow</span><input type="range" min="0" max="100" value="55" style="flex:1"><span style="font-size:11px;color:#999;">Fast</span></div>
             </div>
             
             ${setRow('Natural scrolling', toggleHTML('t-mouse-natural', true))}
@@ -1839,7 +1839,7 @@ const SETTINGS_VIEWS = {
             
             <div class="set-row" style="flex-direction:column;align-items:flex-start;gap:8px;padding:12px 16px;">
                 <span>Double-click speed</span>
-                <div style="display:flex;align-items:center;gap:8px;width:100%;"><span style="font-size:11px;color:#999;">Slow</span><input type="range" min="0" max="100" value="65" style="flex:1;accent-color:#0a84ff;"><span style="font-size:11px;color:#999;">Fast</span></div>
+                <div style="display:flex;align-items:center;gap:8px;width:100%;"><span style="font-size:11px;color:#999;">Slow</span><input type="range" min="0" max="100" value="65" style="flex:1"><span style="font-size:11px;color:#999;">Fast</span></div>
             </div>
         `)}`,
 
@@ -1974,7 +1974,7 @@ const SETTINGS_VIEWS = {
                         <div style="display:flex;flex-direction:column;gap:14px;">
                             ${['Automatically based on mouse or trackpad','When scrolling','Always'].map((opt,i) => `
                             <label style="display:flex;align-items:center;gap:10px;font-size:13px;color:#1d1d1f;cursor:pointer;">
-                                <input type="radio" name="scrollbars" ${i===0?'checked':''} style="width:16px;height:16px;accent-color:#0a84ff;margin:0;">
+                                <input type="radio" name="scrollbars" ${i===0?'checked':''} style="width:16px;height:16px">
                                 ${opt}
                             </label>`).join('')}
                         </div>
@@ -3213,6 +3213,7 @@ window.SystemActions = {
 document.addEventListener('DOMContentLoaded', () => {
     MenuSystem.init();
 });
+
 
 
 
