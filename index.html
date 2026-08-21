@@ -40,7 +40,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="style.css?v=23">
+    <link rel="stylesheet" href="style.css?v=24">
     <link rel="stylesheet" href="apps/Music/MusicApp.css?v=12">
 
     <!-- Tailwind (utility classes) -->
@@ -49,7 +49,15 @@
 <body>
     <!-- Power Off Screen -->
     <div id="power-off-screen" style="position:fixed; inset:0; z-index:30000; background:#000; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="startMac()">
-        <span style="color:#333; font-size:12px; font-family:-apple-system, sans-serif; letter-spacing:2px; animation: pulse 2s infinite;">CLICK TO POWER ON</span>
+        <div class="mac-power-btn-wrapper">
+            <div class="mac-power-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                    <line x1="12" y1="2" x2="12" y2="12"></line>
+                </svg>
+            </div>
+            <span class="mac-power-text">Click to power on</span>
+        </div>
     </div>
 
     <!-- Boot Screen -->
@@ -850,6 +858,8 @@ window.shutDownMac = shutDownMac;
 </script>
 </body>
 </html>
+
+
 
 
 
