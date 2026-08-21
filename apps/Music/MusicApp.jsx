@@ -706,20 +706,20 @@ const SearchView = () => {
     const { data, searchQuery, playSong } = useContext(PlayerContext);
 
     const categories = [
-        { name: 'Apple Music Radio', color: 'linear-gradient(135deg, #fa243c, #ff5e62)', icon: 'radio' },
-        { name: 'Pop', color: 'linear-gradient(135deg, #ff416c, #ff4b2b)', icon: 'heart' },
-        { name: 'Hits', color: 'linear-gradient(135deg, #f7971e, #ffd200)', icon: 'flame' },
-        { name: 'R&B', color: 'linear-gradient(135deg, #8e2de2, #4a00e0)', icon: 'disc' },
-        { name: 'Charts', color: 'linear-gradient(135deg, #11998e, #38ef7d)', icon: 'trending-up' },
-        { name: 'Decades', color: 'linear-gradient(135deg, #e65c00, #f9d423)', icon: 'history' },
-        { name: 'Music Videos', color: 'linear-gradient(135deg, #f857a6, #ff5858)', icon: 'video' },
-        { name: 'DJ Mixes', color: 'linear-gradient(135deg, #4776e6, #8e54e9)', icon: 'sliders' },
-        { name: 'Coming Soon', color: 'linear-gradient(135deg, #ec008c, #fc6767)', icon: 'calendar' },
-        { name: 'Hip-Hop', color: 'linear-gradient(135deg, #00c6ff, #0072ff)', icon: 'mic' },
-        { name: 'Country', color: 'linear-gradient(135deg, #d38312, #a83279)', icon: 'guitar' },
-        { name: 'Latin', color: 'linear-gradient(135deg, #ff0844, #ffb199)', icon: 'zap' },
-        { name: 'Chill', color: 'linear-gradient(135deg, #43e97b, #38f9d7)', icon: 'cloud' },
-        { name: 'Fitness', color: 'linear-gradient(135deg, #f83600, #f9d423)', icon: 'flame' }
+        { name: 'Apple Music Radio', color: 'linear-gradient(135deg, #C12B3B, #E15A68)', icon: 'radio' },
+        { name: 'Pop', color: 'linear-gradient(135deg, #596191, #7A84BC)', icon: 'heart' },
+        { name: 'Hits', color: 'linear-gradient(135deg, #B16238, #D8895C)', icon: 'flame' },
+        { name: 'R&B', color: 'linear-gradient(135deg, #463973, #6B5D9A)', icon: 'disc' },
+        { name: 'Charts', color: 'linear-gradient(135deg, #2E6B56, #4C977D)', icon: 'trending-up' },
+        { name: 'Decades', color: 'linear-gradient(135deg, #7A5B41, #A38062)', icon: 'history' },
+        { name: 'Music Videos', color: 'linear-gradient(135deg, #8A3D5B, #B86485)', icon: 'video' },
+        { name: 'DJ Mixes', color: 'linear-gradient(135deg, #374665, #5A6A8F)', icon: 'sliders' },
+        { name: 'Coming Soon', color: 'linear-gradient(135deg, #535456, #7C7D80)', icon: 'calendar' },
+        { name: 'Hip-Hop', color: 'linear-gradient(135deg, #30588C, #5684BF)', icon: 'mic' },
+        { name: 'Country', color: 'linear-gradient(135deg, #7A4231, #A36450)', icon: 'guitar' },
+        { name: 'Latin', color: 'linear-gradient(135deg, #9C3848, #C95E70)', icon: 'zap' },
+        { name: 'Chill', color: 'linear-gradient(135deg, #427680, #6BA3AE)', icon: 'cloud' },
+        { name: 'Fitness', color: 'linear-gradient(135deg, #B54228, #E36447)', icon: 'flame' }
     ];
 
     const filteredSongs = searchQuery.trim() === '' 

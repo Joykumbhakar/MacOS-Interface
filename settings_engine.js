@@ -8,8 +8,8 @@ const MacSettings = {
     state: JSON.parse(localStorage.getItem('macSettings') || 'null') || {
         appearance:    'light',
         accentColor:   '#0a84ff',
-        wallpaper:     'images/Wallpapers/27-Golden-Gate.jpg',
-        lockWallpaper: 'images/Wallpapers/lockscreen_wallpaper_defualt.jpg',
+        wallpaper:     'images/Wallpapers/26-Tahoe-Light-6K.jpg',
+        lockWallpaper: 'images/Wallpapers/27-Golden-Gate-Dark.jpg',
         lockPassword:  '',
         userName:      'Ashley Rico',
         dockSize:      48,
@@ -41,6 +41,15 @@ const MacSettings = {
 
     // ── Apply all settings on boot ─────────────────────────────────────────
     applyAll() {
+        // Upgrade legacy default wallpapers from localStorage
+        if (this.state.wallpaper === 'images/Wallpapers/27-Golden-Gate.jpg') {
+            this.state.wallpaper = 'images/Wallpapers/26-Tahoe-Light-6K.jpg';
+        }
+        if (this.state.lockWallpaper === 'images/Wallpapers/lockscreen_wallpaper_defualt.jpg') {
+            this.state.lockWallpaper = 'images/Wallpapers/27-Golden-Gate-Dark.jpg';
+        }
+        this.save();
+
         this.applyAppearance(this.state.appearance);
         this.applyWallpaper(this.state.wallpaper);
         this.applyLockWallpaper(this.state.lockWallpaper);
@@ -289,3 +298,4 @@ const MacSettings = {
 
 // Expose globally
 window.MacSettings = MacSettings;
+

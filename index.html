@@ -40,16 +40,31 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="style.css?v=31">
-    <link rel="stylesheet" href="apps/Music/MusicApp.css?v=9">
+    <link rel="stylesheet" href="style.css?v=21">
+    <link rel="stylesheet" href="apps/Music/MusicApp.css?v=12">
 
     <!-- Tailwind (utility classes) -->
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
+<link rel="stylesheet" href="apps/Calculator/CalculatorApp.css?v=1"></head>
 <body>
+    <!-- Power Off Screen -->
+    <div id="power-off-screen" style="position:fixed; inset:0; z-index:30000; background:#000; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="startMac()">
+        <span style="color:#333; font-size:12px; font-family:-apple-system, sans-serif; letter-spacing:2px; animation: pulse 2s infinite;">CLICK TO POWER ON</span>
+    </div>
+
+    <!-- Boot Screen -->
+    <div id="boot-screen" style="position:fixed; inset:0; z-index:20000; background:#000; display:none; flex-direction:column; align-items:center; justify-content:center;">
+        <i class="fab fa-apple" style="font-size: 80px; color: white;"></i>
+        <div style="width:200px; height:4px; background:#333; border-radius:2px; margin-top:60px; overflow:hidden;">
+            <div id="boot-progress" style="width:0%; height:100%; background:white; border-radius:2px;"></div>
+        </div>
+    </div>
+
 
     <!-- Lock Screen -->
-    <div id="lock-screen" style="position:fixed; inset:0; z-index:10000; display:flex; flex-direction:column; align-items:center; justify-content:space-between; background: url('images/Wallpapers/lockscreen_wallpaper_defualt.jpg') no-repeat center center / cover; transition: opacity 0.6s ease, transform 0.6s ease; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
+    <div id="lock-screen" style="position:fixed; inset:0; z-index:10000; display:flex; flex-direction:column; align-items:center; justify-content:space-between; background: url('images/Wallpapers/27-Golden-Gate-Dark.jpg') no-repeat center center / cover; transition: opacity 0.6s ease, transform 0.6s ease; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
+          
+          
         
         <!-- Top Status Bar Area -->
         <div style="width: 100%; padding: 6px 20px; display:flex; justify-content:flex-end; color:#ffffff; font-size: 13px; font-weight: 500;">
@@ -108,7 +123,7 @@
                         </g>
                     </svg>
                 </div>
-                <div style="color: rgba(255,255,255,0.7); font-size: 13px; font-weight: 400; margin-top:10px;" onclick="document.getElementById('ls-pwd-container').style.display='block'; document.getElementById('lock-password').focus(); this.parentElement.style.display='none';">Touch ID or Enter Password</div>
+                <div style="color: rgba(255,255,255,0.9); font-size: 14px; font-weight: 500; margin-top:15px; padding: 8px 16px; background: rgba(255,255,255,0.15); border-radius: 12px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.2);" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'" onclick="document.getElementById('ls-pwd-container').style.display='block'; document.getElementById('lock-password').focus(); this.parentElement.style.display='none';">Unlock with Password</div>
             </div>
         </div>
 
@@ -695,9 +710,9 @@
     </div>
 
     <script src="finder.js?v=12"></script>
-    <script src="settings_engine.js?v=12"></script>
-    <script src="script.js?v=23"></script>
-    <script src="island.js?v=13"></script>
+    <script src="settings_engine.js?v=13"></script>
+    <script src="script.js?v=25"></script>
+    <script src="island.js?v=14"></script>
     <!-- YouTube Iframe API for Real Audio Playback -->
     <script src="https://www.youtube.com/iframe_api"></script>
     <!-- React & Babel for Apple Music App -->
@@ -708,7 +723,7 @@
         <div id="system-overlay" style="position:fixed; inset:0; z-index:20000; background:#000000; display:none; flex-direction:column; align-items:center; justify-content:center; opacity:0; transition: opacity 0.5s ease;">
             <!-- Boot Logo & Progress Bar -->
             <div id="boot-container" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap: 40px; margin-bottom: 80px;">
-                <svg viewBox="0 0 384 512" width="72" height="96" fill="white"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+                <i class="fab fa-apple" style="font-size: 80px; color: white;"></i>
                 <div style="width: 220px; height: 5px; background: #333333; border-radius: 4px; overflow: hidden;">
                     <div id="boot-progress" style="width: 0%; height: 100%; background: #ffffff; border-radius: 4px; transition: width 0.1s linear;"></div>
                 </div>
@@ -717,13 +732,131 @@
         </div>
 
     <!-- Apple Music App Components -->
-    <script src="apps/Music/mockData.js?v=11"></script>
-    <script type="text/babel" src="apps/Music/MusicApp.jsx?v=19"></script>
+    <script src="apps/Music/mockData.js?v=14"></script>
+    <script type="text/babel" src="apps/Music/MusicApp.jsx?v=20"></script>
 
     <!-- Brightness overlay -->
     <div id="brightness-overlay" style="position:fixed;inset:0;background:black;opacity:0;pointer-events:none;z-index:99999;transition:opacity 0.3s;"></div>
     <!-- Night Shift warm tint overlay -->
     <div id="nightshift-overlay" style="position:fixed;inset:0;background:rgba(255,147,0,1);opacity:0;pointer-events:none;z-index:99998;transition:opacity 0.5s;mix-blend-mode:multiply;"></div>
 
+<script type="text/babel" src="apps/Calculator/CalculatorApp.jsx?v=1"></script>
+<script>
+function playMacChime() {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    // An elegant synthetic Mac startup chime (F# major chord)
+    const frequencies = [369.99, 466.16, 554.37]; // F#4, A#4, C#5
+    const now = ctx.currentTime;
+    
+    frequencies.forEach((freq) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.3, now + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 4);
+        
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        
+        osc.start(now);
+        osc.stop(now + 4);
+    });
+}
+
+function startMac() {
+    document.getElementById('power-off-screen').style.display = 'none';
+    const bootScreen = document.getElementById('boot-screen');
+    bootScreen.style.display = 'flex';
+    
+    // Play sound
+    playMacChime();
+    
+    // Animate progress bar
+    const progress = document.getElementById('boot-progress');
+    let width = 0;
+    const interval = setInterval(() => {
+        width += Math.random() * 5;
+        if (width >= 100) {
+            width = 100;
+            clearInterval(interval);
+            setTimeout(() => {
+                bootScreen.style.opacity = '0';
+                bootScreen.style.transition = 'opacity 0.6s ease';
+                setTimeout(() => {
+                    bootScreen.style.display = 'none';
+                    // Trigger island popup now that lockscreen is shown
+                    setTimeout(() => {
+                        if (window.MacIsland) {
+                            window.MacIsland.notification('Security', 'Set your Password', 'images/Icons/password.png', 5000);
+                        }
+                    }, 500);
+                }, 600);
+            }, 300);
+        }
+        progress.style.width = width + '%';
+    }, 100);
+}
+
+// Add shut down functionality
+function shutDownMac() {
+    const bootScreen = document.getElementById('boot-screen');
+    bootScreen.innerHTML = ''; // Black screen, no logo
+    bootScreen.style.opacity = '0';
+    bootScreen.style.display = 'flex';
+    bootScreen.style.transition = 'opacity 1s ease';
+    
+    // Add simple shutdown click sound
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(100, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(20, ctx.currentTime + 0.5);
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.5);
+
+    setTimeout(() => {
+        bootScreen.style.opacity = '1';
+        setTimeout(() => {
+            // Completely reset to power off state
+            document.getElementById('power-off-screen').style.display = 'flex';
+            bootScreen.style.display = 'none';
+            
+            // Rebuild boot screen HTML for next boot
+            bootScreen.innerHTML = `
+                <i class="fab fa-apple" style="font-size: 80px; color: white;"></i>
+                <div style="width:200px; height:4px; background:#333; border-radius:2px; margin-top:60px; overflow:hidden;">
+                    <div id="boot-progress" style="width:0%; height:100%; background:white; border-radius:2px;"></div>
+                </div>`;
+            
+            // lock screen again
+            document.getElementById('lock-screen').style.display = 'flex';
+            document.getElementById('lock-screen').style.opacity = '1';
+            document.getElementById('lock-screen').style.transform = 'translateY(0)';
+        }, 1000);
+    }, 100);
+}
+// Attach shutDownMac globally so the Apple menu can call it
+window.shutDownMac = shutDownMac;
+</script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+

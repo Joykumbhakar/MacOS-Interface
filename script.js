@@ -612,7 +612,28 @@
             if (appObj && appObj.category === 'folder') return;
             
             if (appObj && appId !== 'finder' && appId !== 'safari' && appId !== 'terminal' && appId !== 'settings') {
-                if (appId === 'music') {
+                                if (appId === 'calculator') {
+                    if (!document.getElementById('calculator-window')) {
+                        const winContainer = document.getElementById('windows-container');
+                        const win = document.createElement('div');
+                        win.id = 'calculator-window';
+                        win.className = 'mac-window';
+                        win.style.width = '240px';
+                        win.style.height = '330px';
+                        win.style.marginTop = `${Math.floor(Math.random() * 40 - 20)}px`;
+                        win.style.marginLeft = `${Math.floor(Math.random() * 40 - 20)}px`;
+                        win.innerHTML = `<div class="traffic-lights window-header" style="position: absolute; top:0; left:0; z-index: 10;"><div class="tl-btn tl-close"></div><div class="tl-btn tl-min"></div><div class="tl-btn tl-max" style="opacity: 0.5; pointer-events: none;"></div></div><div id="calculator-react-root" style="width:100%;height:100%;border-radius:inherit;overflow:hidden;"></div>`;
+                        winContainer.appendChild(win);
+                        makeDraggable(win);
+                        win.addEventListener('mousedown', () => focusWindow(win));
+                        win.querySelector('.tl-close').addEventListener('click', (e) => { e.stopPropagation(); this.closeApp('calculator'); });
+                        win.querySelector('.tl-min').addEventListener('click', (e) => { e.stopPropagation(); this.closeApp('calculator'); });
+                        
+                        if (window.renderCalculatorApp) {
+                            window.renderCalculatorApp();
+                        }
+                    }
+                } else if (appId === 'music') {
                     if (!document.getElementById('music-window')) {
                         const winContainer = document.getElementById('windows-container');
                         const win = document.createElement('div');
@@ -1178,6 +1199,11 @@ const SETTINGS_VIEWS = {
                     <div style="width:5%;background:#34c759;"></div>
                 </div>
                 <div style="font-size:12px;color:#555;text-align:right;">312 GB of 512 GB used</div>
+            </div>
+        `)}
+        ${setSection('Reset', `
+            <div class="set-row" style="color: #ff3b30; font-weight: 500; cursor: pointer; justify-content: center;" onclick="if(confirm('Are you sure you want to restore all settings to their defaults?')) { localStorage.removeItem('macSettings'); window.location.reload(); }">
+                Restore Default Settings...
             </div>
         `)}
         ${setSection('Language & Region', `
@@ -3142,9 +3168,7 @@ window.SystemActions = {
                 } else if (action === 'shutdownMac') {
                     this.spinner.style.display = 'block';
                     setTimeout(() => {
-                        this.spinner.style.display = 'none';
-                    }, 2000);
-                } else if (action === 'restartMac') {
+                        this.spinner.style.display = 'none'; if(window.shutDownMac) window.shutDownMac(); }, 2000); } else if (action === 'restartMac') {
                     this.spinner.style.display = 'block';
                     setTimeout(() => {
                         this.spinner.style.display = 'none';
@@ -3164,7 +3188,7 @@ window.SystemActions = {
         }, 10);
     },
     
-    simulateBoot() {
+    simulateBoot() { if(window.playMacChime) window.playMacChime();
         if(this.bootProgress) this.bootProgress.style.width = '0%';
         let progress = 0;
         const interval = setInterval(() => {
@@ -3188,4 +3212,8 @@ window.SystemActions = {
 document.addEventListener('DOMContentLoaded', () => {
     MenuSystem.init();
 });
+
+
+
+
 

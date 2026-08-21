@@ -69,7 +69,7 @@
 
         .macos-body {
             width: 100vw; height: 100vh; overflow: hidden;
-            background: #0f172a url('images/Wallpapers/27-Golden-Gate.jpg') no-repeat center center / cover;
+            background: #0f172a url('images/Wallpapers/26-Tahoe-Light-6K.jpg') no-repeat center center / cover;
             display: flex; align-items: flex-end; justify-content: center;
             padding-bottom: 0px; user-select: none; -webkit-user-select: none; position: relative;
         }
@@ -256,7 +256,7 @@
         .launchpad-item:active img { transform: scale(0.9); }
         .launchpad-item span { color: white; font-size: 13px; font-weight: 500; text-align: center; text-shadow: 0 1px 2px rgba(0,0,0,0.3); letter-spacing: 0.2px; line-height: 1.2; }
 
-        .island-system { position: absolute; top: 0; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-start; z-index: 9999; }
+        .island-system { position: absolute; top: 0; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-start; z-index: 10005; }
         .island-row { display: flex; align-items: center; }
         .island-col { display: flex; flex-direction: column; }
         .dynamic-island {
@@ -576,7 +576,7 @@
 
         .context-menu {
             position: absolute; background: rgba(30, 30, 35, 0.85); backdrop-filter: blur(25px) saturate(200%); -webkit-backdrop-filter: blur(25px) saturate(200%);
-            border: 1px solid rgba(255, 255, 255, 0.15);  border-radius: 8px; padding: 5px; min-width: 220px; z-index: 9999; display: none; color: white; font-size: 13px;
+            border: 1px solid rgba(255, 255, 255, 0.15);  border-radius: 8px; padding: 5px; min-width: 220px; z-index: 10005; display: none; color: white; font-size: 13px;
         }
         .context-menu.active { display: block; }
         .menu-item { padding: 4px 12px; border-radius: 4px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
@@ -587,7 +587,7 @@
         .menu-item:hover:not(.disabled) .menu-shortcut { color: rgba(255,255,255,0.8); }
 
         .quicklook-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 10005; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s;
         }
         .quicklook-overlay.active { opacity: 1; pointer-events: auto; }
         .quicklook-modal {
@@ -899,7 +899,7 @@
     background: rgba(0, 120, 215, 0.3);
     border: 1px solid rgba(0, 120, 215, 0.8);
     pointer-events: none;
-    z-index: 9999;
+    z-index: 10005;
     display: none;
 }
 
@@ -1417,3 +1417,4 @@ img.needs-padding { transform: scale(0.82); }
 @keyframes drawCheck {
     to { stroke-dashoffset: 0; }
 }
+
