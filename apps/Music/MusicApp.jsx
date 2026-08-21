@@ -277,7 +277,7 @@ const SafeImage = ({ src, className, style, alt = 'Cover', song = null }) => {
         return (
             <div 
                 className={className} 
-                style={{ ...style, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', aspectRatio: '1', overflow: 'visible' }}
+                style={{ ...style, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'visible' }}
                 dangerouslySetInnerHTML={{ __html: rawSvgContent }}
             />
         );
