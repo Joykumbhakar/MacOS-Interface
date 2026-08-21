@@ -954,7 +954,7 @@ document.addEventListener('pointerdown', (e) => {
 
 // Slider drag tick sound feedback
 document.addEventListener('input', (e) => {
-    if (e.target && e.target.type === 'range') {
+    if (e.target && e.target.type === 'range') { const p = (e.target.value - e.target.min) / (e.target.max - e.target.min) * 100; e.target.style.setProperty('--value', p + '%');
         const now = Date.now();
         if (now - MacAudio.lastSliderTick > 50) {
             MacAudio.lastSliderTick = now;
@@ -1868,6 +1868,7 @@ const SETTINGS_VIEWS = {
             const titleEl = document.getElementById('settings-main-title');
             const contentArea = document.getElementById('settings-content-area');
             if (!titleEl || !contentArea) return;
+            setTimeout(() => { document.querySelectorAll('input[type="range"]').forEach(r => { const p = (r.value - r.min) / (r.max - r.min) * 100; r.style.setProperty('--value', p + '%'); }); }, 10);
             
             // Set title
             const titles = {
@@ -3212,6 +3213,8 @@ window.SystemActions = {
 document.addEventListener('DOMContentLoaded', () => {
     MenuSystem.init();
 });
+
+
 
 
 
