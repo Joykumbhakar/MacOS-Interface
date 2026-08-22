@@ -208,3 +208,216 @@
         console.warn('[Electron Bridge] Could not load local files:', err.message);
     }
 })();
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AUTO-UPDATE NOTIFICATION SYSTEM
+// Listens for update events from main.js and shows a native macOS-style
+// notification banner with Download / Install & Restart / Dismiss actions.
+// ─────────────────────────────────────────────────────────────────────────────
+(function () {
+    if (typeof window === 'undefined' || !window.process || !window.process.versions || !window.process.versions.electron) return;
+
+    const { ipcRenderer } = require('electron');
+
+    // ── Inject styles ─────────────────────────────────────────────────────────
+    const style = document.createElement('style');
+    style.textContent = `
+        #electron-update-banner {
+            position: fixed;
+            bottom: 28px;
+            right: 24px;
+            width: 340px;
+            background: rgba(255,255,255,0.82);
+            backdrop-filter: blur(28px) saturate(180%);
+            -webkit-backdrop-filter: blur(28px) saturate(180%);
+            border: 0.5px solid rgba(0,0,0,0.12);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
+            padding: 16px 18px 14px;
+            z-index: 999999;
+            font-family: -apple-system, 'SF Pro Text', sans-serif;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            animation: update-slide-in 0.4s cubic-bezier(0.16,1,0.3,1);
+            transform-origin: bottom right;
+        }
+        #electron-update-banner.hiding {
+            animation: update-slide-out 0.3s cubic-bezier(0.4,0,1,1) forwards;
+        }
+        @keyframes update-slide-in {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to   { opacity: 1; transform: translateY(0)  scale(1); }
+        }
+        @keyframes update-slide-out {
+            from { opacity: 1; transform: translateY(0)  scale(1); }
+            to   { opacity: 0; transform: translateY(16px) scale(0.95); }
+        }
+        .update-banner-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .update-banner-icon {
+            width: 36px; height: 36px; border-radius: 8px;
+            background: linear-gradient(135deg, #1d62f0, #0a84ff);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .update-banner-title {
+            font-size: 13px; font-weight: 600; color: #1d1d1f; line-height: 1.3;
+        }
+        .update-banner-sub {
+            font-size: 11.5px; color: #6e6e73; line-height: 1.4; margin-top: 1px;
+        }
+        .update-banner-dismiss {
+            position: absolute; top: 10px; right: 12px;
+            width: 20px; height: 20px; border-radius: 50%;
+            background: rgba(0,0,0,0.08);
+            border: none; cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+            font-size: 11px; color: #6e6e73;
+            transition: background 0.15s;
+        }
+        .update-banner-dismiss:hover { background: rgba(0,0,0,0.15); }
+        .update-banner-actions {
+            display: flex; gap: 8px; margin-top: 2px;
+        }
+        .update-btn {
+            flex: 1; padding: 7px 0; border-radius: 9px;
+            border: none; cursor: pointer; font-size: 12px;
+            font-weight: 500; font-family: inherit;
+            transition: opacity 0.15s, transform 0.1s;
+        }
+        .update-btn:active { transform: scale(0.97); }
+        .update-btn-primary {
+            background: #0a84ff; color: #fff;
+        }
+        .update-btn-primary:hover { opacity: 0.88; }
+        .update-btn-secondary {
+            background: rgba(0,0,0,0.06); color: #1d1d1f;
+        }
+        .update-btn-secondary:hover { background: rgba(0,0,0,0.1); }
+        .update-progress-bar-wrap {
+            height: 4px; background: rgba(0,0,0,0.08); border-radius: 2px; overflow: hidden;
+        }
+        .update-progress-bar-fill {
+            height: 100%; background: #0a84ff; border-radius: 2px;
+            transition: width 0.3s ease; width: 0%;
+        }
+        .update-progress-label {
+            font-size: 11px; color: #6e6e73; text-align: right;
+        }
+    `;
+    document.head.appendChild(style);
+
+    // ── Banner helpers ────────────────────────────────────────────────────────
+    function removeBanner() {
+        const el = document.getElementById('electron-update-banner');
+        if (!el) return;
+        el.classList.add('hiding');
+        setTimeout(() => el.remove(), 300);
+    }
+
+    function createBanner(innerHTML) {
+        removeBanner();
+        const div = document.createElement('div');
+        div.id = 'electron-update-banner';
+        div.innerHTML = innerHTML;
+        document.body.appendChild(div);
+
+        const dismiss = div.querySelector('.update-banner-dismiss');
+        if (dismiss) dismiss.addEventListener('click', removeBanner);
+        return div;
+    }
+
+    function iconSVG() {
+        return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+            <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+        </svg>`;
+    }
+
+    // ── Handle update events from main process ────────────────────────────────
+    ipcRenderer.on('update-status', (_, info) => {
+        if (info.type === 'available') {
+            const banner = createBanner(`
+                <button class="update-banner-dismiss" title="Dismiss">&#x2715;</button>
+                <div class="update-banner-header">
+                    <div class="update-banner-icon">${iconSVG()}</div>
+                    <div>
+                        <div class="update-banner-title">Update Available — v${info.version}</div>
+                        <div class="update-banner-sub">${String(info.notes).replace(/<[^>]+>/g, '').slice(0, 80)}</div>
+                    </div>
+                </div>
+                <div class="update-banner-actions">
+                    <button class="update-btn update-btn-primary" id="update-download-btn">Download Update</button>
+                    <button class="update-btn update-btn-secondary" id="update-later-btn">Later</button>
+                </div>
+            `);
+            banner.querySelector('#update-download-btn').addEventListener('click', () => {
+                ipcRenderer.invoke('update-download');
+            });
+            banner.querySelector('#update-later-btn').addEventListener('click', removeBanner);
+        }
+
+        if (info.type === 'downloading') {
+            const existing = document.getElementById('electron-update-banner');
+            if (existing) {
+                const fill  = existing.querySelector('.update-progress-bar-fill');
+                const label = existing.querySelector('.update-progress-label');
+                if (fill)  fill.style.width  = info.percent + '%';
+                if (label) label.textContent  = `${info.percent}% · ${info.speed}`;
+            } else {
+                createBanner(`
+                    <div class="update-banner-header">
+                        <div class="update-banner-icon">${iconSVG()}</div>
+                        <div>
+                            <div class="update-banner-title">Downloading Update…</div>
+                            <div class="update-banner-sub">Please wait while the update is downloaded.</div>
+                        </div>
+                    </div>
+                    <div class="update-progress-bar-wrap">
+                        <div class="update-progress-bar-fill" style="width:${info.percent}%"></div>
+                    </div>
+                    <div class="update-progress-label">${info.percent}% · ${info.speed}</div>
+                `);
+            }
+            // Replace actions if they still exist
+            const actionsEl = document.querySelector('#electron-update-banner .update-banner-actions');
+            if (actionsEl) {
+                actionsEl.outerHTML = `
+                    <div class="update-progress-bar-wrap">
+                        <div class="update-progress-bar-fill" style="width:${info.percent}%"></div>
+                    </div>
+                    <div class="update-progress-label">${info.percent}% · ${info.speed}</div>
+                `;
+            }
+        }
+
+        if (info.type === 'downloaded') {
+            const banner = createBanner(`
+                <button class="update-banner-dismiss" title="Dismiss">&#x2715;</button>
+                <div class="update-banner-header">
+                    <div class="update-banner-icon" style="background:linear-gradient(135deg,#34c759,#30d158)">${iconSVG()}</div>
+                    <div>
+                        <div class="update-banner-title">Ready to Install — v${info.version}</div>
+                        <div class="update-banner-sub">The update has been downloaded. Restart to apply it.</div>
+                    </div>
+                </div>
+                <div class="update-banner-actions">
+                    <button class="update-btn update-btn-primary" id="update-install-btn">Install &amp; Restart</button>
+                    <button class="update-btn update-btn-secondary" id="update-later-btn">Later</button>
+                </div>
+            `);
+            banner.querySelector('#update-install-btn').addEventListener('click', () => {
+                ipcRenderer.invoke('update-install');
+            });
+            banner.querySelector('#update-later-btn').addEventListener('click', removeBanner);
+        }
+
+        if (info.type === 'error') {
+            console.warn('[Electron Updater] Error:', info.message);
+        }
+    });
+})();

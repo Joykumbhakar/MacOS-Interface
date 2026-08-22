@@ -2,6 +2,59 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+const { autoUpdater } = require('electron-updater');
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AUTO-UPDATER SETUP
+// ─────────────────────────────────────────────────────────────────────────────
+autoUpdater.autoDownload = false;     // Don't download silently — ask the user first
+autoUpdater.autoInstallOnAppQuit = false;
+
+let mainWindowRef = null;
+
+function sendToRenderer(channel, data) {
+    if (mainWindowRef && !mainWindowRef.isDestroyed()) {
+        mainWindowRef.webContents.send(channel, data);
+    }
+}
+
+autoUpdater.on('checking-for-update', () => {
+    sendToRenderer('update-status', { type: 'checking' });
+});
+
+autoUpdater.on('update-available', (info) => {
+    sendToRenderer('update-status', {
+        type:    'available',
+        version: info.version,
+        notes:   info.releaseNotes || 'Bug fixes and improvements.',
+    });
+});
+
+autoUpdater.on('update-not-available', () => {
+    sendToRenderer('update-status', { type: 'not-available' });
+});
+
+autoUpdater.on('download-progress', (progress) => {
+    sendToRenderer('update-status', {
+        type:    'downloading',
+        percent: Math.round(progress.percent),
+        speed:   Math.round(progress.bytesPerSecond / 1024) + ' KB/s',
+    });
+});
+
+autoUpdater.on('update-downloaded', (info) => {
+    sendToRenderer('update-status', {
+        type:    'downloaded',
+        version: info.version,
+    });
+});
+
+autoUpdater.on('error', (err) => {
+    sendToRenderer('update-status', {
+        type:    'error',
+        message: err.message,
+    });
+});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HELPERS
@@ -172,8 +225,17 @@ function createWindow () {
         autoHideMenuBar: true,
     });
 
+    mainWindowRef = mainWindow;
+
     mainWindow.loadFile('index.html');
     mainWindow.maximize();
+
+    // Check for updates 3 seconds after the app has fully loaded
+    mainWindow.webContents.once('did-finish-load', () => {
+        setTimeout(() => {
+            autoUpdater.checkForUpdates().catch(() => {});
+        }, 3000);
+    });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -220,6 +282,21 @@ ipcMain.handle('open-folder-dialog', async () => {
     const musicFiles = Object.values(nodes).filter(n => n.isAudio);
 
     return { nodes, rootNode: node, musicFiles };
+});
+
+// User clicked "Download Update" in the notification banner
+ipcMain.handle('update-download', async () => {
+    autoUpdater.downloadUpdate();
+});
+
+// User clicked "Install & Restart" after download completed
+ipcMain.handle('update-install', async () => {
+    autoUpdater.quitAndInstall(false, true); // isSilent=false, isForceRunAfter=true
+});
+
+// User manually triggered an update check from Settings
+ipcMain.handle('update-check', async () => {
+    autoUpdater.checkForUpdates().catch(() => {});
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
