@@ -1749,7 +1749,7 @@ const SETTINGS_VIEWS = {
             ${setRow('Keyboard backlight off after', setSelect('5 secs of inactivity'))}
         `)}
         ${setSection('', `
-            ${setRow('Press 🌐  key to', setSelect('Change Input Source'))}
+            ${setRow('Press <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display:inline; vertical-align:-3px; margin: 0 2px;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg><svg width="14" height="16" viewBox="0 0 14 16" fill="none" stroke="currentColor" stroke-width="1.2" style="display:inline; vertical-align:-4px; margin: 0 4px;"><rect x="1" y="1" width="12" height="14" rx="2"></rect><text x="7" y="11" font-size="7" font-weight="600" font-family="sans-serif" text-anchor="middle" fill="currentColor" stroke="none">fn</text></svg> key to', setSelect('Change Input Source'))}
             
             ${setRow('Keyboard Shortcuts...', '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>')}
             
