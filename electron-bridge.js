@@ -73,6 +73,7 @@
             if (!window.FS[fsId].children) window.FS[fsId].children = [];
             // Prepend real children before mock children so they appear first
             window.FS[fsId].children = [...newChildIds, ...window.FS[fsId].children];
+            if (fsId === 'desktop') { const desktopContainer = document.getElementById('desktop-icons-container'); if (desktopContainer) { newChildIds.forEach(childId => { const node = window.FS[childId]; if (!node) return; const div = document.createElement('div'); div.className = 'desktop-item'; div.setAttribute('data-id', node.id); if (node.type === 'folder') { div.setAttribute('data-target', node.id); } let iconSrc = 'images/Icons/File.png'; if (node.icon === 'folder-blue' || node.type === 'folder') iconSrc = 'images/Icons/Dev Tools Icons/folder.png'; else if (node.isAudio) iconSrc = 'images/Icons/AudioFile.png'; else if (node.isVideo) iconSrc = 'images/Icons/VideoFile.png'; else if (node.icon === 'image-file') iconSrc = 'images/Icons/ImageFile.png'; else if (node.icon === 'doc-text') iconSrc = 'images/Icons/TextFile.png'; div.innerHTML = '<img src="' + iconSrc + '" onerror="this.src=''images/Icons/File.png''" alt="' + node.name + '"><span>' + node.name + '</span>'; desktopContainer.appendChild(div); }); if (window.DesktopIcons) { window.DesktopIcons.init(); if (typeof window.DesktopIcons.applySavedOrInitialPositions === 'function') { window.DesktopIcons.applySavedOrInitialPositions(); } } } }
         }
 
         // 4. Update the username in the sidebar (Ashley -> real username)
@@ -925,5 +926,7 @@
         setTimeout(injectSidebarButton, 300);
     });
 })();
+
+
 
 
