@@ -172,7 +172,7 @@
     width: 320px;
 }
 
-.am-search-bar i.fa-search {
+.am-search-bar svg {
     position: absolute;
     left: 12px;
     top: 50%;
