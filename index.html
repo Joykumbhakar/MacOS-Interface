@@ -47,8 +47,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="apps/Calculator/CalculatorApp.css?v=1"></head>
 <body>
-    <!-- Power Off Screen -->
-    <div id="power-off-screen" style="position:fixed; inset:0; z-index:30000; background:#000; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="startMac()">
+    <!-- Power Off Screen (Hidden by default to skip boot sequence) -->
+    <div id="power-off-screen" style="position:fixed; inset:0; z-index:30000; background:#000; display:none; align-items:center; justify-content:center; cursor:pointer;" onclick="startMac()">
         <div class="mac-power-btn-wrapper">
             <div class="mac-power-btn">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
