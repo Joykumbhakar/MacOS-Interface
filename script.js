@@ -1216,12 +1216,12 @@ const SETTINGS_VIEWS = {
 
     // --- Wi-Fi ---
     'wifi': () => `
-        ${setSection('', `${setRow('Wi-Fi', toggleHTML('t-wifi', true))}`)}
+        ${setSection('', `${setRow('Wi-Fi', toggleHTML('t-wifi', MacSettings.state.wifiEnabled, 'MacSettings.setWifi(this.checked);'))}`)}
         ${setSection('', `
             <div class="set-row" style="background:#e8f4ff;">
                 <div style="display:flex;align-items:center;gap:10px;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1.5" fill="#0a84ff" stroke="none"/></svg>
-                    <div><div style="font-weight:600;font-size:13px;">Home_Network</div><div style="font-size:11px;color:#555;">Connected</div></div>
+                    <div><div style="font-weight:600;font-size:13px;">${window.MacNetworkStatus ? (window.MacNetworkStatus.online ? 'Connected Network' : 'Offline') : 'Home_Network'}</div><div style="font-size:11px;color:#555;">${window.MacNetworkStatus && !window.MacNetworkStatus.online ? 'Not Connected' : 'Connected'}</div></div>
                 </div>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
             </div>
@@ -1234,7 +1234,7 @@ const SETTINGS_VIEWS = {
 
     // --- Bluetooth ---
     'bluetooth': () => `
-        ${setSection('', `${setRow('Bluetooth', toggleHTML('t-bt', true))}`)}
+        ${setSection('', `${setRow('Bluetooth', toggleHTML('t-bt', MacSettings.state.bluetoothOn, 'MacSettings.setBluetooth(this.checked);'))}`)}
         ${setSection('My Devices', `
             ${setRow('AirPods Pro', '<div style="font-size:12px;color:#34c759;">Connected</div>')}
             
@@ -1419,7 +1419,9 @@ const SETTINGS_VIEWS = {
             
             ${setRow('Zoom', toggleHTML('t-zoom-a11y', false))}
             
-            ${setRow('Display', '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>')}
+            ${setRow('Reduce Motion', toggleHTML('t-reduce-motion', MacSettings.state.reduceMotion, 'MacSettings.setReduceMotion(this.checked);'))}
+            
+            ${setRow('Reduce Transparency', toggleHTML('t-reduce-trans', MacSettings.state.reduceTransparency, 'MacSettings.setReduceTransparency(this.checked);'))}
             
             ${setRow('Spoken Content', '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>')}
         `)}
@@ -1474,20 +1476,20 @@ const SETTINGS_VIEWS = {
         `)}`,
 
     // --- Desktop & Dock ---
-        'desktop-dock': () => `
+    'desktop-dock': () => `
         ${setSection('Dock', `
             <div class="set-row" style="flex-direction:column;align-items:flex-start;gap:8px;padding:12px 16px;">
                 <span>Size</span>
                 <input type="range" min="24" max="80" value="${MacSettings.state.dockSize}" oninput="MacSettings.setDockSize(+this.value);" style="width:100%">
             </div>
             
-            ${setRow('Magnification', toggleHTML('t-magnify', MacSettings.state.dockMagnify))}
+            ${setRow('Magnification', toggleHTML('t-magnify', MacSettings.state.dockMagnify, 'MacSettings.state.dockMagnify=this.checked;MacSettings.save();'))}
             
             ${setRow('Position on screen', setSelect(MacSettings.state.dockPosition === 'bottom' ? 'Bottom' : MacSettings.state.dockPosition === 'left' ? 'Left' : 'Right'))}
             
             ${setRow('Minimize windows using', setSelect('Genie Effect'))}
             
-            ${setRow('Automatically hide and show the Dock', toggleHTML('t-autohide', MacSettings.state.dockAutoHide))}
+            ${setRow('Automatically hide and show the Dock', toggleHTML('t-autohide', MacSettings.state.dockAutoHide, 'MacSettings.state.dockAutoHide=this.checked;MacSettings.applyDock();'))}
             
             ${setRow('Animate opening applications', toggleHTML('t-animopen', true))}
             
@@ -1495,17 +1497,6 @@ const SETTINGS_VIEWS = {
             
             ${setRow('Show suggested and recent apps in Dock', toggleHTML('t-recent', false))}
         `)}
-        <script>
-        (function(){
-            setTimeout(() => {
-                const th = document.getElementById('t-autohide');
-                if(th) th.addEventListener('click', () => {
-                    MacSettings.state.dockAutoHide = th.classList.contains('on');
-                    MacSettings.applyDock();
-                });
-            }, 100);
-        })();
-        </script>
         ${setSection('Windows', `
             ${setRow('Prefer tabs when opening documents', setSelect('In Full Screen'))}
             
