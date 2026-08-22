@@ -1,4 +1,4 @@
-/**
+﻿/**
  * electron-bridge.js
  *
  * Loaded only when running inside Electron (detected by presence of
@@ -38,6 +38,13 @@
         // FETCH LOCAL FILE SYSTEM FROM MAIN PROCESS
         // ─────────────────────────────────────────────────────────────────
         const { allNodes, folderPatch, musicFiles, username } = await ipcRenderer.invoke('get-local-fs');
+
+        // ─────────────────────────────────────────────────────────────────
+        // FETCH SYSTEM INFO FOR SETTINGS APP
+        // ─────────────────────────────────────────────────────────────────
+        window.MacSystemInfo   = await ipcRenderer.invoke('system-info').catch(() => ({}));
+        window.MacDiskInfo     = await ipcRenderer.invoke('disk-info').catch(() => ({}));
+        window.MacNetworkStatus = await ipcRenderer.invoke('network-status').catch(() => ({ online: true }));
 
         // ─────────────────────────────────────────────────────────────────
         // INJECT INTO FINDER FS
@@ -443,7 +450,8 @@
     function getLocalAudio() {
         if (!localAudio) {
             localAudio = new Audio();
-            localAudio.volume = 0.8;
+            localAudio.volume = window.systemVolume !== undefined ? window.systemVolume : 0.8;
+            window.addEventListener('system-volume-changed', (e) => { if (localAudio) localAudio.volume = e.detail; });
             localAudio.addEventListener('ended', () => {
                 const idx = localTracks.findIndex(t => t.id === currentLocalTrack?.id);
                 if (idx !== -1 && idx + 1 < localTracks.length) {
@@ -917,3 +925,5 @@
         setTimeout(injectSidebarButton, 300);
     });
 })();
+
+

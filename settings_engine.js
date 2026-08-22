@@ -56,6 +56,10 @@ const MacSettings = {
         this.applyAccentColor(this.state.accentColor);
         this.applyDock();
         this.applyBrightness(this.state.brightness);
+        this.setVolume(this.state.outputVolume);
+        this.setNightShift(this.state.nightShift);
+        this.setReduceMotion(this.state.reduceMotion);
+        this.setReduceTransparency(this.state.reduceTransparency);
     },
 
     // ── Appearance (Light / Dark / Auto) ───────────────────────────────────
@@ -237,9 +241,17 @@ const MacSettings = {
         this.save();
     },
 
-    // ── Volume (Web Audio API) ─────────────────────────────────────────────
+    // ── Volume (Web Audio API) ───────────────────────────────────────────────
     setVolume(val) {
         this.state.outputVolume = val;
+        window.systemVolume = val / 100;
+        window.dispatchEvent(new CustomEvent('system-volume-changed', { detail: window.systemVolume }));
+        
+        // Also update all <audio> and <video> elements in the document
+        document.querySelectorAll('audio, video').forEach(el => {
+            el.volume = window.systemVolume;
+        });
+        
         this.save();
     },
 

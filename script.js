@@ -1244,14 +1244,17 @@ const SETTINGS_VIEWS = {
         `)}`,
 
     // --- Network ---
-    'network': () => `
+    'network': () => {
+        const online = window.MacNetworkStatus ? window.MacNetworkStatus.online : navigator.onLine;
+        return `
         ${setSection('', `
-            ${setRow('Wi-Fi', '<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#555;">Connected <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>')}
+            ${setRow('Wi-Fi', `<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#555;">${online ? 'Connected' : 'Offline'} <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>`)}
             
             ${setRow('Ethernet', '<div style="font-size:12px;color:#999;">Not connected</div>')}
             
             ${setRow('Firewall', toggleHTML('t-fw', true))}
-        `)}`,
+        `)}`;
+    },
 
     // --- Notifications ---
     'notifications': () => `
@@ -1357,26 +1360,30 @@ const SETTINGS_VIEWS = {
         `)}`,
 
     // --- General ---
-    'general': () => `
+    'general': () => {
+        const sys = window.MacSystemInfo || { cpu: 'Apple M4 Pro', totalMemGB: 24, osRelease: 'Tahoe 26.0', appVersion: '1.0.0' };
+        const dsk = window.MacDiskInfo   || { used: '312 GB', total: '512 GB', usedPct: 61 };
+        
+        return `
         ${setSection('About This Mac', `
             <div style="padding:12px 16px;display:flex;flex-direction:column;gap:6px;">
-                ${[['MacBook Pro',''],['Chip','Apple M4 Pro'],['Memory','24 GB'],['macOS','Tahoe 26.0'],['Serial Number','C02GH1ABCD']].map(([l,v])=>`<div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:#555;">${l}</span><span style="font-weight:${l==='MacBook Pro'?'700':'500'}">${v||l}</span></div>`).join('')}
+                ${[['MacBook Pro',''],['Chip', sys.cpu],['Memory', sys.totalMemGB + ' GB'],['macOS', 'Tahoe 26.0 (Build ' + (sys.osRelease || '1.0') + ')'],['Serial Number','C02GH1ABCD']].map(([l,v])=>`<div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:#555;">${l}</span><span style="font-weight:${l==='MacBook Pro'?'700':'500'}">${v||l}</span></div>`).join('')}
             </div>
         `)}
         ${setSection('Software Update', `
             ${setRow('Automatic Updates', toggleHTML('t-autoupdate', true))}
             
-            <div class="set-row"><span>macOS Tahoe 26.0</span><span style="font-size:12px;color:#34c759;">Up to Date</span></div>
+            <div class="set-row"><span>macOS Interface v${sys.appVersion || '1.0'}</span><span style="font-size:12px;color:#34c759;">Up to Date</span></div>
+            <div class="set-row" style="color: #0a84ff; font-weight: 500; cursor: pointer; justify-content: center;" onclick="if(window.require){ require('electron').ipcRenderer.invoke('update-check'); } else { alert('Updates are only supported in the desktop app.'); }">
+                Check for Updates...
+            </div>
         `)}
         ${setSection('Storage', `
             <div style="padding:16px;">
                 <div style="height:12px;border-radius:6px;background:#e5e5ea;overflow:hidden;display:flex;margin-bottom:8px;">
-                    <div style="width:25%;background:#0a84ff;"></div>
-                    <div style="width:15%;background:#ff9500;"></div>
-                    <div style="width:10%;background:#ff3b30;"></div>
-                    <div style="width:5%;background:#34c759;"></div>
+                    <div style="width:${dsk.usedPct}%;background:#0a84ff;"></div>
                 </div>
-                <div style="font-size:12px;color:#555;text-align:right;">312 GB of 512 GB used</div>
+                <div style="font-size:12px;color:#555;text-align:right;">${dsk.used} of ${dsk.total} used</div>
             </div>
         `)}
         ${setSection('Reset', `
@@ -1396,13 +1403,14 @@ const SETTINGS_VIEWS = {
         ${setSection('Date & Time', `
             ${setRow('Set time and date automatically', toggleHTML('t-autotime', true))}
             
-            ${setRow('Time Zone', setSelect('America/New_York'))}
+            ${setRow('Time Zone', setSelect(Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/New_York'))}
         `)}
         ${setSection('Login Items & Extensions', `
             ${setRow('Open at Login', '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>')}
             
             ${setRow('Allow in the Background', '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>')}
-        `)}`,
+        `)}`;
+    },
 
     // --- Accessibility ---
     'accessibility': () => `
@@ -2200,7 +2208,45 @@ const SETTINGS_VIEWS = {
                             </div>
                         </div>
                     </div>
+
+                    <div class="set-section-header">Brightness</div>
+                    <div class="set-section">
+                        <div class="set-row" style="padding:12px 16px; gap:12px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                            <input type="range" min="10" max="100" value="${window.MacSettings ? window.MacSettings.state.brightness : 100}" oninput="if(window.MacSettings) MacSettings.applyBrightness(+this.value);" style="flex:1;">
+                        </div>
+                        <div class="set-row">
+                            <span>Night Shift</span>
+                            <div id="t-nightshift-disp" class="set-toggle ${window.MacSettings && window.MacSettings.state.nightShift ? 'on' : ''}" style="background:${window.MacSettings && window.MacSettings.state.nightShift ? window.MacSettings.state.accentColor : '#e5e5ea'}">
+                                <div class="toggle-track"></div><div class="toggle-knob"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="set-section-header">Display Resolution</div>
+                    <div class="set-section">
+                        <div class="set-row" style="padding:16px;">
+                            <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
+                                <div style="display:flex; justify-content:space-between; font-size:12px;">
+                                    <span>Larger Text</span>
+                                    <span>More Space</span>
+                                </div>
+                                <input type="range" min="0.8" max="1.2" step="0.1" value="${document.documentElement.style.fontSize === '1.2px' ? 1.2 : document.documentElement.style.fontSize === '0.8px' ? 0.8 : 1}" oninput="document.documentElement.style.fontSize = this.value + 'px';" style="width:100%;">
+                            </div>
+                        </div>
+                    </div>
                 `;
+                // Add event listener for Night Shift toggle
+                setTimeout(() => {
+                    const ns = document.getElementById('t-nightshift-disp');
+                    if (ns && window.MacSettings) {
+                        ns.addEventListener('click', () => {
+                            ns.classList.toggle('on');
+                            MacSettings.setNightShift(ns.classList.contains('on'));
+                            ns.style.background = ns.classList.contains('on') ? MacSettings.state.accentColor : '#e5e5ea';
+                        });
+                    }
+                }, 50);
             } else {
                 titleEl.textContent = view.charAt(0).toUpperCase() + view.slice(1);
                 contentArea.innerHTML = `<div style="padding: 40px; text-align: center; color: #999;">Select a setting on the left to configure.</div>`;

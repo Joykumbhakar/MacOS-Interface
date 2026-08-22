@@ -1,4 +1,4 @@
-const { useState, useEffect, useRef, createContext, useContext } = React;
+ï»¿const { useState, useEffect, useRef, createContext, useContext } = React;
 
 const PlayerContext = createContext();
 
@@ -320,8 +320,24 @@ const AppleMusicApp = () => {
     const [progress, setProgress] = useState(0);
     const [duration, setDuration] = useState(200);
 
-    const [audio] = useState(() => new Audio());
+    const [audio] = useState(() => {
+        const a = new Audio();
+        if (window.systemVolume !== undefined) a.volume = window.systemVolume;
+        return a;
+    });
     const ytPlayerRef = useRef(null);
+
+    // Sync with system volume
+    useEffect(() => {
+        const handleVol = (e) => {
+            audio.volume = e.detail;
+            if (ytPlayerRef.current && ytPlayerRef.current.setVolume) {
+                ytPlayerRef.current.setVolume(e.detail * 100);
+            }
+        };
+        window.addEventListener('system-volume-changed', handleVol);
+        return () => window.removeEventListener('system-volume-changed', handleVol);
+    }, [audio]);
 
 
 
@@ -946,7 +962,7 @@ const FloatingPlayer = () => {
                     <div className="am-np-details">
                         <div className="am-np-text-row" style={{ display: "flex", alignItems: "center" }}>
                             <span className="am-np-title">{currentTrack.title}</span>
-                            <span className="am-np-dot">GÇó</span>
+                            <span className="am-np-dot">Gï¿½ï¿½</span>
                             <span className="am-np-artist">{currentTrack.artist}</span><AudioVisualizer />
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', color: '#8e8e93', marginTop: '6px' }}>
@@ -1142,4 +1158,5 @@ window.renderAppleMusicApp = () => {
 };
 
 if (document.getElementById('music-react-root')) { window.renderAppleMusicApp(); }
+
 
