@@ -1,6 +1,9 @@
-﻿# 🍎 macOS Interface — Web Simulation
+# 🍎 macOS Interface — Web Simulation
 
 A **pixel-perfect macOS desktop** experience built entirely for the browser. No frameworks, no build step — just clean HTML, CSS, and JavaScript delivering an authentic Apple experience on the web.
+
+> 🖥️ **Want to run this as a native Windows desktop app?**
+> Check out the [Desktop App Build Guide](DESKTOP_APP.md) to learn how to compile and run the `.exe`!
 
 ---
 
