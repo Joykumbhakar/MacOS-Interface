@@ -2,8 +2,10 @@
 
 A **pixel-perfect macOS desktop** experience built entirely for the browser. No frameworks, no build step — just clean HTML, CSS, and JavaScript delivering an authentic Apple experience on the web.
 
-> 🖥️ **Want to run this as a native Windows desktop app?**
-> Check out the [Desktop App Build Guide](DESKTOP_APP.md) to learn how to compile and run the `.exe`!
+[![Download for Windows](https://img.shields.io/badge/Download_for_Windows-.exe-0078D6?style=for-the-badge&logo=windows)](https://github.com/Joykumbhakar/MacOS-Interface/releases/latest)
+
+> 🖥️ **Want to build this yourself?**
+> Check out the [Desktop App Build Guide](DESKTOP_APP.md) to learn how to compile the source code!
 
 ---
 
