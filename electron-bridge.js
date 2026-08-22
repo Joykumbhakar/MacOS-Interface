@@ -421,3 +421,499 @@
         }
     });
 })();
+
+// ─────────────────────────────────────────────────────────────────────────────
+// LOCAL MUSIC LIBRARY SYSTEM
+// Full local music folder management, scanning, and playback integration.
+// Injects a "Local Library" tab into the Music app with folder settings.
+// ─────────────────────────────────────────────────────────────────────────────
+(function () {
+    if (typeof window === 'undefined' || !window.process || !window.process.versions || !window.process.versions.electron) return;
+
+    const { ipcRenderer } = require('electron');
+
+    // State
+    let localTracks  = [];
+    let localFolders = [];
+    let currentLocalTrack = null;
+    let localAudio   = null; // Dedicated Audio element for local files
+    let isLocalPlaying = false;
+
+    // ── Audio Engine ────────────────────────────────────────────────────────────
+    function getLocalAudio() {
+        if (!localAudio) {
+            localAudio = new Audio();
+            localAudio.volume = 0.8;
+            localAudio.addEventListener('ended', () => {
+                const idx = localTracks.findIndex(t => t.id === currentLocalTrack?.id);
+                if (idx !== -1 && idx + 1 < localTracks.length) {
+                    playLocalTrack(localTracks[idx + 1]);
+                } else {
+                    isLocalPlaying = false;
+                    updateLocalUI();
+                }
+            });
+            localAudio.addEventListener('timeupdate', () => {
+                const bar  = document.getElementById('local-progress-bar-fill');
+                const time = document.getElementById('local-current-time');
+                const dur  = document.getElementById('local-duration');
+                if (!localAudio.duration) return;
+                const pct = (localAudio.currentTime / localAudio.duration) * 100;
+                if (bar)  bar.style.width = pct + '%';
+                if (time) time.textContent = fmt(localAudio.currentTime);
+                if (dur)  dur.textContent  = fmt(localAudio.duration);
+                // Sync Dynamic Island
+                if (window.MacIsland && currentLocalTrack) {
+                    window.MacIsland.media(
+                        currentLocalTrack.title, currentLocalTrack.artist || 'Local File',
+                        isLocalPlaying, null,
+                        fmt(localAudio.currentTime), fmt(localAudio.duration),
+                        Math.round(pct), '-' + fmt(localAudio.duration - localAudio.currentTime)
+                    );
+                }
+            });
+            localAudio.addEventListener('error', (e) => {
+                console.warn('[Local Audio] Error playing:', localAudio.src, e);
+                showLocalToast('Could not play this file. Format may not be supported.');
+            });
+        }
+        return localAudio;
+    }
+
+    function fmt(secs) {
+        if (!secs || isNaN(secs)) return '0:00';
+        const m = Math.floor(secs / 60), s = Math.floor(secs % 60);
+        return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    function playLocalTrack(track) {
+        const audio = getLocalAudio();
+        // Pause any built-in Music app playback first
+        const amAudio = document.querySelector('#music-window audio');
+        if (amAudio) amAudio.pause();
+
+        currentLocalTrack = track;
+        isLocalPlaying = true;
+        audio.src = track.url || track.previewUrl;
+        audio.play().catch(err => {
+            console.warn('[Local Audio] Play failed:', err.message);
+            showLocalToast('Playback error: ' + err.message);
+        });
+        updateLocalUI();
+        renderTrackList();
+    }
+
+    function toggleLocalPlay() {
+        const audio = getLocalAudio();
+        if (isLocalPlaying) {
+            audio.pause();
+            isLocalPlaying = false;
+        } else {
+            audio.play().catch(() => {});
+            isLocalPlaying = true;
+        }
+        updateLocalUI();
+    }
+
+    function skipLocalTrack(dir) {
+        const idx = localTracks.findIndex(t => t.id === currentLocalTrack?.id);
+        const next = idx + dir;
+        if (next >= 0 && next < localTracks.length) playLocalTrack(localTracks[next]);
+    }
+
+    function seekLocal(e) {
+        const audio = getLocalAudio();
+        if (!audio.duration) return;
+        const rect = e.currentTarget.getBoundingClientRect();
+        const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        audio.currentTime = pct * audio.duration;
+    }
+
+    // ── Toast ────────────────────────────────────────────────────────────────────
+    function showLocalToast(msg) {
+        const t = document.createElement('div');
+        t.style.cssText = `position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+            background:rgba(0,0,0,0.75);color:#fff;padding:8px 16px;border-radius:20px;
+            font-size:12px;z-index:999998;pointer-events:none;white-space:nowrap;`;
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 3000);
+    }
+
+    // ── Settings Panel Styles ───────────────────────────────────────────────────
+    const style = document.createElement('style');
+    style.textContent = `
+        #local-library-panel {
+            position: absolute; inset: 0; background: rgba(249,249,249,0.96);
+            backdrop-filter: blur(20px); z-index: 200;
+            display: flex; flex-direction: column;
+            font-family: -apple-system,'SF Pro Text',sans-serif;
+            overflow: hidden;
+        }
+        #local-library-panel.hidden { display: none; }
+        .ll-topbar {
+            display: flex; align-items: center; gap: 10px;
+            padding: 14px 18px 10px; border-bottom: 0.5px solid rgba(0,0,0,0.1);
+        }
+        .ll-topbar h2 { font-size: 17px; font-weight: 700; color: #1d1d1f; flex: 1; margin: 0; }
+        .ll-topbar-btn {
+            border: none; cursor: pointer; border-radius: 8px; padding: 6px 12px;
+            font-size: 12px; font-weight: 500; font-family: inherit; transition: opacity 0.15s;
+        }
+        .ll-topbar-btn:hover { opacity: 0.8; }
+        .ll-topbar-btn.primary { background: #fa243c; color: #fff; }
+        .ll-topbar-btn.settings { background: rgba(0,0,0,0.06); color: #1d1d1f; }
+        .ll-body { display: flex; flex: 1; overflow: hidden; }
+        .ll-sidebar {
+            width: 200px; flex-shrink: 0; border-right: 0.5px solid rgba(0,0,0,0.1);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .ll-sidebar-section { padding: 12px 10px 4px; font-size: 10px; font-weight: 600;
+            color: #8e8e93; text-transform: uppercase; letter-spacing: 0.5px; }
+        .ll-folder-item {
+            display: flex; align-items: center; gap: 6px; padding: 6px 10px;
+            font-size: 12px; color: #1d1d1f; cursor: default; border-radius: 6px; margin: 1px 4px;
+        }
+        .ll-folder-item:hover { background: rgba(0,0,0,0.05); }
+        .ll-folder-item span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .ll-folder-remove { font-size: 11px; color: #8e8e93; cursor: pointer; padding: 2px; }
+        .ll-folder-remove:hover { color: #fa243c; }
+        .ll-add-folder-btn {
+            margin: 6px 8px; padding: 7px 10px; border-radius: 8px;
+            border: 1.5px dashed #0a84ff; background: none; color: #0a84ff;
+            font-size: 12px; cursor: pointer; font-family: inherit; font-weight: 500;
+            transition: background 0.15s;
+        }
+        .ll-add-folder-btn:hover { background: rgba(10,132,255,0.06); }
+        .ll-search-wrap { padding: 10px 14px 6px; }
+        .ll-search { width: 100%; padding: 7px 10px; border-radius: 8px; border: none;
+            background: rgba(0,0,0,0.07); font-size: 12px; font-family: inherit; outline: none; box-sizing: border-box; }
+        .ll-track-list { flex: 1; overflow-y: auto; padding: 4px 0; }
+        .ll-track-list::-webkit-scrollbar { width: 4px; }
+        .ll-track-list::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 2px; }
+        .ll-track-row {
+            display: grid; grid-template-columns: 28px 1fr 110px 55px 52px; align-items: center;
+            gap: 6px; padding: 5px 14px; cursor: pointer; border-radius: 6px; margin: 1px 6px;
+            transition: background 0.1s;
+        }
+        .ll-track-row:hover { background: rgba(0,0,0,0.05); }
+        .ll-track-row.active { background: rgba(250,36,60,0.07); }
+        .ll-track-num { font-size: 11px; color: #8e8e93; text-align: right; }
+        .ll-track-info { overflow: hidden; }
+        .ll-track-title { font-size: 12px; font-weight: 500; color: #1d1d1f; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .ll-track-title.playing { color: #fa243c; }
+        .ll-track-sub { font-size: 10.5px; color: #8e8e93; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .ll-track-album { font-size: 11px; color: #8e8e93; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .ll-track-ext { font-size: 10px; color: #8e8e93; text-align: center; }
+        .ll-track-dur { font-size: 11px; color: #8e8e93; text-align: right; }
+        .ll-table-header {
+            display: grid; grid-template-columns: 28px 1fr 110px 55px 52px; align-items: center;
+            gap: 6px; padding: 4px 14px; margin: 0 6px;
+            border-bottom: 0.5px solid rgba(0,0,0,0.08); margin-bottom: 4px;
+        }
+        .ll-th { font-size: 10px; font-weight: 600; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.4px; }
+        .ll-th:last-child { text-align: right; }
+        .ll-now-playing {
+            border-top: 0.5px solid rgba(0,0,0,0.1);
+            padding: 10px 14px; display: flex; align-items: center; gap: 12px;
+            background: rgba(255,255,255,0.8);
+        }
+        .ll-np-controls { display: flex; align-items: center; gap: 10px; }
+        .ll-np-btn { background: none; border: none; cursor: pointer; padding: 4px; color: #1d1d1f; border-radius: 6px; }
+        .ll-np-btn:hover { background: rgba(0,0,0,0.07); }
+        .ll-np-info { flex: 1; overflow: hidden; }
+        .ll-np-title { font-size: 12px; font-weight: 600; color: #1d1d1f; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .ll-np-artist { font-size: 10.5px; color: #8e8e93; }
+        .ll-np-progress { display: flex; flex-direction: column; gap: 3px; width: 160px; flex-shrink: 0; }
+        .ll-np-bar-wrap { height: 3px; background: rgba(0,0,0,0.1); border-radius: 2px; cursor: pointer; }
+        .ll-np-bar-fill { height: 100%; background: #fa243c; border-radius: 2px; width: 0%; transition: width 0.5s linear; }
+        .ll-np-times { display: flex; justify-content: space-between; font-size: 9.5px; color: #8e8e93; }
+        .ll-empty { display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 200px; color: #8e8e93; gap: 8px; text-align: center; padding: 20px; }
+        .ll-empty-title { font-size: 14px; font-weight: 600; color: #3c3c43; }
+        .ll-empty-sub { font-size: 12px; color: #8e8e93; }
+    `;
+    document.head.appendChild(style);
+
+    // ── Build Panel HTML ─────────────────────────────────────────────────────────
+    function buildPanel() {
+        const panel = document.createElement('div');
+        panel.id = 'local-library-panel';
+        panel.className = 'hidden';
+        panel.innerHTML = `
+            <div class="ll-topbar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fa243c" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                <h2>Local Library</h2>
+                <button class="ll-topbar-btn settings" id="ll-settings-toggle">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:4px;"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0M4.93 19.07a10 10 0 0 0 14.14 0"/></svg>
+                    Folders
+                </button>
+                <button class="ll-topbar-btn settings" id="ll-close-btn" style="padding:6px 8px;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="ll-body">
+                <div class="ll-sidebar" id="ll-sidebar">
+                    <div class="ll-sidebar-section">Music Folders</div>
+                    <div id="ll-folder-list"></div>
+                    <button class="ll-add-folder-btn" id="ll-add-folder-btn">+ Add Folder</button>
+                    <div style="flex:1;"></div>
+                    <div style="padding:10px;font-size:10px;color:#8e8e93;border-top:0.5px solid rgba(0,0,0,0.08);" id="ll-stats"></div>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+                    <div class="ll-search-wrap">
+                        <input class="ll-search" id="ll-search" type="search" placeholder="Search songs, artists, albums…">
+                    </div>
+                    <div class="ll-table-header">
+                        <div class="ll-th">#</div>
+                        <div class="ll-th">Title</div>
+                        <div class="ll-th">Album / Folder</div>
+                        <div class="ll-th" style="text-align:center;">Type</div>
+                        <div class="ll-th" style="text-align:right;">Duration</div>
+                    </div>
+                    <div class="ll-track-list" id="ll-track-list"></div>
+                </div>
+            </div>
+            <div class="ll-now-playing" id="ll-now-playing">
+                <div class="ll-np-controls">
+                    <button class="ll-np-btn" id="ll-prev-btn" title="Previous">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                    </button>
+                    <button class="ll-np-btn" id="ll-play-btn" title="Play / Pause" style="background:rgba(0,0,0,0.07);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" id="ll-play-icon"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    </button>
+                    <button class="ll-np-btn" id="ll-next-btn" title="Next">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                    </button>
+                </div>
+                <div class="ll-np-info">
+                    <div class="ll-np-title" id="ll-np-title">No track selected</div>
+                    <div class="ll-np-artist" id="ll-np-artist">Select a song to start playing</div>
+                </div>
+                <div class="ll-np-progress">
+                    <div class="ll-np-bar-wrap" id="ll-progress-bar" style="cursor:pointer;">
+                        <div class="ll-np-bar-fill" id="local-progress-bar-fill"></div>
+                    </div>
+                    <div class="ll-np-times">
+                        <span id="local-current-time">0:00</span>
+                        <span id="local-duration">0:00</span>
+                    </div>
+                </div>
+            </div>
+        `;
+        return panel;
+    }
+
+    // ── Render Folder List ──────────────────────────────────────────────────────
+    function renderFolderList() {
+        const list = document.getElementById('ll-folder-list');
+        if (!list) return;
+        list.innerHTML = localFolders.map(f => `
+            <div class="ll-folder-item">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                <span title="${f}">${f.split(/[\\/]/).pop()}</span>
+                <span class="ll-folder-remove" data-path="${f}" title="Remove">&#x2715;</span>
+            </div>
+        `).join('');
+
+        list.querySelectorAll('.ll-folder-remove').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const fp = btn.dataset.path;
+                const res = await ipcRenderer.invoke('music-remove-folder', fp);
+                localFolders = res.allFolders;
+                localTracks  = localTracks.filter(t => !t.localPath || !t.localPath.startsWith(fp));
+                renderFolderList();
+                renderTrackList();
+                updateStats();
+            });
+        });
+    }
+
+    // ── Render Track List ───────────────────────────────────────────────────────
+    function renderTrackList() {
+        const list   = document.getElementById('ll-track-list');
+        const search = (document.getElementById('ll-search') || {}).value || '';
+        if (!list) return;
+
+        const query    = search.toLowerCase();
+        const filtered = query
+            ? localTracks.filter(t =>
+                (t.title || '').toLowerCase().includes(query) ||
+                (t.artist || '').toLowerCase().includes(query) ||
+                (t.album || '').toLowerCase().includes(query))
+            : localTracks;
+
+        if (!filtered.length) {
+            list.innerHTML = `<div class="ll-empty">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                <div class="ll-empty-title">${localTracks.length ? 'No results for "' + search + '"' : 'No audio files found'}</div>
+                <div class="ll-empty-sub">${localTracks.length ? 'Try a different search.' : 'Click "+ Add Folder" to select a music folder.'}</div>
+            </div>`;
+            return;
+        }
+
+        list.innerHTML = filtered.map((track, idx) => `
+            <div class="ll-track-row ${currentLocalTrack && currentLocalTrack.id === track.id ? 'active' : ''}" data-id="${track.id}">
+                <div class="ll-track-num">${currentLocalTrack && currentLocalTrack.id === track.id && isLocalPlaying
+                    ? '<svg width="10" height="10" viewBox="0 0 24 24" fill="#fa243c"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>'
+                    : (idx + 1)}</div>
+                <div class="ll-track-info">
+                    <div class="ll-track-title ${currentLocalTrack && currentLocalTrack.id === track.id ? 'playing' : ''}">${track.title}</div>
+                    <div class="ll-track-sub">${track.artist || 'Unknown Artist'}</div>
+                </div>
+                <div class="ll-track-album">${track.album || '—'}</div>
+                <div class="ll-track-ext"><span style="background:rgba(0,0,0,0.07);padding:2px 5px;border-radius:4px;font-size:9px;">${(track.ext || 'mp3').toUpperCase()}</span></div>
+                <div class="ll-track-dur">${track.duration || '—'}</div>
+            </div>
+        `).join('');
+
+        list.querySelectorAll('.ll-track-row').forEach(row => {
+            row.addEventListener('click', () => {
+                const track = filtered.find(t => t.id === row.dataset.id);
+                if (track) {
+                    if (currentLocalTrack && currentLocalTrack.id === track.id) {
+                        toggleLocalPlay();
+                    } else {
+                        playLocalTrack(track);
+                    }
+                }
+            });
+        });
+    }
+
+    function updateLocalUI() {
+        const npTitle  = document.getElementById('ll-np-title');
+        const npArtist = document.getElementById('ll-np-artist');
+        const playIcon = document.getElementById('ll-play-icon');
+        if (npTitle  && currentLocalTrack) npTitle.textContent  = currentLocalTrack.title;
+        if (npArtist && currentLocalTrack) npArtist.textContent = currentLocalTrack.artist || currentLocalTrack.album || 'Local File';
+        if (playIcon) {
+            playIcon.innerHTML = isLocalPlaying
+                ? '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'
+                : '<polygon points="5 3 19 12 5 21 5 3"/>';
+        }
+        renderTrackList();
+    }
+
+    function updateStats() {
+        const el = document.getElementById('ll-stats');
+        if (el) el.textContent = `${localTracks.length} songs · ${localFolders.length} folder${localFolders.length !== 1 ? 's' : ''}`;
+    }
+
+    // ── Attach Panel to Music Window ────────────────────────────────────────────
+    async function attachLocalLibrary() {
+        const musicWin = document.getElementById('music-window');
+        if (!musicWin) return;
+
+        const reactRoot = musicWin.querySelector('#music-react-root');
+        if (!reactRoot) return;
+
+        const panel = buildPanel();
+        reactRoot.style.position = 'relative';
+        reactRoot.appendChild(panel);
+
+        // Wire close button
+        document.getElementById('ll-close-btn').addEventListener('click', () => {
+            panel.classList.add('hidden');
+        });
+
+        // Wire play/pause, prev, next
+        document.getElementById('ll-play-btn').addEventListener('click', () => {
+            if (!currentLocalTrack && localTracks.length) playLocalTrack(localTracks[0]);
+            else toggleLocalPlay();
+        });
+        document.getElementById('ll-prev-btn').addEventListener('click', () => skipLocalTrack(-1));
+        document.getElementById('ll-next-btn').addEventListener('click', () => skipLocalTrack(1));
+
+        // Wire seek bar
+        document.getElementById('ll-progress-bar').addEventListener('click', seekLocal);
+
+        // Wire search
+        document.getElementById('ll-search').addEventListener('input', renderTrackList);
+
+        // Wire folder management
+        document.getElementById('ll-add-folder-btn').addEventListener('click', async () => {
+            const res = await ipcRenderer.invoke('music-add-folder');
+            if (!res) return;
+            localFolders = res.allFolders;
+            // Deduplicate and merge
+            const existingIds = new Set(localTracks.map(t => t.id));
+            localTracks.push(...res.audioFiles.filter(t => !existingIds.has(t.id)));
+            renderFolderList();
+            renderTrackList();
+            updateStats();
+            showLocalToast(`Added ${res.audioFiles.length} songs from "${res.folderPath.split(/[\\/]/).pop()}"`);
+        });
+
+        // Load saved settings and scan
+        const settings = await ipcRenderer.invoke('music-get-settings');
+        const scanResult = await ipcRenderer.invoke('music-scan-all');
+        localFolders = scanResult.folders;
+        localTracks  = scanResult.audioFiles;
+        renderFolderList();
+        renderTrackList();
+        updateStats();
+    }
+
+    // ── Inject "Local Library" button into Music sidebar ───────────────────────
+    function injectSidebarButton() {
+        const musicWin = document.getElementById('music-window');
+        if (!musicWin) return;
+
+        const sidebarNavItems = musicWin.querySelectorAll('.am-nav-item');
+        if (!sidebarNavItems.length) return;
+        if (document.getElementById('local-library-btn')) return;
+
+        // Find sidebar nav container
+        const navContainer = sidebarNavItems[0].parentElement;
+        if (!navContainer) return;
+
+        // Add separator
+        const sep = document.createElement('div');
+        sep.style.cssText = 'height:0.5px;background:rgba(0,0,0,0.08);margin:8px 10px;';
+        navContainer.appendChild(sep);
+
+        const btn = document.createElement('div');
+        btn.id = 'local-library-btn';
+        btn.className = 'am-nav-item';
+        btn.style.cssText = 'display:flex;align-items:center;gap:8px;cursor:pointer;';
+        btn.innerHTML = `
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+            </svg>
+            Local Library
+        `;
+        btn.addEventListener('click', () => {
+            const panel = document.getElementById('local-library-panel');
+            if (panel) panel.classList.remove('hidden');
+        });
+        navContainer.appendChild(btn);
+    }
+
+    // ── Init ────────────────────────────────────────────────────────────────────
+    // Wait for the Music window and React app to render
+    let retries = 0;
+    const tryInit = setInterval(async () => {
+        const musicWin  = document.getElementById('music-window');
+        const reactRoot = musicWin && musicWin.querySelector('#music-react-root');
+        if (reactRoot && retries < 30) {
+            clearInterval(tryInit);
+            await attachLocalLibrary();
+            injectSidebarButton();
+
+            // Also inject tracks into APPLE_MUSIC_DATA for the built-in player
+            if (window.APPLE_MUSIC_DATA && localTracks.length) {
+                const existingIds = new Set(window.APPLE_MUSIC_DATA.songs.map(s => s.id));
+                window.APPLE_MUSIC_DATA.songs.push(...localTracks.filter(t => !existingIds.has(t.id)));
+            }
+        }
+        retries++;
+        if (retries >= 30) clearInterval(tryInit);
+    }, 500);
+
+    // Re-inject sidebar button if music window is reopened
+    window.addEventListener('music-window-opened', () => {
+        setTimeout(injectSidebarButton, 300);
+    });
+})();

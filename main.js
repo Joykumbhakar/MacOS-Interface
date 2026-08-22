@@ -59,11 +59,34 @@ autoUpdater.on('error', (err) => {
 // ─────────────────────────────────────────────────────────────────────────────
 // HELPERS
 // ─────────────────────────────────────────────────────────────────────────────
-const AUDIO_EXTS  = new Set(['.mp3', '.m4a', '.flac', '.wav', '.ogg', '.aac', '.opus']);
+const AUDIO_EXTS  = new Set(['.mp3', '.m4a', '.flac', '.wav', '.ogg', '.aac', '.opus', '.wma', '.aiff', '.alac']);
 const IMAGE_EXTS  = new Set(['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg', '.heic']);
 const VIDEO_EXTS  = new Set(['.mp4', '.mov', '.mkv', '.avi', '.webm', '.m4v']);
 const DOC_EXTS    = new Set(['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.txt', '.md', '.csv', '.rtf', '.pages', '.numbers', '.key']);
 const CODE_EXTS   = new Set(['.js', '.ts', '.jsx', '.tsx', '.html', '.css', '.json', '.py', '.swift', '.kt', '.java', '.go', '.rs', '.cpp', '.c', '.sh']);
+
+// ── Persistent Settings (saved to userData/settings.json) ────────────────────
+function getSettingsPath() {
+    return path.join(app.getPath('userData'), 'settings.json');
+}
+
+function loadSettings() {
+    try {
+        const raw = fs.readFileSync(getSettingsPath(), 'utf8');
+        return JSON.parse(raw);
+    } catch (_) {
+        return {};
+    }
+}
+
+function saveSettings(data) {
+    try {
+        const current = loadSettings();
+        fs.writeFileSync(getSettingsPath(), JSON.stringify({ ...current, ...data }, null, 2));
+    } catch (err) {
+        console.error('saveSettings error:', err);
+    }
+}
 
 function getFileKind(ext) {
     if (AUDIO_EXTS.has(ext))  return 'Audio File';
@@ -298,6 +321,99 @@ ipcMain.handle('update-install', async () => {
 ipcMain.handle('update-check', async () => {
     autoUpdater.checkForUpdates().catch(() => {});
 });
+
+// ── Music Folder Settings IPC ─────────────────────────────────────────────────
+
+// Get current saved music folder paths and app version
+ipcMain.handle('music-get-settings', async () => {
+    const settings = loadSettings();
+    return {
+        musicFolders: settings.musicFolders || [path.join(os.homedir(), 'Music')],
+        appVersion:   app.getVersion(),
+        userDataPath: app.getPath('userData'),
+    };
+});
+
+// Open native folder picker to add a music folder
+ipcMain.handle('music-add-folder', async () => {
+    const { canceled, filePaths } = await dialog.showOpenDialog(mainWindowRef, {
+        properties: ['openDirectory'],
+        title:      'Select Music Folder',
+        buttonLabel: 'Add Folder',
+    });
+    if (canceled || !filePaths.length) return null;
+
+    const settings = loadSettings();
+    const folders  = new Set(settings.musicFolders || [path.join(os.homedir(), 'Music')]);
+    folders.add(filePaths[0]);
+    const newFolders = [...folders];
+    saveSettings({ musicFolders: newFolders });
+
+    // Scan and return audio files from the newly added folder
+    const audioFiles = scanMusicFolder(filePaths[0]);
+    return { folderPath: filePaths[0], audioFiles, allFolders: newFolders };
+});
+
+// Remove a folder from the saved list
+ipcMain.handle('music-remove-folder', async (_, folderPath) => {
+    const settings = loadSettings();
+    const folders  = (settings.musicFolders || []).filter(f => f !== folderPath);
+    saveSettings({ musicFolders: folders });
+    return { allFolders: folders };
+});
+
+// Scan all saved music folders and return audio files
+ipcMain.handle('music-scan-all', async () => {
+    const settings    = loadSettings();
+    const folders     = settings.musicFolders || [path.join(os.homedir(), 'Music')];
+    const allFiles    = [];
+    for (const folder of folders) {
+        if (fs.existsSync(folder)) {
+            allFiles.push(...scanMusicFolder(folder));
+        }
+    }
+    return { audioFiles: allFiles, folders };
+});
+
+// Recursively scan a folder for audio files (flat list, no depth limit)
+function scanMusicFolder(folderPath, depth = 0, maxDepth = 6) {
+    const results = [];
+    let entries;
+    try { entries = fs.readdirSync(folderPath, { withFileTypes: true }); }
+    catch (_) { return results; }
+
+    for (const entry of entries) {
+        if (entry.name.startsWith('.')) continue;
+        const fullPath = path.join(folderPath, entry.name);
+
+        if (entry.isDirectory() && depth < maxDepth) {
+            results.push(...scanMusicFolder(fullPath, depth + 1, maxDepth));
+        } else if (entry.isFile()) {
+            const ext = path.extname(entry.name).toLowerCase();
+            if (!AUDIO_EXTS.has(ext)) continue;
+
+            let stat;
+            try { stat = fs.statSync(fullPath); } catch (_) { continue; }
+
+            results.push({
+                id:       'local-' + fullPath.replace(/[^a-zA-Z0-9]/g, '_'),
+                title:    path.basename(entry.name, ext),
+                artist:   'Unknown Artist',
+                album:    path.basename(folderPath),
+                ext:      ext.replace('.', ''),
+                size:     formatSize(stat.size),
+                modified: formatDate(stat.mtime),
+                url:        'file:///' + fullPath.replace(/\\/g, '/'),
+                previewUrl: 'file:///' + fullPath.replace(/\\/g, '/'),
+                localPath:  fullPath,
+                cover:      null,
+                isLocal:    true,
+                duration:   '—',
+            });
+        }
+    }
+    return results;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // APP LIFECYCLE
