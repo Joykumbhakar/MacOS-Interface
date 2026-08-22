@@ -3,15 +3,45 @@
   "version": "1.0.0",
   "description": "A pixel-perfect macOS desktop experience built for the web. Full Finder, Settings, Apple Music, Dynamic Island, and more - running entirely in the browser.",
   "private": true,
+  "main": "main.js",
   "scripts": {
     "dev": "python -m http.server 3000",
     "start": "python -m http.server 3000",
-    "preview": "npx serve . -p 3000"
+    "preview": "npx serve . -p 3000",
+    "start-electron": "electron .",
+    "build": "electron-builder --win"
   },
-  "keywords": ["macos", "web", "simulation", "apple", "finder", "ui"],
+  "keywords": [
+    "macos",
+    "web",
+    "simulation",
+    "apple",
+    "finder",
+    "ui"
+  ],
   "author": "macOS Interface",
   "license": "MIT",
   "engines": {
     "node": ">=18"
+  },
+  "build": {
+    "appId": "com.macos.interface",
+    "productName": "MacOS-Interface Fan Made",
+    "win": {
+      "target": "nsis",
+      "icon": "images/Icons/MacOS.png"
+    },
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/*",
+      "!dist-electron/*"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^43.4.1",
+    "electron-builder": "^26.15.3"
   }
 }

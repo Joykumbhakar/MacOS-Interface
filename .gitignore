@@ -51,3 +51,6 @@ Tracks/
 
 # Dev prototype HTML files
 htmls/
+
+# Electron builds
+dist-electron/
