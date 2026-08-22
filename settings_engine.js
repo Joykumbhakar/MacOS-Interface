@@ -190,6 +190,10 @@ const MacSettings = {
         return true;
     },
 
+    getPassword() {
+        return this.state.lockPassword || '';
+    },
+
     checkPassword(pwd) {
         // Empty password means no lock
         if (!this.state.lockPassword) return true;

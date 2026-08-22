@@ -8,11 +8,27 @@ const PRIORITY = {
 
 const SIZE = {
   collapsed: { w: 140, h: 32, br: 16 },
-  compact: { w: 205, h: 36, br: 16 },
+  compact: { w: 205, h: 36, br: 18 },
   expanded: { w: 380, h: 168, br: 36 },
   detail: { w: 380, h: 220, br: 24 },
   idle_hover: { w: 220, h: 96, br: 24 },
-  auth: { w: 164, h: 142, br: 36 }
+  auth: { w: 164, h: 142, br: 36 },
+  notification: { w: 290, h: 56, br: 22 },
+  airdrop: { w: 280, h: 76, br: 22 },
+  download: { w: 280, h: 76, br: 22 },
+  battery: { w: 190, h: 36, br: 18 },
+  battery_expanded: { w: 290, h: 84, br: 22 },
+  call: { w: 310, h: 120, br: 26 },
+  recording: { w: 280, h: 76, br: 22 },
+  focus: { w: 180, h: 36, br: 18 },
+  bluetooth: { w: 180, h: 36, br: 18 },
+  camera: { w: 170, h: 36, br: 18 },
+  microphone: { w: 190, h: 36, br: 18 },
+  timer: { w: 180, h: 36, br: 18 },
+  screenshot: { w: 200, h: 36, br: 18 },
+  copy: { w: 150, h: 36, br: 18 },
+  success: { w: 170, h: 36, br: 18 },
+  error: { w: 220, h: 36, br: 18 }
 };
 
 // Internal State
@@ -35,7 +51,7 @@ const T = {
   idle_hover: () => {
     return `<div class="island-col" style="width:100%;height:100%;padding:12px 16px;justify-content:center;box-sizing:border-box;">
       <div style="display:flex;align-items:center;gap:12px;cursor:pointer;width:100%;" onclick="if(window.appState) window.appState.openApp('music')">
-        <img src="images/Music_Alums/album1.png" style="width:40px;height:40px;border-radius:8px;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+        <img src="images/Music_Alums/album1.png" style="width:40px;height:40px;border-radius:8px;object-fit:cover;">
         <div style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.2;flex:1;">
           <span style="font-size:14px;font-weight:700;color:white;letter-spacing:-0.2px;">Music</span>
           <span style="font-size:11.5px;color:rgba(255,255,255,0.6);font-weight:500;">Not Playing</span>
@@ -262,20 +278,18 @@ const T = {
     <span style="font-size:12.5px;color:white;font-weight:600;">${d.text || 'Error'}</span>
   </div>`,
 
-  notification_compact: (d) => `<div class="island-row" style="padding:0 14px;width:100%;height:100%;justify-content:space-between;align-items:center;">
-    <div class="island-row" style="gap:8px;">
-      <i class="${d.icon || 'fas fa-bell'}" style="color:#0a84ff;font-size:12px;"></i>
-      <span style="font-size:12.5px;color:white;font-weight:600;">${d.title || 'Notification'}</span>
-    </div>
+  notification_compact: (d) => `<div class="island-row" style="padding:0 14px;width:100%;height:100%;justify-content:flex-start;gap:8px;align-items:center;">
+    <img src="${d.icon || 'images/Icons/Messages.png'}" style="width:16px;height:16px;border-radius:4px;object-fit:contain;" onerror="this.style.display='none'">
+    <span style="font-size:12.5px;color:white;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.title || 'Notification'}</span>
   </div>`,
 
-  notification_expanded: (d) => `<div class="island-col" style="width:100%;height:100%;padding:14px 18px;justify-content:center;align-items:flex-start;box-sizing:border-box;gap:8px;">
-    <div class="island-row" style="gap:10px;width:100%;align-items:center;">
-      <img src="${d.icon || 'images/Icons/Messages.png'}" style="width:28px;height:28px;border-radius:6px;">
-      <div class="island-col" style="align-items:flex-start;flex:1;">
-        <span style="font-size:13.5px;font-weight:700;color:white;">${d.title || 'Messages'}</span>
-        <span style="font-size:12px;color:rgba(255,255,255,0.7);">${d.subtitle || 'New notification'}</span>
-      </div>
+  notification_expanded: (d) => `<div class="island-row" style="width:100%;height:100%;padding:0 14px;align-items:center;gap:12px;box-sizing:border-box;">
+    <div style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <img src="${d.icon || 'images/Icons/Messages.png'}" style="width:24px;height:24px;border-radius:5px;object-fit:contain;" onerror="this.src='images/Icons/Finder.png'">
+    </div>
+    <div class="island-col" style="align-items:flex-start;flex:1;overflow:hidden;line-height:1.25;">
+      <span style="font-size:13px;font-weight:600;color:white;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;">${d.title || 'Notification'}</span>
+      <span style="font-size:11.5px;color:rgba(255,255,255,0.65);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;margin-top:2px;">${d.subtitle || ''}</span>
     </div>
   </div>`,
 
@@ -335,7 +349,7 @@ const IslandBus = {
         // PRESERVE the user's current mode (e.g. if they hovered to 'expanded')
         targetMode = IslandState.mode;
       } else {
-        if (opts.type === 'media' || opts.type === 'recording' || opts.type === 'call') {
+        if (['media', 'recording', 'call', 'focus', 'bluetooth', 'camera', 'microphone', 'screenshot', 'copy', 'success', 'error', 'battery', 'timer'].includes(opts.type)) {
           targetMode = 'compact';
         } else {
           targetMode = 'expanded';
@@ -411,7 +425,16 @@ const IslandBus = {
     if (IslandState.mode !== 'idle_hover') IslandState.visible = true;
     
     // Size transitions
-    const size = (IslandState.type === 'auth' ? SIZE.auth : (SIZE[IslandState.mode] || SIZE.compact));
+    let size;
+    if (IslandState.type === 'auth') {
+      size = SIZE.auth;
+    } else if (IslandState.mode === 'compact') {
+      size = SIZE[IslandState.type] || SIZE.compact;
+    } else if (IslandState.mode === 'expanded') {
+      size = SIZE[`${IslandState.type}_expanded`] || (T[`${IslandState.type}_expanded`] ? (SIZE[IslandState.type] || SIZE.expanded) : (SIZE[IslandState.type] || SIZE.compact));
+    } else {
+      size = SIZE[IslandState.mode] || SIZE.compact;
+    }
     el.style.width = size.w + 'px';
     el.style.height = size.h + 'px';
     el.style.borderRadius = `0 0 ${size.br}px ${size.br}px`;
@@ -450,7 +473,7 @@ const IslandBus = {
       };
     } else {
       el.onmouseenter = () => {
-        if (IslandState.mode === 'compact') {
+        if (IslandState.mode === 'compact' && T[`${IslandState.type}_expanded`]) {
           IslandState._hoverTimeout = setTimeout(() => {
             IslandState.mode = 'expanded';
             IslandBus.render();
@@ -459,7 +482,7 @@ const IslandBus = {
       };
       el.onmouseleave = () => {
         if (IslandState._hoverTimeout) clearTimeout(IslandState._hoverTimeout);
-        if (IslandState.mode === 'expanded' && IslandState.type) {
+        if (IslandState.mode === 'expanded' && IslandState.type && T[`${IslandState.type}_expanded`]) {
           setTimeout(() => {
              if (IslandState.mode === 'expanded') {
                  IslandState.mode = 'compact';

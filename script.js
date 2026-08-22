@@ -391,72 +391,250 @@
         }
 
         function showContextMenu(e, type) {
-            const finderMenu = document.getElementById('finder-ctx-menu'); if (finderMenu) finderMenu.remove(); const contextMenu = document.getElementById('context-menu');
-            if(!contextMenu) return;
+            const finderMenu = document.getElementById('finder-ctx-menu'); 
+            if (finderMenu) finderMenu.remove(); 
+            const contextMenu = document.getElementById('context-menu');
+            if (!contextMenu) return;
             
-            // Hide all sections first
-            document.getElementById('cm-finder-item').style.display = 'none';
-            document.getElementById('cm-finder-bg').style.display = 'none';
-            document.getElementById('cm-desktop').style.display = 'none';
-            document.getElementById('cm-dock').style.display = 'none';
-            document.getElementById('cm-window').style.display = 'none';
+            // Don't show desktop context menu if lock screen is active
+            const lockScreen = document.getElementById('lock-screen');
+            if (lockScreen && lockScreen.style.display !== 'none' && lockScreen.style.opacity !== '0') return;
 
-            if (type === 'finder-item') {
-                document.getElementById('cm-finder-item').style.display = 'block';
+            // Hide all sections first
+            const secFinderItem = document.getElementById('cm-finder-item');
+            const secFinderBg = document.getElementById('cm-finder-bg');
+            const secDesktop = document.getElementById('cm-desktop');
+            const secWindow = document.getElementById('cm-window');
+
+            if (secFinderItem) secFinderItem.style.display = 'none';
+            if (secFinderBg) secFinderBg.style.display = 'none';
+            if (secDesktop) secDesktop.style.display = 'none';
+            if (secWindow) secWindow.style.display = 'none';
+
+            if (type === 'finder-item' && secFinderItem) {
+                secFinderItem.style.display = 'block';
                 const hasSel = appState.selectedItemIds.size > 0, hasClip = appState.clipboard.items.length > 0;
-                document.getElementById('menu-open').className = hasSel ? 'menu-item' : 'menu-item disabled';
-                document.getElementById('menu-quicklook').className = hasSel ? 'menu-item' : 'menu-item disabled';
-                document.getElementById('menu-getinfo').className = hasSel ? 'menu-item' : 'menu-item disabled';
-                document.getElementById('menu-copy').className = hasSel ? 'menu-item' : 'menu-item disabled';
-                document.getElementById('menu-cut').className = hasSel ? 'menu-item' : 'menu-item disabled';
-                document.getElementById('menu-duplicate').className = hasSel ? 'menu-item' : 'menu-item disabled';
-                document.getElementById('menu-rename').className = (hasSel && appState.selectedItemIds.size === 1) ? 'menu-item' : 'menu-item disabled';
-                document.getElementById('menu-delete').className = hasSel ? 'menu-item' : 'menu-item disabled';
-                document.getElementById('menu-paste').className = hasClip ? 'menu-item' : 'menu-item disabled';
-            } else if (type === 'finder-bg') {
-                document.getElementById('cm-finder-bg').style.display = 'block';
-            } else if (type === 'desktop') {
-                document.getElementById('cm-desktop').style.display = 'block';
-            } else if (type === 'dock') {
-                document.getElementById('cm-dock').style.display = 'block';
-            } else if (type === 'window') {
-                document.getElementById('cm-window').style.display = 'block';
+                const setClass = (id, cond) => {
+                    const el = document.getElementById(id);
+                    if (el) el.className = cond ? (id === 'menu-delete' ? 'menu-item menu-item-danger' : 'menu-item') : 'menu-item disabled';
+                };
+                setClass('menu-open', hasSel);
+                setClass('menu-quicklook', hasSel);
+                setClass('menu-getinfo', hasSel);
+                setClass('menu-copy', hasSel);
+                setClass('menu-cut', hasSel);
+                setClass('menu-duplicate', hasSel);
+                setClass('menu-rename', hasSel && appState.selectedItemIds.size === 1);
+                setClass('menu-delete', hasSel);
+                setClass('menu-paste', hasClip);
+            } else if (type === 'finder-bg' && secFinderBg) {
+                secFinderBg.style.display = 'block';
+            } else if (type === 'window' && secWindow) {
+                secWindow.style.display = 'block';
+            } else if (secDesktop) {
+                secDesktop.style.display = 'block';
             }
 
-            // Adjust position so it doesn't overflow
+            // Adjust position so it doesn't overflow screen boundaries
             let x = e.clientX;
             let y = e.clientY;
             contextMenu.style.visibility = 'hidden';
             contextMenu.style.display = 'block';
             contextMenu.classList.add('active');
             
-            setTimeout(() => {
-                const rect = contextMenu.getBoundingClientRect();
-                if (x + rect.width > window.innerWidth) x = window.innerWidth - rect.width - 5;
-                if (y + rect.height > window.innerHeight) y = window.innerHeight - rect.height - 5;
-                contextMenu.style.left = `${x}px`;
-                contextMenu.style.top = `${y}px`;
-                contextMenu.style.visibility = 'visible';
-            }, 0);
+            const rect = contextMenu.getBoundingClientRect();
+            if (x + rect.width > window.innerWidth - 10) x = window.innerWidth - rect.width - 10;
+            if (y + rect.height > window.innerHeight - 10) y = window.innerHeight - rect.height - 10;
+            contextMenu.style.left = `${Math.max(10, x)}px`;
+            contextMenu.style.top = `${Math.max(34, y)}px`;
+            contextMenu.style.visibility = 'visible';
         }
+
+        // Close context menu on global click or Escape
+        document.addEventListener('click', (e) => {
+            const contextMenu = document.getElementById('context-menu');
+            if (contextMenu && !contextMenu.contains(e.target)) {
+                contextMenu.classList.remove('active');
+                contextMenu.style.display = 'none';
+            }
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const contextMenu = document.getElementById('context-menu');
+                if (contextMenu) {
+                    contextMenu.classList.remove('active');
+                    contextMenu.style.display = 'none';
+                }
+            }
+        });
+
+        window.createDesktopFolder = function() {
+            const cm = document.getElementById('context-menu');
+            if (cm) { cm.classList.remove('active'); cm.style.display = 'none'; }
+            
+            const newId = 'folder-' + Date.now();
+            const newFolder = document.createElement('div');
+            newFolder.className = 'desktop-item';
+            newFolder.setAttribute('data-id', newId);
+            newFolder.setAttribute('data-target', newId);
+            
+            newFolder.innerHTML = `
+                <img src="images/Icons/Dev Tools Icons/folder.png" onerror="this.src='images/Icons/Finder.png'" alt="untitled folder">
+                <span>untitled folder</span>
+            `;
+            
+            const container = document.getElementById('desktop-icons-container');
+            if (container) {
+                container.appendChild(newFolder);
+                if (window.DesktopIcons && typeof window.DesktopIcons.applySavedOrInitialPositions === 'function') {
+                    // It's a singleton object, not a class
+                    window.DesktopIcons.init(); // re-init to attach listeners if needed
+                    window.DesktopIcons.applySavedOrInitialPositions();
+                }
+            }
+
+            if (window.FS) {
+                window.FS[newId] = {
+                    id: newId,
+                    name: 'untitled folder',
+                    type: 'folder',
+                    icon: 'folder-blue',
+                    parent: 'desktop',
+                    children: [],
+                    modified: 'Today, ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    tags: []
+                };
+                if (!window.FS['desktop']) {
+                    window.FS['desktop'] = { id: 'desktop', type: 'folder', children: [] };
+                }
+                if(window.FS['desktop'].children) {
+                    window.FS['desktop'].children.push(newId);
+                }
+            }
+
+            if (window.MacIsland) {
+                MacIsland.dispatch({ type: 'notification', data: { title: 'Finder', subtitle: 'Created "untitled folder"', icon: 'images/Icons/Finder.png' }, duration: 2500 });
+            }
+            if (window.MacAudio) MacAudio.play('paper');
+        };
+
+        window.createDesktopFile = function() {
+            const cm = document.getElementById('context-menu');
+            if (cm) { cm.classList.remove('active'); cm.style.display = 'none'; }
+            if (window.appState && typeof window.appState.openApp === 'function') {
+                window.appState.openApp('notes');
+            }
+            if (window.MacIsland) {
+                MacIsland.dispatch({ type: 'notification', data: { title: 'Notes', subtitle: 'New Document Created', icon: 'images/Icons/Notes.png' }, duration: 2500 });
+            }
+            if (window.MacAudio) MacAudio.play('paper');
+        };
+
+        window.openWallpaperSettings = function() {
+            const cm = document.getElementById('context-menu');
+            if (cm) { cm.classList.remove('active'); cm.style.display = 'none'; }
+            if (window.appState) {
+                window.appState.setSettingsView('wallpaper');
+                window.appState.openApp('settings');
+            }
+        };
+
+        window.openTerminalHere = function() {
+            const cm = document.getElementById('context-menu');
+            if (cm) { cm.classList.remove('active'); cm.style.display = 'none'; }
+            if (window.appState) {
+                window.appState.openApp('terminal');
+            }
+        };
+
+        window.cleanUpDesktopIcons = function() {
+            const cm = document.getElementById('context-menu');
+            if (cm) { cm.classList.remove('active'); cm.style.display = 'none'; }
+            if (window.DesktopIcons) DesktopIcons.cleanUp();
+        };
+
+        window.sortDesktopIcons = function(by) {
+            const cm = document.getElementById('context-menu');
+            if (cm) { cm.classList.remove('active'); cm.style.display = 'none'; }
+            if (window.DesktopIcons) DesktopIcons.sortBy(by);
+            if (window.MacIsland) {
+                MacIsland.dispatch({ type: 'notification', data: { title: 'Desktop', subtitle: `Sorted by ${by.charAt(0).toUpperCase() + by.slice(1)}`, icon: 'images/Icons/Finder.png' }, duration: 2000 });
+            }
+        };
+
+        window.refreshDesktop = function() {
+            const cm = document.getElementById('context-menu');
+            if (cm) { cm.classList.remove('active'); cm.style.display = 'none'; }
+            const container = document.getElementById('desktop-icons-container');
+            if (container) {
+                container.style.opacity = '0.3';
+                container.style.transition = 'opacity 0.15s ease';
+                setTimeout(() => {
+                    container.style.opacity = '1';
+                }, 150);
+            }
+            if (window.MacAudio) MacAudio.play('paper');
+        };
+
+        window.showDesktopInfo = function() {
+            const cm = document.getElementById('context-menu');
+            if (cm) { cm.classList.remove('active'); cm.style.display = 'none'; }
+            if (window.toggleQuickLook) {
+                window.toggleQuickLook({
+                    type: 'folder',
+                    name: 'Desktop',
+                    kind: 'Folder',
+                    size: '2.4 GB',
+                    date: 'Today'
+                });
+            }
+        };
+
+        window.minimizeFocusedWindow = function() {
+            const cm = document.getElementById('context-menu');
+            if (cm) { cm.classList.remove('active'); cm.style.display = 'none'; }
+            const focused = document.querySelector('.mac-window.is-focused');
+            if (focused) {
+                const minBtn = focused.querySelector('.tl-min');
+                if (minBtn) minBtn.click();
+            }
+        };
+
+        window.zoomFocusedWindow = function() {
+            const cm = document.getElementById('context-menu');
+            if (cm) { cm.classList.remove('active'); cm.style.display = 'none'; }
+            const focused = document.querySelector('.mac-window.is-focused');
+            if (focused) {
+                const maxBtn = focused.querySelector('.tl-max');
+                if (maxBtn) maxBtn.click();
+            }
+        };
+
+        window.closeFocusedWindow = function() {
+            const cm = document.getElementById('context-menu');
+            if (cm) { cm.classList.remove('active'); cm.style.display = 'none'; }
+            const focused = document.querySelector('.mac-window.is-focused');
+            if (focused) {
+                const closeBtn = focused.querySelector('.tl-close');
+                if (closeBtn) closeBtn.click();
+            }
+        };
 
         // Global Context Menu Interception
         document.addEventListener('contextmenu', (e) => {
-            // Allow default right click on inputs/textareas if needed, but the prompt says block globally
             e.preventDefault();
             
             // Check context
             let type = 'desktop'; // fallback
             
             if (e.target.closest('.dock-item')) {
-                type = 'dock';
+                return; // Let dock handle its own menu
             } else if (e.target.closest('.mac-window')) {
                 type = 'window';
             } else if (e.target.closest('.macos-desktop') || e.target.closest('.macos-body')) {
                 type = 'desktop';
             }
             
-            // Finder already stops propagation for finder-item and finder-bg, so they handle themselves
             showContextMenu(e, type);
         });
         
@@ -705,9 +883,9 @@
         };
 
         
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // MAC AUDIO SYSTEM (Synthesized Web Audio Feedback for all UI Interactions)
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 const MacAudio = {
     ctx: null,
     lastSliderTick: 0,
@@ -972,7 +1150,7 @@ document.addEventListener('keydown', (e) => {
     }
 }, true);
 
-// â”€â”€ Helper: toggle switch sound & HTML â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- Helper: toggle switch sound & HTML ---
 function playToggleSound(isOn) {
     MacAudio.play(isOn ? 'toggleOn' : 'toggleOff');
 }
@@ -985,7 +1163,7 @@ function toggleHTML(id, on, customJs = '') {
     </label>`;
 }
 
-// â”€â”€ Helper: row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- Helper: row ---
 function setRow(label, right, sub='') {
     const labelHtml = sub
         ? `<div><div style="font-size:13px;color:#1d1d1f;font-weight:400;">${label}</div><div style="font-size:11px;color:#8e8e93;margin-top:2px;">${sub}</div></div>`
@@ -993,23 +1171,23 @@ function setRow(label, right, sub='') {
     return `<div class="set-row">${labelHtml}<div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">${right}</div></div>`;
 }
 
-// â”€â”€ Helper: section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- Helper: section ---
 function setSection(title, rows) {
     const hdr = title ? `<div class="set-section-header">${title}</div>` : '';
     return `${hdr}<div class="set-section">${rows}</div>`;
 }
 
-// â”€â”€ Helper: chevron select â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- Helper: chevron select ---
 function setSelect(value) {
     return `<div style="display:flex;align-items:center;gap:4px;color:#555;font-size:13px;">${value}<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>`;
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // VIEW DEFINITIONS
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 const SETTINGS_VIEWS = {
-    // â”€â”€ Apple Account â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Apple Account ---
     'apple-account': () => `
         <div style="display:flex;flex-direction:column;align-items:center;padding:32px 0 24px;gap:12px;">
             <div style="width:80px;height:80px;border-radius:50%;overflow:hidden;"><img src="images/Avatars/Profile-avatar.png" style="width:100%;height:100%;object-fit:cover;"></div>
@@ -1036,7 +1214,7 @@ const SETTINGS_VIEWS = {
             ${setRow('Purchase History', '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>')}
         `)}`,
 
-    // â”€â”€ Wi-Fi â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Wi-Fi ---
     'wifi': () => `
         ${setSection('', `${setRow('Wi-Fi', toggleHTML('t-wifi', true))}`)}
         ${setSection('', `
@@ -1054,7 +1232,7 @@ const SETTINGS_VIEWS = {
             ${setRow('TP-LINK_GUEST', setSelect(''))}
         `)}`,
 
-    // â”€â”€ Bluetooth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Bluetooth ---
     'bluetooth': () => `
         ${setSection('', `${setRow('Bluetooth', toggleHTML('t-bt', true))}`)}
         ${setSection('My Devices', `
@@ -1065,7 +1243,7 @@ const SETTINGS_VIEWS = {
             ${setRow('Magic Mouse', '<div style="font-size:12px;color:#34c759;">Connected</div>')}
         `)}`,
 
-    // â”€â”€ Network â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Network ---
     'network': () => `
         ${setSection('', `
             ${setRow('Wi-Fi', '<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#555;">Connected <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>')}
@@ -1075,7 +1253,7 @@ const SETTINGS_VIEWS = {
             ${setRow('Firewall', toggleHTML('t-fw', true))}
         `)}`,
 
-    // â”€â”€ Notifications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Notifications ---
     'notifications': () => `
         ${setSection('', `
             ${setRow('Allow Notifications', toggleHTML('t-notif-all', true))}
@@ -1090,7 +1268,7 @@ const SETTINGS_VIEWS = {
             ).join('')}
         `)}`,
 
-    // â”€â”€ Sound â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Sound ---
         'sound': () => `
         ${setSection('Output', `
             ${setRow('Output Device', setSelect('MacBook Pro Speakers'))}
@@ -1128,7 +1306,7 @@ const SETTINGS_VIEWS = {
             
             ${setRow('Play feedback when volume is changed', toggleHTML('t-vol-feedback', true))}
         `)}`,
-    // â”€â”€ Focus â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Focus ---
     'focus': () => `
         ${setSection('', `
             <div class="set-row" style="padding:12px 16px;gap:12px;">
@@ -1157,14 +1335,14 @@ const SETTINGS_VIEWS = {
         `)}
         <div style="padding:16px;"><button style="width:100%;padding:8px;border-radius:8px;border:1px solid #d1d1d6;background:#f2f2f7;font-size:13px;font-weight:500;color:#0a84ff;cursor:pointer;">+ Add Focus</button></div>`,
 
-    // â”€â”€ Screen Time â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Screen Time ---
     'screen-time': () => `
         ${setSection('', `
             ${setRow('Screen Time', toggleHTML('t-screentime', true))}
         `)}
         <div class="set-section-header">Usage</div>
         <div style="background:white;border-radius:12px;margin:0 20px;padding:16px;border:1px solid rgba(0,0,0,0.05);">
-            <div style="font-size:12px;color:#999;margin-bottom:8px;">TODAY â€” 2h 34m</div>
+            <div style="font-size:12px;color:#999;margin-bottom:8px;">TODAY &mdash; 2h 34m</div>
             <div style="display:flex;gap:2px;height:80px;align-items:flex-end;">
                 ${[40,60,80,50,100,70,45].map((h,i)=>`<div style="flex:1;background:${i===4?'#0a84ff':'#e5e5ea'};border-radius:3px 3px 0 0;height:${h}%;"></div>`).join('')}
             </div>
@@ -1178,7 +1356,7 @@ const SETTINGS_VIEWS = {
             ${setRow('Downtime', toggleHTML('t-downtime', false))}
         `)}`,
 
-    // â”€â”€ General â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- General ---
     'general': () => `
         ${setSection('About This Mac', `
             <div style="padding:12px 16px;display:flex;flex-direction:column;gap:6px;">
@@ -1226,7 +1404,7 @@ const SETTINGS_VIEWS = {
             ${setRow('Allow in the Background', '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>')}
         `)}`,
 
-    // â”€â”€ Accessibility â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Accessibility ---
     'accessibility': () => `
         ${setSection('Vision', `
             ${setRow('VoiceOver', toggleHTML('t-vo', false))}
@@ -1254,7 +1432,7 @@ const SETTINGS_VIEWS = {
             ${setRow('Switch Control', toggleHTML('t-switchctrl', false))}
         `)}`,
 
-    // â”€â”€ Control Center Settings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Control Center Settings ---
     'control-center-settings': () => `
         ${setSection('Control Center Modules', `
             ${[['Wi-Fi','always on'],['Bluetooth','always on'],['AirDrop','show when active'],['Focus','always show'],['Stage Manager','show when active'],['Screen Mirroring','show when active'],['Display','show when active'],['Sound','always show'],['Now Playing','show when active']].map(([name,hint],i)=>`${i?'':''}${setRow(name, setSelect(hint))}`).join('')}
@@ -1263,7 +1441,7 @@ const SETTINGS_VIEWS = {
             ${[['Clock','show'],['Spotlight','show'],['Siri','show'],['Time Machine','show when active']].map(([name,hint],i)=>`${i?'':''}${setRow(name, setSelect(hint))}`).join('')}
         `)}`,
 
-    // â”€â”€ Siri & Spotlight â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Siri & Spotlight ---
     'siri-spotlight': () => `
         ${setSection('Siri', `
             ${setRow('Ask Siri', toggleHTML('t-siri', true))}
@@ -1287,7 +1465,7 @@ const SETTINGS_VIEWS = {
             </div>
         `)}`,
 
-    // â”€â”€ Desktop & Dock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Desktop & Dock ---
         'desktop-dock': () => `
         ${setSection('Dock', `
             <div class="set-row" style="flex-direction:column;align-items:flex-start;gap:8px;padding:12px 16px;">
@@ -1335,7 +1513,7 @@ const SETTINGS_VIEWS = {
             
             ${setRow('Widget style', setSelect('Automatic'))}
         `)}`,
-        // â”€â”€ Wallpaper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // --- Wallpaper ---
     'wallpaper': () => {
         const wallpapers = [
             { file: 'images/Wallpapers/27-Golden-Gate.jpg',              label: 'Golden Gate Day' },
@@ -1431,7 +1609,7 @@ const SETTINGS_VIEWS = {
             </div>
         </div>`;
     },
-    // â”€â”€ Screen Saver â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Screen Saver ---
     'screen-saver': () => `
         ${setSection('', `
             ${setRow('Start after', setSelect('10 minutes'))}
@@ -1445,7 +1623,7 @@ const SETTINGS_VIEWS = {
             </div>
         </div>`,
 
-    // â”€â”€ Lock Screen Settings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Lock Screen Settings ---
         'lock-screen-settings': () => `
         ${setSection('', `
             ${setRow('Start Screen Saver when inactive', setSelect('For 5 minutes'))}
@@ -1475,7 +1653,7 @@ const SETTINGS_VIEWS = {
                 ${MacSettings.state.lockPassword ? `<button onclick="MacSettings.setLockPassword('');appState.setSettingsView('lock-screen-settings');" style="padding:7px 14px;border-radius:7px;border:1px solid #ff3b30;background:transparent;color:#ff3b30;font-size:13px;font-weight:600;cursor:pointer;align-self:flex-start;">Remove Password</button>` : ''}
             </div>
         </div>`,
-    // â”€â”€ Privacy & Security â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Privacy & Security ---
     'privacy-security': () => `
         ${setSection('Privacy', `
             ${[['Location Services','On'],['Contacts',''],['Calendars',''],['Reminders',''],['Photos',''],['Camera',''],['Microphone',''],['Files and Folders',''],['Full Disk Access',''],['Screen Recording',''],['Accessibility',''],['Input Monitoring','']].map(([name,hint],i)=>`${i?'':''}${setRow(name, '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>')}`).join('')}
@@ -1490,7 +1668,7 @@ const SETTINGS_VIEWS = {
             ${setRow('Lockdown Mode', '<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#999;">Off <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>')}
         `)}`,
 
-    // â”€â”€ Face ID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Face ID ---
     'face-id': () => `
         <div style="display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:12px;">
             <img src="images/Icons/Face_ID.png" style="width:64px;height:64px;object-fit:cover;border-radius:14px;box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
@@ -1503,7 +1681,7 @@ const SETTINGS_VIEWS = {
         `)}
     `,
 
-    // â”€â”€ Touch ID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Touch ID ---
     'touch-id': () => `
         <div style="display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:12px;">
             <img src="images/Icons/fingerprint.png" style="width:64px;height:64px;object-fit:contain;opacity:0.7;">
@@ -1518,7 +1696,7 @@ const SETTINGS_VIEWS = {
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
             </div>
             
-            <div class="set-row" style="padding:12px 16px;"><span style="color:#0a84ff;font-size:13px;cursor:pointer;">Add Fingerprintâ€¦</span></div>
+            <div class="set-row" style="padding:12px 16px;"><span style="color:#0a84ff;font-size:13px;cursor:pointer;">Add Fingerprint...</span></div>
         `)}
         ${setSection('Use Touch ID for', `
             ${setRow('Unlocking your Mac', toggleHTML('t-tid-unlock', true))}
@@ -1532,7 +1710,7 @@ const SETTINGS_VIEWS = {
             ${setRow('Fast User Switching', toggleHTML('t-tid-switch', false))}
         `)}`,
 
-    // â”€â”€ Users & Groups â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Users & Groups ---
     'users-groups': () => `
         <div class="set-section-header">Current User</div>
         <div class="set-section">
@@ -1543,7 +1721,7 @@ const SETTINGS_VIEWS = {
             </div>
         </div>
         ${setSection('Other Users', `
-            <div class="set-row" style="padding:12px 16px;"><span style="color:#0a84ff;cursor:pointer;">+ Add Userâ€¦</span></div>
+            <div class="set-row" style="padding:12px 16px;"><span style="color:#0a84ff;cursor:pointer;">+ Add User...</span></div>
         `)}
         ${setSection('Login Options', `
             ${setRow('Automatic login', setSelect('Off'))}
@@ -1553,7 +1731,7 @@ const SETTINGS_VIEWS = {
             ${setRow('Show password hints', toggleHTML('t-pwdhints', false))}
         `)}`,
 
-    // â”€â”€ Keyboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Keyboard ---
     'keyboard': () => `
         ${setSection('', `
             <div class="set-row" style="flex-direction:column;align-items:flex-start;gap:8px;padding:12px 16px;">
@@ -1571,11 +1749,11 @@ const SETTINGS_VIEWS = {
             ${setRow('Keyboard backlight off after', setSelect('5 secs of inactivity'))}
         `)}
         ${setSection('', `
-            ${setRow('Press ðŸŒ key to', setSelect('Change Input Source'))}
+            ${setRow('Press 🌐  key to', setSelect('Change Input Source'))}
             
-            ${setRow('Keyboard Shortcutsâ€¦', '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>')}
+            ${setRow('Keyboard Shortcuts...', '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>')}
             
-            ${setRow('Input Sourcesâ€¦', '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>')}
+            ${setRow('Input Sources...', '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>')}
         `)}
         ${setSection('Text Input', `
             ${setRow('Autocorrect', toggleHTML('t-autocorrect', true))}
@@ -1587,7 +1765,7 @@ const SETTINGS_VIEWS = {
             ${setRow('Use smart quotes and dashes', toggleHTML('t-smart-quotes', true))}
         `)}`,
 
-    // â”€â”€ Trackpad â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Trackpad ---
     'trackpad': () => `
         ${setSection('Point & Click', `
             <div class="set-row" style="flex-direction:column;align-items:flex-start;gap:8px;padding:12px 16px;">
@@ -1622,7 +1800,7 @@ const SETTINGS_VIEWS = {
             ${setRow('Launchpad', toggleHTML('t-launchpad-gesture', true))}
         `)}`,
 
-    // â”€â”€ Battery â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Battery ---
         'battery': () => {
         const pct = 79;
         const charging = true;
@@ -1642,7 +1820,7 @@ const SETTINGS_VIEWS = {
                     <rect x="1" y="1" width="${Math.round(pct*15/100)}" height="9" rx="1.5" fill="${pct>20?'#34c759':'#ff3b30'}"/>
                     <path d="M18.5 3.5v4" stroke="#1d1d1f" stroke-opacity="0.4" stroke-width="1.5" stroke-linecap="round"/>
                 </svg>
-                <span style="color:#1d1d1f;font-size:13px;">${pct}% â€” ${charging?'Charging':'Battery'}</span>
+                <span style="color:#1d1d1f;font-size:13px;">${pct}% &mdash; ${charging?'Charging':'Battery'}</span>
             </div>
 
             <!-- Top rows: Low Power Mode + Battery Health -->
@@ -1691,7 +1869,7 @@ const SETTINGS_VIEWS = {
                     <div style="position:absolute;top:8px;left:8px;right:40px;bottom:20px;display:flex;align-items:flex-end;gap:1px;">
                         ${chartData.map((v,i) => `
                         <div style="flex:1;background:#30d158;border-radius:1px 1px 0 0;height:${v}%;opacity:0.9;position:relative;">
-                            ${charging && i > 20 ? '<div style="position:absolute;top:2px;left:50%;transform:translateX(-50%);font-size:6px;color:white;">âš¡</div>' : ''}
+                            ${charging && i > 20 ? '<div style="position:absolute;top:2px;left:50%;transform:translateX(-50%);font-size:6px;color:white;">&#9889;</div>' : ''}
                         </div>`).join('')}
                     </div>
                     <!-- Time labels -->
@@ -1719,7 +1897,7 @@ const SETTINGS_VIEWS = {
 
         </div>`;
     },
-    // â”€â”€ Sharing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Sharing ---
     'sharing': () => `
         ${setSection('', `
             <div class="set-row" style="padding:12px 16px;flex-direction:column;align-items:flex-start;gap:4px;">
@@ -1732,14 +1910,14 @@ const SETTINGS_VIEWS = {
             ${[['Screen Sharing',false],['File Sharing',false],['Media Sharing',false],['Remote Login',false],['Remote Management',false],['Remote Apple Events',false],['Internet Sharing',false],['Bluetooth Sharing',false],['Content Caching',false]].map(([name,on],i)=>`${i?'':''}${setRow(name, toggleHTML('t-share-'+i, on))}`).join('')}
         `)}`,
 
-    // â”€â”€ VPN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- VPN ---
     'vpn': () => `
         ${setSection('', `
-            <div class="set-row" style="padding:16px;"><span style="color:#0a84ff;cursor:pointer;">+ Add VPN Configurationâ€¦</span></div>
+            <div class="set-row" style="padding:16px;"><span style="color:#0a84ff;cursor:pointer;">+ Add VPN Configuration...</span></div>
         `)}
         <div style="padding:16px 24px;color:#999;font-size:12px;">No VPN configurations are currently installed. Click "Add VPN Configuration" to create a new one.</div>`,
 
-    // â”€â”€ Internet Accounts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Internet Accounts ---
     'internet-accounts': () => `
         ${setSection('', `
             <div class="set-row" style="gap:12px;padding:12px 16px;">
@@ -1755,7 +1933,7 @@ const SETTINGS_VIEWS = {
             </div>
         </div>`,
 
-    // â”€â”€ Game Center â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Game Center ---
     'game-center': () => `
         <div style="display:flex;flex-direction:column;align-items:center;padding:24px;gap:8px;">
             <div style="width:60px;height:60px;border-radius:14px;background:linear-gradient(135deg,#34c759,#0a84ff);display:flex;align-items:center;justify-content:center;"><svg width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M22.56 8.94C21.93 8.34 21.09 8 20.22 8H3.78c-.87 0-1.71.34-2.34.94-.63.6-.97 1.41-.94 2.25L1 13c.04.88.42 1.69 1.09 2.27.59.51 1.37.73 2.21.73.88 0 1.77-.38 2.35-1.08L8.5 12h7l1.85 2.92c.58.7 1.47 1.08 2.35 1.08.84 0 1.62-.22 2.21-.73.67-.58 1.05-1.39 1.09-2.27l.5-1.81c.03-.84-.31-1.65-.94-2.25z"/></svg></div>
@@ -1770,7 +1948,7 @@ const SETTINGS_VIEWS = {
             ${setRow('Share Games with Friends', toggleHTML('t-gc-share', true))}
         `)}`,
 
-    // â”€â”€ Wallet & Apple Pay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Wallet & Apple Pay ---
     'wallet-pay': () => `
         <div class="set-section-header">Payment Cards</div>
         <div style="display:flex; justify-content:center; padding: 20px 0;">
@@ -1811,12 +1989,12 @@ const SETTINGS_VIEWS = {
         </div>` + `
         <div class="set-section">
             <div class="set-row" style="gap:12px;padding:12px 16px;">
-                <div style="width:52px;height:34px;border-radius:6px;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;padding:4px 8px;"><div style="font-size:8px;color:white;font-weight:700;">VISA â€¢â€¢â€¢ 4242</div></div>
-                <div style="flex:1;"><div style="font-weight:600;font-size:13px;">Visa â€¢â€¢â€¢â€¢4242</div><div style="font-size:11px;color:#555;">Default Card</div></div>
+                <div style="width:52px;height:34px;border-radius:6px;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;padding:4px 8px;"><div style="font-size:8px;color:white;font-weight:700;">VISA &bull;&bull;&bull; 4242</div></div>
+                <div style="flex:1;"><div style="font-weight:600;font-size:13px;">Visa &bull;&bull;&bull;&bull;4242</div><div style="font-size:11px;color:#555;">Default Card</div></div>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
             </div>
             
-            <div class="set-row" style="padding:12px 16px;"><span style="color:#0a84ff;cursor:pointer;">+ Add Cardâ€¦</span></div>
+            <div class="set-row" style="padding:12px 16px;"><span style="color:#0a84ff;cursor:pointer;">+ Add Card...</span></div>
         </div>
         ${setSection('Shipping Address', `
             <div class="set-row" style="padding:12px 16px;flex-direction:column;align-items:flex-start;gap:2px;">
@@ -1825,7 +2003,7 @@ const SETTINGS_VIEWS = {
             </div>
         `)}`,
 
-    // â”€â”€ Mouse â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Mouse ---
     'mouse': () => `
         ${setSection('', `
             <div class="set-row" style="flex-direction:column;align-items:flex-start;gap:8px;padding:12px 16px;">
@@ -1843,13 +2021,13 @@ const SETTINGS_VIEWS = {
             </div>
         `)}`,
 
-    // â”€â”€ Printers & Scanners â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // --- Printers & Scanners ---
     'printers-scanners': () => `
         <div class="set-section-header">Printers</div>
         <div class="set-section">
             <div class="set-row" style="padding:12px 16px;"><span style="color:#999;">No printers added yet.</span></div>
             
-            <div class="set-row" style="padding:12px 16px;"><span style="color:#0a84ff;cursor:pointer;">+ Add Printer, Scanner, or Faxâ€¦</span></div>
+            <div class="set-row" style="padding:12px 16px;"><span style="color:#0a84ff;cursor:pointer;">+ Add Printer, Scanner, or Fax...</span></div>
         </div>
         ${setSection('', `
             ${setRow('Default printer', setSelect('Last Printer Used'))}
@@ -2119,6 +2297,40 @@ const SETTINGS_VIEWS = {
                 clockEl.textContent = `${days[now.getDay()]} ${h}:${m} ${now.getHours() >= 12 ? 'PM' : 'AM'}`;
             }, 1000);
 
+            // Battery Status Synchronization
+            const updateBatteryUI = (level = 1, charging = false) => {
+                const pct = Math.max(1, Math.min(100, Math.round(level * 100)));
+                window._macBatteryLevel = pct;
+                const topText = document.getElementById('topbar-battery-text');
+                const topFill = document.getElementById('topbar-battery-fill');
+                const lsText = document.getElementById('ls-battery-text');
+                const lsFill = document.getElementById('ls-battery-fill');
+
+                if (topText) topText.textContent = `${pct}%`;
+                if (topFill) {
+                    const fillW = Math.max(2, Math.round((pct / 100) * 14));
+                    topFill.setAttribute('width', fillW);
+                    topFill.setAttribute('fill', pct > 20 ? '#34c759' : '#ff3b30');
+                }
+
+                if (lsText) lsText.textContent = `${pct}%`;
+                if (lsFill) {
+                    const lsW = Math.max(2, Math.round((pct / 100) * 14));
+                    lsFill.setAttribute('width', lsW);
+                    lsFill.setAttribute('fill', pct > 20 ? '#34c759' : '#ff3b30');
+                }
+            };
+
+            if (navigator.getBattery) {
+                navigator.getBattery().then(battery => {
+                    updateBatteryUI(battery.level, battery.charging);
+                    battery.addEventListener('levelchange', () => updateBatteryUI(battery.level, battery.charging));
+                    battery.addEventListener('chargingchange', () => updateBatteryUI(battery.level, battery.charging));
+                }).catch(() => updateBatteryUI(1, false));
+            } else {
+                updateBatteryUI(1, false);
+            }
+
             // Hardcoded Window Controls
             document.querySelectorAll('.mac-window').forEach(win => {
                 const appId = win.id.replace('-window', '');
@@ -2377,54 +2589,94 @@ const SETTINGS_VIEWS = {
             const touchIdBtn = document.getElementById('touch-id-btn');
 
             let isAuthenticating = false;
-            window.authenticateTouchID = async function() {
+            window.authenticateFaceID = async function() {
                 if (isAuthenticating) return;
                 isAuthenticating = true;
                 
-                const fingerprintGroup = document.getElementById('fingerprint-group');
-                const tickGroup = document.getElementById('tick-group');
-                const circleAnim = document.getElementById('circle-anim');
-                const checkAnim = document.getElementById('check-anim');
-                
-                if (fingerprintGroup) fingerprintGroup.classList.remove('scanning-pulse');
-                if (fingerprintGroup) fingerprintGroup.style.transform = 'scale(0.6)';
-                if (fingerprintGroup) fingerprintGroup.style.opacity = '0';
-                
-                await new Promise(r => setTimeout(r, 300));
-                if (fingerprintGroup) fingerprintGroup.style.display = 'none';
+                try {
+                    if (window.MacIsland && window.MacIsland.dispatch) {
+                        window.MacIsland.dispatch({
+                            type: 'auth',
+                            mode: 'expanded',
+                            data: { title: 'Face ID' },
+                            autoDismiss: false,
+                            persistent: true
+                        });
 
-                if (tickGroup) {
-                    tickGroup.style.display = 'block';
-                    void tickGroup.offsetWidth;
-                    tickGroup.style.opacity = '1';
-                    tickGroup.style.transform = 'scale(1)';
-                    if (circleAnim) circleAnim.style.animation = 'drawCircle 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
-                    if (checkAnim) checkAnim.style.animation = 'drawCheck 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.15s';
+                        // Start scanning sequence
+                        await new Promise(r => setTimeout(r, 1100));
+
+                        const faceGroup = document.getElementById('island-face-group');
+                        const tickGroup = document.getElementById('island-tick-group');
+                        const circleAnim = document.getElementById('island-circle-anim');
+                        const checkAnim = document.getElementById('island-check-anim');
+                        const authLabel = document.getElementById('island-auth-label');
+
+                        if (faceGroup) {
+                            faceGroup.classList.remove('scanning-pulse');
+                            faceGroup.style.transform = 'scale(0.6)';
+                            faceGroup.style.opacity = '0';
+                        }
+
+                        await new Promise(r => setTimeout(r, 300));
+                        if (faceGroup) faceGroup.style.display = 'none';
+                        if (tickGroup) {
+                            tickGroup.style.display = 'block';
+                            void tickGroup.offsetWidth;
+                            tickGroup.style.opacity = '1';
+                            tickGroup.style.transform = 'scale(1)';
+                        }
+                        if (circleAnim) circleAnim.style.animation = 'drawCircle 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
+                        if (checkAnim) checkAnim.style.animation = 'drawCheck 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.15s';
+                        if (authLabel) {
+                            authLabel.style.color = '#32D74B';
+                            authLabel.textContent = 'Unlocked';
+                        }
+
+                        await new Promise(r => setTimeout(r, 700));
+                        window.MacIsland.dismiss();
+                    }
+                    
+                    unlock('', true);
+                } catch (err) {
+                    console.error('Face ID auth error:', err);
+                    unlock('', true);
+                } finally {
+                    isAuthenticating = false;
                 }
-                
-                await new Promise(r => setTimeout(r, 800));
-                
-                // Fetch actual password from settings to bypass the check, or just force unlock if no password is required
-                const pwd = window.MacSettings ? window.MacSettings.getPassword() : '';
-                unlock(pwd);
-                isAuthenticating = false;
             };
+            window.authenticateTouchID = window.authenticateFaceID;
 
-            function unlock(pwdAttempt) {
-                window.unlock = unlock;
-                if (!lockScreen) return;
-                // Check password if one is set
-                if (!MacSettings.checkPassword(pwdAttempt || '')) {
+            function unlock(pwdAttempt = '', force = false) {
+                const ls = document.getElementById('lock-screen');
+                if (!ls) return;
+                
+                // Check password if not a biometric bypass and password is required
+                if (!force && window.MacSettings && !window.MacSettings.checkPassword(pwdAttempt || '')) {
                     const inp = document.getElementById('lock-password');
-                    if (inp) { inp.style.border = '1.5px solid #ff3b30'; inp.value = ''; inp.placeholder = 'Incorrect password'; }
-                    setTimeout(() => { if(inp){ inp.style.border=''; inp.placeholder='Enter Password'; }}, 1500);
+                    if (inp) { 
+                        inp.style.border = '1.5px solid #ff3b30'; 
+                        inp.value = ''; 
+                        inp.placeholder = 'Incorrect password'; 
+                    }
+                    setTimeout(() => { 
+                        if (inp) { 
+                            inp.style.border = ''; 
+                            inp.placeholder = 'Enter Password'; 
+                        }
+                    }, 1500);
                     return;
                 }
+                
                 if (window.MacAudio) MacAudio.play('unlock');
-                lockScreen.style.transform = 'translateY(-20px)';
-                lockScreen.style.opacity = '0';
-                setTimeout(() => { lockScreen.style.display = 'none'; }, 600);
+                ls.style.pointerEvents = 'none';
+                ls.style.transform = 'translateY(-30px)';
+                ls.style.opacity = '0';
+                setTimeout(() => { 
+                    ls.style.display = 'none'; 
+                }, 600);
             }
+            window.unlock = unlock;
 
             if (lockScreen) {
                 if (unlockBtn) unlockBtn.addEventListener('click', () => unlock(lockPassword ? lockPassword.value : ''));
@@ -2439,8 +2691,8 @@ const SETTINGS_VIEWS = {
         });
 
 
-// â”€â”€ Lock Screen Clock Updater â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-setInterval(() => {
+// --- Lock Screen Clock Updater ---
+function updateLockScreenClock() {
     const now = new Date();
     const lsTime = document.getElementById('ls-time');
     const lsDate = document.getElementById('ls-date');
@@ -2452,23 +2704,58 @@ setInterval(() => {
     h = h % 12 || 12;
     m = m < 10 ? '0' + m : m;
     
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
     if (lsTime) lsTime.textContent = h + ':' + m;
     if (lsTopTime) lsTopTime.textContent = h + ':' + m + ' ' + ampm;
     if (lsDate) {
-        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         lsDate.textContent = days[now.getDay()] + ', ' + now.getDate() + ' ' + months[now.getMonth()];
     }
-}, 1000);
+}
+setInterval(updateLockScreenClock, 1000);
+updateLockScreenClock();
+
+window.showPasswordInput = function() {
+    const promptText = document.getElementById('ls-prompt-text');
+    const pwdBox = document.getElementById('ls-pwd-container');
+    const inp = document.getElementById('lock-password');
+    if (promptText) promptText.style.display = 'none';
+    if (pwdBox) pwdBox.style.display = 'flex';
+    if (inp) {
+        inp.focus();
+    }
+};
+
+document.addEventListener('keydown', (e) => {
+    const lockScreen = document.getElementById('lock-screen');
+    if (!lockScreen || lockScreen.style.display === 'none' || lockScreen.style.opacity === '0') return;
+    if (e.key === 'Tab' || e.key === 'Shift' || e.key === 'Control' || e.key === 'Alt' || e.key === 'Meta') return;
+    if (e.key === 'Escape') {
+        const promptText = document.getElementById('ls-prompt-text');
+        const pwdBox = document.getElementById('ls-pwd-container');
+        const inp = document.getElementById('lock-password');
+        if (pwdBox && pwdBox.style.display !== 'none') {
+            if (inp) inp.value = '';
+            pwdBox.style.display = 'none';
+            if (promptText) promptText.style.display = 'block';
+        }
+        return;
+    }
+    showPasswordInput();
+});
 
 
-// â”€â”€ macOS Moveable Desktop Icons & Selection Engine â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- macOS Moveable Desktop Icons & Selection Engine ---
 const DesktopIcons = {
     storageKey: 'macos_desktop_icon_positions_v1',
     isDragging: false,
     dragThreshold: 3,
 
     init() {
+        if (this._initialized) return;
+        this._initialized = true;
+
         const container = document.getElementById('desktop-icons-container');
         if (!container) return;
 
@@ -2486,6 +2773,7 @@ const DesktopIcons = {
 
     applySavedOrInitialPositions() {
         const items = this.getIconElements();
+        if (!items.length) return;
         let savedPositions = {};
         try {
             const raw = localStorage.getItem(this.storageKey);
@@ -2495,26 +2783,61 @@ const DesktopIcons = {
         }
 
         const startTop = 46;
-        const itemGap = 96;
+        const itemHeight = 96;
         const defaultRight = 24;
         const itemWidth = 86;
+        const colGap = 16;
+        
+        let screenW = window.innerWidth || document.documentElement.clientWidth;
+        let screenH = window.innerHeight || document.documentElement.clientHeight;
+        if (screenW < 300) screenW = 1280; // Fallback if still loading
+        if (screenH < 300) screenH = 800;
+        
+        const maxRows = Math.max(1, Math.floor((screenH - 120) / itemHeight));
+
+        const usedPositions = [];
 
         items.forEach((item, index) => {
             const id = item.getAttribute('data-id') || ('desktop-item-' + index);
+            item.style.right = 'auto';
+            
+            // Check if saved position is valid and not part of the top-left stacking bug
+            let isValidSaved = false;
             if (savedPositions[id] && typeof savedPositions[id].left === 'number' && typeof savedPositions[id].top === 'number') {
-                let left = savedPositions[id].left;
-                let top = savedPositions[id].top;
-                left = Math.max(10, Math.min(window.innerWidth - itemWidth - 10, left));
-                top = Math.max(34, Math.min(window.innerHeight - 100, top));
-                item.style.left = `${left}px`;
-                item.style.top = `${top}px`;
-            } else {
-                const left = Math.max(10, window.innerWidth - itemWidth - defaultRight);
-                const top = startTop + index * itemGap;
-                item.style.left = `${left}px`;
-                item.style.top = `${top}px`;
+                if (savedPositions[id].left > 15 && savedPositions[id].top > 15) {
+                    isValidSaved = true;
+                }
             }
+
+            let left, top;
+            if (isValidSaved) {
+                left = savedPositions[id].left;
+                top = savedPositions[id].top;
+                left = Math.max(10, Math.min(screenW - itemWidth - 10, left));
+                top = Math.max(34, Math.min(screenH - 100, top));
+
+                // If this position collides with an already placed item, unstack it
+                const isColliding = usedPositions.some(p => Math.hypot(p.left - left, p.top - top) < 40);
+                if (isColliding) {
+                    const col = Math.floor(index / maxRows);
+                    const row = index % maxRows;
+                    left = Math.max(10, screenW - defaultRight - itemWidth - col * (itemWidth + colGap));
+                    top = Math.max(34, startTop + row * itemHeight);
+                }
+            } else {
+                const col = Math.floor(index / maxRows);
+                const row = index % maxRows;
+                left = Math.max(10, screenW - defaultRight - itemWidth - col * (itemWidth + colGap));
+                top = Math.max(34, startTop + row * itemHeight);
+            }
+
+            usedPositions.push({ left, top });
+            item.style.left = `${left}px`;
+            item.style.top = `${top}px`;
         });
+        
+        // Save immediately to overwrite bad layout
+        this.savePositions();
     },
 
     savePositions() {
@@ -2538,14 +2861,19 @@ const DesktopIcons = {
         const itemHeight = 90;
         let modified = false;
 
+        let screenW = window.innerWidth || document.documentElement.clientWidth;
+        let screenH = window.innerHeight || document.documentElement.clientHeight;
+
         items.forEach(item => {
             const currLeft = parseFloat(item.style.left) || 0;
             const currTop = parseFloat(item.style.top) || 0;
-            const clampedLeft = Math.max(10, Math.min(window.innerWidth - itemWidth - 10, currLeft));
-            const clampedTop = Math.max(34, Math.min(window.innerHeight - itemHeight - 75, currTop));
+            if (currLeft === 0 && currTop === 0) return; 
+            const clampedLeft = Math.max(10, Math.min(screenW - itemWidth - 10, currLeft));
+            const clampedTop = Math.max(34, Math.min(screenH - itemHeight - 75, currTop));
             if (Math.abs(clampedLeft - currLeft) > 1 || Math.abs(clampedTop - currTop) > 1) {
                 item.style.left = `${clampedLeft}px`;
                 item.style.top = `${clampedTop}px`;
+                item.style.right = 'auto';
                 modified = true;
             }
         });
@@ -2555,63 +2883,25 @@ const DesktopIcons = {
         }
     },
 
-    cleanUp() {
-        const items = this.getIconElements();
-        const startTop = 46;
-        const itemGap = 96;
-        const defaultRight = 24;
-        const itemWidth = 86;
-
-        items.forEach((item, index) => {
-            const left = Math.max(10, window.innerWidth - itemWidth - defaultRight);
-            const top = startTop + index * itemGap;
-            item.style.transition = 'left 0.35s cubic-bezier(0.16, 1, 0.3, 1), top 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
-            item.style.left = `${left}px`;
-            item.style.top = `${top}px`;
-            setTimeout(() => { item.style.transition = ''; }, 400);
-        });
-
-        this.savePositions();
-    },
-
-    sortByName() {
-        const items = this.getIconElements();
-        items.sort((a, b) => {
-            const nameA = (a.querySelector('span')?.textContent || '').trim().toLowerCase();
-            const nameB = (b.querySelector('span')?.textContent || '').trim().toLowerCase();
-            return nameA.localeCompare(nameB);
-        });
-
-        const startTop = 46;
-        const itemGap = 96;
-        const defaultRight = 24;
-        const itemWidth = 86;
-
-        items.forEach((item, index) => {
-            const left = Math.max(10, window.innerWidth - itemWidth - defaultRight);
-            const top = startTop + index * itemGap;
-            item.style.transition = 'left 0.35s cubic-bezier(0.16, 1, 0.3, 1), top 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
-            item.style.left = `${left}px`;
-            item.style.top = `${top}px`;
-            setTimeout(() => { item.style.transition = ''; }, 400);
-        });
-
-        this.savePositions();
-    },
-
     bindEvents() {
+        if (this._eventsBound) return;
+        this._eventsBound = true;
+        
         const container = document.getElementById('desktop-icons-container');
-        const desktop = document.getElementById('macos-container');
+        const desktop = document.getElementById('macos-container') || document.body;
         const selBox = document.getElementById('selection-box');
         if (!container || !desktop) return;
 
+        // Prevent native browser image ghost drag
+        document.addEventListener('dragstart', (e) => {
+            if (e.target.closest('.desktop-item') || e.target.closest('#desktop-icons-container')) {
+                e.preventDefault();
+            }
+        });
+
         let activeDrag = null;
 
-        // Pointer down on desktop items
-        container.addEventListener('pointerdown', (e) => {
-            const item = e.target.closest('.desktop-item');
-            if (!item) return;
-
+        const startItemDrag = (e, item) => {
             // If right click, select item and let context menu open
             if (e.button === 2) {
                 if (!item.classList.contains('selected')) {
@@ -2623,7 +2913,7 @@ const DesktopIcons = {
                 return;
             }
 
-            if (e.button !== 0) return;
+            if (e.type !== 'touchstart' && e.button !== 0) return;
 
             e.stopPropagation();
 
@@ -2642,46 +2932,65 @@ const DesktopIcons = {
                 selectedItems.push(item);
             }
 
-            const startPositions = selectedItems.map(el => ({
-                el,
-                startLeft: parseFloat(el.style.left) || el.offsetLeft,
-                startTop: parseFloat(el.style.top) || el.offsetTop
-            }));
+            const startPositions = selectedItems.map(el => {
+                const rect = el.getBoundingClientRect();
+                el.style.right = 'auto';
+                el.style.left = `${rect.left}px`;
+                el.style.top = `${rect.top}px`;
+                return {
+                    el,
+                    startLeft: rect.left,
+                    startTop: rect.top
+                };
+            });
+
+            const clientX = e.clientX ?? (e.touches && e.touches.length > 0 ? e.touches[0].clientX : 0);
+            const clientY = e.clientY ?? (e.touches && e.touches.length > 0 ? e.touches[0].clientY : 0);
 
             activeDrag = {
-                startX: e.clientX,
-                startY: e.clientY,
+                startX: clientX,
+                startY: clientY,
                 items: startPositions,
                 hasMoved: false,
                 targetItem: item
             };
 
-            const onPointerMove = (moveEvent) => {
+            const onMove = (moveEvt) => {
                 if (!activeDrag) return;
-                const dx = moveEvent.clientX - activeDrag.startX;
-                const dy = moveEvent.clientY - activeDrag.startY;
+                const curX = moveEvt.clientX ?? (moveEvt.touches && moveEvt.touches.length > 0 ? moveEvt.touches[0].clientX : activeDrag.startX);
+                const curY = moveEvt.clientY ?? (moveEvt.touches && moveEvt.touches.length > 0 ? moveEvt.touches[0].clientY : activeDrag.startY);
+                const dx = curX - activeDrag.startX;
+                const dy = curY - activeDrag.startY;
 
-                if (!activeDrag.hasMoved && Math.hypot(dx, dy) > DesktopIcons.dragThreshold) {
+                if (!activeDrag.hasMoved && Math.hypot(dx, dy) > 2) {
                     activeDrag.hasMoved = true;
                     DesktopIcons.isDragging = true;
                     activeDrag.items.forEach(it => it.el.classList.add('is-dragging'));
                 }
 
                 if (activeDrag.hasMoved) {
+                    if (moveEvt.cancelable) moveEvt.preventDefault();
+                    let screenW = window.innerWidth || document.documentElement.clientWidth;
+                    let screenH = window.innerHeight || document.documentElement.clientHeight;
                     activeDrag.items.forEach(it => {
-                        const newLeft = Math.max(10, Math.min(window.innerWidth - it.el.offsetWidth - 10, it.startLeft + dx));
-                        const newTop = Math.max(34, Math.min(window.innerHeight - it.el.offsetHeight - 75, it.startTop + dy));
+                        const newLeft = Math.max(10, Math.min(screenW - it.el.offsetWidth - 10, it.startLeft + dx));
+                        const newTop = Math.max(34, Math.min(screenH - it.el.offsetHeight - 75, it.startTop + dy));
                         it.el.style.left = `${newLeft}px`;
                         it.el.style.top = `${newTop}px`;
+                        it.el.style.right = 'auto';
                     });
                 }
             };
 
-            const onPointerUp = () => {
+            const onEnd = () => {
                 if (!activeDrag) return;
-                window.removeEventListener('pointermove', onPointerMove);
-                window.removeEventListener('pointerup', onPointerUp);
-                window.removeEventListener('pointercancel', onPointerUp);
+                window.removeEventListener('pointermove', onMove);
+                window.removeEventListener('pointerup', onEnd);
+                window.removeEventListener('pointercancel', onEnd);
+                window.removeEventListener('mousemove', onMove);
+                window.removeEventListener('mouseup', onEnd);
+                window.removeEventListener('touchmove', onMove);
+                window.removeEventListener('touchend', onEnd);
 
                 if (activeDrag.hasMoved) {
                     activeDrag.items.forEach(it => it.el.classList.remove('is-dragging'));
@@ -2695,9 +3004,27 @@ const DesktopIcons = {
                 }, 60);
             };
 
-            window.addEventListener('pointermove', onPointerMove);
-            window.addEventListener('pointerup', onPointerUp);
-            window.addEventListener('pointercancel', onPointerUp);
+            window.addEventListener('pointermove', onMove, { passive: false });
+            window.addEventListener('pointerup', onEnd);
+            window.addEventListener('pointercancel', onEnd);
+            window.addEventListener('mousemove', onMove);
+            window.addEventListener('mouseup', onEnd);
+            window.addEventListener('touchmove', onMove, { passive: false });
+            window.addEventListener('touchend', onEnd);
+        };
+
+        // Document-level delegation for 100% reliable grab detection
+        document.addEventListener('pointerdown', (e) => {
+            const item = e.target.closest('.desktop-item');
+            if (item) {
+                startItemDrag(e, item);
+            }
+        });
+        document.addEventListener('mousedown', (e) => {
+            const item = e.target.closest('.desktop-item');
+            if (item && !activeDrag) {
+                startItemDrag(e, item);
+            }
         });
 
         // Double click to open folder in Finder
@@ -2782,14 +3109,72 @@ const DesktopIcons = {
                 window.addEventListener('pointercancel', onSelectionUp);
             });
         }
+    },
+
+    cleanUp() {
+        const items = this.getIconElements();
+        if (!items || !items.length) return;
+        const startTop = 46;
+        const itemHeight = 96;
+        const itemWidth = 86;
+        const defaultRight = 24;
+        const colGap = 16;
+        const maxRows = Math.max(1, Math.floor((window.innerHeight - 120) / itemHeight));
+
+        items.forEach((item, index) => {
+            const col = Math.floor(index / maxRows);
+            const row = index % maxRows;
+            const left = Math.max(10, window.innerWidth - defaultRight - itemWidth - col * (itemWidth + colGap));
+            const top = Math.max(34, startTop + row * itemHeight);
+
+            item.style.transition = 'left 0.35s cubic-bezier(0.16, 1, 0.3, 1), top 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
+            item.style.left = `${left}px`;
+            item.style.top = `${top}px`;
+            item.style.right = 'auto';
+            setTimeout(() => {
+                item.style.transition = '';
+            }, 400);
+        });
+
+        setTimeout(() => {
+            this.savePositions();
+        }, 450);
+
+        if (window.MacAudio) MacAudio.play('paper');
+    },
+
+    sortBy(criteria = 'name') {
+        const container = document.getElementById('desktop-icons-container');
+        if (!container) return;
+        let items = this.getIconElements();
+        
+        items.sort((a, b) => {
+            const nameA = (a.querySelector('span')?.textContent || a.getAttribute('data-id') || '').trim().toLowerCase();
+            const nameB = (b.querySelector('span')?.textContent || b.getAttribute('data-id') || '').trim().toLowerCase();
+            if (criteria === 'name') {
+                return nameA.localeCompare(nameB);
+            } else if (criteria === 'kind') {
+                const isFolderA = a.querySelector('img')?.src.toLowerCase().includes('folder') ? 0 : 1;
+                const isFolderB = b.querySelector('img')?.src.toLowerCase().includes('folder') ? 0 : 1;
+                return isFolderA - isFolderB || nameA.localeCompare(nameB);
+            }
+            return 0;
+        });
+
+        items.forEach(it => container.appendChild(it));
+        this.cleanUp();
     }
 };
 
 window.DesktopIcons = DesktopIcons;
 
-document.addEventListener('DOMContentLoaded', () => {
-    DesktopIcons.init();
-});
+if (document.readyState !== 'loading') {
+    setTimeout(() => DesktopIcons.init(), 100);
+} else {
+    window.addEventListener('load', () => {
+        setTimeout(() => DesktopIcons.init(), 100);
+    });
+}
 
 // --- macOS Dynamic Menu Bar System ---
 
@@ -3210,10 +3595,50 @@ window.SystemActions = {
     }
 };
 
+const ControlCenter = {
+    init() {
+        this.overlay = document.getElementById('brightness-overlay');
+        const sliders = document.querySelectorAll('.cc-native-slider');
+        sliders.forEach(slider => {
+            slider.addEventListener('input', (e) => {
+                const val = e.target.value;
+                e.target.style.setProperty('--value', val + '%');
+                
+                // If it's the first slider (Display)
+                if (e.target.parentElement.parentElement.querySelector('.cc-title').innerText === 'Display') {
+                    if (this.overlay) {
+                        // value 100 -> opacity 0. value 0 -> opacity 0.7
+                        const opacity = 0.7 - (val / 100) * 0.7;
+                        this.overlay.style.opacity = opacity;
+                    }
+                }
+                
+                // If it's Sound, play a soft tick occasionally
+                if (e.target.parentElement.parentElement.querySelector('.cc-title').innerText === 'Sound') {
+                    if (window.MacAudio && Math.random() > 0.7) {
+                        MacAudio.play('slider');
+                    }
+                }
+            });
+        });
+        
+        // Initial setup for sliders
+        sliders.forEach(slider => {
+            slider.style.setProperty('--value', slider.value + '%');
+            if (slider.parentElement.parentElement.querySelector('.cc-title').innerText === 'Display') {
+                if (this.overlay) {
+                    const opacity = 0.7 - (slider.value / 100) * 0.7;
+                    this.overlay.style.opacity = opacity;
+                }
+            }
+        });
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     MenuSystem.init();
+    ControlCenter.init();
 });
-
 
 
 
