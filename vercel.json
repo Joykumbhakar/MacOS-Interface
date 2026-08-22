@@ -1,5 +1,3 @@
-﻿{
-    "outputDirectory":  ".",
-    "buildCommand":  "echo \u0027No build required for Vercel\u0027",
-    "framework":  null
+{
+  "buildCommand": "echo 'No build required'"
 }
