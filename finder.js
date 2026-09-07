@@ -1411,9 +1411,9 @@ function openQuickLook(itemId) {
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(0, 0, 0, 0.45);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
+        background: rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         animation: qlFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
     `;
 
@@ -1422,44 +1422,44 @@ function openQuickLook(itemId) {
 
     if (isLegalDocument) {
         const sectionsHtml = (item.sections || []).map((sec, idx) => `
-            <div style="background:rgba(255,255,255,0.035); border:0.5px solid rgba(255,255,255,0.08); border-radius:12px; padding:16px 20px; margin-bottom:12px; transition:background 0.15s ease;">
-                <div style="font-size:13.5px; font-weight:600; color:#ffffff; margin-bottom:8px; display:flex; align-items:center; gap:8px; letter-spacing:-0.01em;">
-                    <span style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:6px; background:rgba(10,132,255,0.15); color:#0a84ff; font-size:11px; font-weight:700;">${idx + 1}</span>
+            <div style="background:#fbfbfd; border:0.5px solid rgba(0,0,0,0.07); border-radius:12px; padding:16px 20px; margin-bottom:12px; transition:background 0.15s ease;">
+                <div style="font-size:13.5px; font-weight:600; color:#1d1d1f; margin-bottom:8px; display:flex; align-items:center; gap:8px; letter-spacing:-0.01em;">
+                    <span style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:6px; background:rgba(0,113,227,0.1); color:#0071e3; font-size:11px; font-weight:700;">${idx + 1}</span>
                     <span>${sec.title}</span>
                 </div>
-                <div style="font-size:12.5px; line-height:1.7; color:rgba(255,255,255,0.82); white-space:pre-line; font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; font-weight:400;">${sec.text.replace(/\*\*(.*?)\*\*/g, '<strong style="color:#ffffff; font-weight:600;">$1</strong>')}</div>
+                <div style="font-size:12.5px; line-height:1.7; color:#3a3a3c; white-space:pre-line; font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; font-weight:400;">${sec.text.replace(/\*\*(.*?)\*\*/g, '<strong style="color:#1d1d1f; font-weight:600;">$1</strong>')}</div>
             </div>
         `).join('');
 
         previewContent = `
             <div style="width:100%; height:480px; overflow-y:auto; padding:24px 28px; font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif; box-sizing:border-box;">
                 <!-- Apple Document Hero Header -->
-                <div style="text-align:center; padding-bottom:20px; margin-bottom:20px; border-bottom:0.5px solid rgba(255,255,255,0.08);">
+                <div style="text-align:center; padding-bottom:20px; margin-bottom:20px; border-bottom:0.5px solid rgba(0,0,0,0.08);">
                     <div style="margin-bottom:12px; display:inline-flex; align-items:center; justify-content:center;">
-                        <div style="width:52px; height:52px; border-radius:14px; background:linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)); border:0.5px solid rgba(255,255,255,0.18); box-shadow:0 8px 20px rgba(0,0,0,0.3); display:flex; align-items:center; justify-content:center;">
+                        <div style="width:52px; height:52px; border-radius:14px; background:linear-gradient(145deg, #ffffff, #f0f0f4); border:0.5px solid rgba(0,0,0,0.1); box-shadow:0 6px 16px rgba(0,0,0,0.08); display:flex; align-items:center; justify-content:center;">
                             ${fileIcon(item, 34)}
                         </div>
                     </div>
                     <div style="display:block; margin-bottom:8px;">
-                        <span style="display:inline-flex; align-items:center; gap:6px; background:rgba(10,132,255,0.12); border:0.5px solid rgba(10,132,255,0.28); padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; color:#5ac8fa; letter-spacing:0.3px;">
+                        <span style="display:inline-flex; align-items:center; gap:6px; background:rgba(0,113,227,0.08); border:0.5px solid rgba(0,113,227,0.22); padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; color:#0071e3; letter-spacing:0.3px;">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                             ${item.docBadge || 'OFFICIAL COMPLIANCE DOCUMENT'}
                         </span>
                     </div>
-                    <div style="font-size:20px; font-weight:700; color:#ffffff; letter-spacing:-0.02em; line-height:1.3; margin-top:6px;">
+                    <div style="font-size:20px; font-weight:700; color:#1d1d1f; letter-spacing:-0.02em; line-height:1.3; margin-top:6px;">
                         ${item.docTitle || item.name}
                     </div>
-                    <div style="font-size:12px; color:rgba(255,255,255,0.5); margin-top:8px; display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap;">
+                    <div style="font-size:12px; color:rgba(0,0,0,0.48); margin-top:8px; display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap;">
                         <span style="display:inline-flex; align-items:center; gap:5px;">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                             Effective 2026
                         </span>
-                        <span style="opacity:0.4;">•</span>
+                        <span style="opacity:0.3;">•</span>
                         <span style="display:inline-flex; align-items:center; gap:5px;">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                             Client-Side Sandbox
                         </span>
-                        <span style="opacity:0.4;">•</span>
+                        <span style="opacity:0.3;">•</span>
                         <span style="display:inline-flex; align-items:center; gap:5px;">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
                             Apple HIG Compliant
@@ -1473,15 +1473,15 @@ function openQuickLook(itemId) {
                 </div>
 
                 <!-- Apple Verification & Copyright Card -->
-                <div style="margin-top:16px; padding:16px 20px; background:rgba(255,255,255,0.035); border:0.5px solid rgba(255,255,255,0.08); border-radius:12px; display:flex; align-items:center; justify-content:space-between; gap:16px;">
+                <div style="margin-top:16px; padding:16px 20px; background:rgba(0,113,227,0.04); border:0.5px solid rgba(0,113,227,0.16); border-radius:12px; display:flex; align-items:center; justify-content:space-between; gap:16px;">
                     <div>
-                        <div style="font-size:12.5px; font-weight:600; color:#ffffff; display:flex; align-items:center; gap:6px;">
+                        <div style="font-size:12.5px; font-weight:600; color:#1d1d1f; display:flex; align-items:center; gap:6px;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                             Authenticity & Compliance Verification
                         </div>
-                        <div style="font-size:11.5px; color:rgba(255,255,255,0.55); margin-top:3px; line-height:1.4;">All trademarks belong to their respective holders. Executed under 17 U.S.C. § 107 Fair Use.</div>
+                        <div style="font-size:11.5px; color:rgba(0,0,0,0.55); margin-top:3px; line-height:1.4;">All trademarks belong to their respective holders. Executed under 17 U.S.C. § 107 Fair Use.</div>
                     </div>
-                    <button onclick="Finder.copyDocText('${item.id}')" style="background:rgba(255,255,255,0.1); hover:background:rgba(255,255,255,0.16); border:0.5px solid rgba(255,255,255,0.18); color:#ffffff; font-size:11.5px; font-weight:500; padding:6px 12px; border-radius:7px; cursor:pointer; display:flex; align-items:center; gap:6px; white-space:nowrap; transition:all 0.15s ease;">
+                    <button onclick="Finder.copyDocText('${item.id}')" style="background:#ffffff; border:0.5px solid rgba(0,0,0,0.14); color:#1d1d1f; font-size:11.5px; font-weight:500; padding:6px 12px; border-radius:7px; cursor:pointer; display:flex; align-items:center; gap:6px; white-space:nowrap; box-shadow:0 1px 3px rgba(0,0,0,0.05); transition:all 0.15s ease;">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                         Copy Text
                     </button>
@@ -1491,55 +1491,55 @@ function openQuickLook(itemId) {
     } else if (item.ext === 'mp3' || item.ext === 'flac') {
         previewContent = `
             <div style="display:flex; flex-direction:column; align-items:center; gap:20px; padding:30px; font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">
-                <div style="width:140px; height:140px; border-radius:20px; background:linear-gradient(135deg, #fa2d48, #c62368); display:flex; align-items:center; justify-content:center; box-shadow:0 16px 36px rgba(250,45,72,0.35);">
+                <div style="width:140px; height:140px; border-radius:20px; background:linear-gradient(135deg, #ff2d55, #ff375f); display:flex; align-items:center; justify-content:center; box-shadow:0 14px 28px rgba(255,45,85,0.3);">
                     <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3" fill="#ffffff"/><circle cx="18" cy="16" r="3" fill="#ffffff"/></svg>
                 </div>
                 <div style="text-align:center;">
-                    <div style="font-size:18px; font-weight:600; color:#ffffff; letter-spacing:-0.01em;">${item.name}</div>
-                    <div style="font-size:13px; color:rgba(255,255,255,0.55); margin-top:4px;">${item.kind} • ${item.size} • 320 kbps AAC</div>
+                    <div style="font-size:18px; font-weight:600; color:#1d1d1f; letter-spacing:-0.01em;">${item.name}</div>
+                    <div style="font-size:13px; color:rgba(0,0,0,0.5); margin-top:4px;">${item.kind} • ${item.size} • 320 kbps AAC</div>
                 </div>
-                <div style="width:100%; max-width:380px; background:rgba(255,255,255,0.06); border:0.5px solid rgba(255,255,255,0.12); padding:12px 20px; border-radius:24px; display:flex; align-items:center; gap:16px;">
-                    <button onclick="Finder.showToast('Playing audio track...')" style="width:34px; height:34px; border-radius:50%; background:#ffffff; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#000; box-shadow:0 2px 8px rgba(0,0,0,0.3);">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#000" stroke="#000"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <div style="width:100%; max-width:380px; background:#ffffff; border:0.5px solid rgba(0,0,0,0.1); padding:12px 20px; border-radius:24px; display:flex; align-items:center; gap:16px; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+                    <button onclick="Finder.showToast('Playing audio track...')" style="width:34px; height:34px; border-radius:50%; background:#0071e3; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#fff; box-shadow:0 2px 6px rgba(0,113,227,0.35);">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff" stroke="#fff"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                     </button>
-                    <div style="flex:1; height:4px; background:rgba(255,255,255,0.15); border-radius:2px; position:relative; overflow:hidden;">
-                        <div style="width:42%; height:100%; background:#ffffff; border-radius:2px;"></div>
+                    <div style="flex:1; height:4px; background:rgba(0,0,0,0.08); border-radius:2px; position:relative; overflow:hidden;">
+                        <div style="width:42%; height:100%; background:#0071e3; border-radius:2px;"></div>
                     </div>
-                    <span style="font-size:12px; color:rgba(255,255,255,0.6); font-variant-numeric:tabular-nums;">1:32 / 3:45</span>
+                    <span style="font-size:12px; color:rgba(0,0,0,0.6); font-variant-numeric:tabular-nums; font-weight:500;">1:32 / 3:45</span>
                 </div>
             </div>
         `;
     } else if (['jpg', 'png', 'heic', 'svg'].includes(item.ext)) {
         previewContent = `
             <div style="display:flex; flex-direction:column; align-items:center; gap:16px; padding:24px; font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">
-                <div style="max-width:480px; max-height:300px; border-radius:14px; overflow:hidden; background:rgba(0,0,0,0.4); border:0.5px solid rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; box-shadow:0 12px 30px rgba(0,0,0,0.4);">
+                <div style="max-width:480px; max-height:300px; border-radius:14px; overflow:hidden; background:#ffffff; border:0.5px solid rgba(0,0,0,0.08); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 24px rgba(0,0,0,0.08);">
                     ${fileIcon(item, 160)}
                 </div>
                 <div style="text-align:center;">
-                    <div style="font-size:15px; font-weight:600; color:#ffffff;">${item.name}</div>
-                    <div style="font-size:12px; color:rgba(255,255,255,0.55); margin-top:2px;">${item.kind} • 3840 × 2160 • ${item.size}</div>
+                    <div style="font-size:15px; font-weight:600; color:#1d1d1f;">${item.name}</div>
+                    <div style="font-size:12px; color:rgba(0,0,0,0.5); margin-top:2px;">${item.kind} • 3840 × 2160 • ${item.size}</div>
                 </div>
             </div>
         `;
     } else if (['js', 'html', 'css', 'swift', 'md', 'txt', 'py', 'ts'].includes(item.ext)) {
         previewContent = `
-            <div style="width:100%; height:320px; background:rgba(18,18,20,0.7); border-radius:12px; padding:18px 22px; font-family:'SF Mono', ui-monospace, Menlo, Monaco, monospace; font-size:12.5px; color:#e0e0e0; overflow:auto; line-height:1.65; border:0.5px solid rgba(255,255,255,0.08);">
-                <div style="color:rgba(255,255,255,0.4); margin-bottom:10px;">// ${item.name} — Apple OS Sonoma Simulator</div>
-                <div style="color:#ff7b72;">import <span style="color:#79c0ff;">SwiftUI</span></div>
-                <div style="color:#ff7b72;">import <span style="color:#79c0ff;">Foundation</span></div>
+            <div style="width:100%; height:320px; background:#ffffff; border-radius:12px; padding:18px 22px; font-family:'SF Mono', ui-monospace, Menlo, Monaco, monospace; font-size:12.5px; color:#24292f; overflow:auto; line-height:1.68; border:0.5px solid rgba(0,0,0,0.08); box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+                <div style="color:#6e7781; margin-bottom:10px; font-style:italic;">// ${item.name} — Apple OS Light Mode Preview</div>
+                <div><span style="color:#cf222e; font-weight:600;">import</span> <span style="color:#0550ae; font-weight:500;">SwiftUI</span></div>
+                <div><span style="color:#cf222e; font-weight:600;">import</span> <span style="color:#0550ae; font-weight:500;">Foundation</span></div>
                 <br>
-                <div style="color:#d2a8ff;">struct <span style="color:#ffa657;">${item.name.replace(/[^a-zA-Z0-9]/g, '')}Preview</span>: <span style="color:#79c0ff;">View</span> {</div>
-                <div style="padding-left:18px; color:#ff7b72;">var <span style="color:#79c0ff;">body</span>: some <span style="color:#79c0ff;">View</span> {</div>
-                <div style="padding-left:36px; color:#a5d6ff;">VStack(spacing: 12) {</div>
-                <div style="padding-left:54px; color:#7ee787;">Text("${item.name}")</div>
-                <div style="padding-left:72px; color:#79c0ff;">.font(.title2)</div>
-                <div style="padding-left:72px; color:#79c0ff;">.fontWeight(.semibold)</div>
-                <div style="padding-left:54px; color:#7ee787;">Text("macOS Sequoia Authentic Experience")</div>
-                <div style="padding-left:72px; color:#79c0ff;">.foregroundColor(.secondary)</div>
-                <div style="padding-left:36px; color:#a5d6ff;">}</div>
-                <div style="padding-left:36px; color:#79c0ff;">.padding()</div>
-                <div style="padding-left:18px; color:#ff7b72;">}</div>
-                <div style="color:#d2a8ff;">}</div>
+                <div><span style="color:#cf222e; font-weight:600;">struct</span> <span style="color:#953800; font-weight:600;">${item.name.replace(/[^a-zA-Z0-9]/g, '')}Preview</span>: <span style="color:#0550ae; font-weight:500;">View</span> {</div>
+                <div style="padding-left:18px;"><span style="color:#cf222e; font-weight:600;">var</span> <span style="color:#6639ba;">body</span>: <span style="color:#cf222e; font-weight:600;">some</span> <span style="color:#0550ae;">View</span> {</div>
+                <div style="padding-left:36px;"><span style="color:#0550ae;">VStack</span>(spacing: <span style="color:#0550ae;">12</span>) {</div>
+                <div style="padding-left:54px;"><span style="color:#0550ae;">Text</span>(<span style="color:#0a3069;">"${item.name}"</span>)</div>
+                <div style="padding-left:72px;"><span style="color:#6f42c1;">.font</span>(.<span style="color:#953800;">title2</span>)</div>
+                <div style="padding-left:72px;"><span style="color:#6f42c1;">.fontWeight</span>(.<span style="color:#953800;">semibold</span>)</div>
+                <div style="padding-left:54px;"><span style="color:#0550ae;">Text</span>(<span style="color:#0a3069;">"macOS Sequoia Light Experience"</span>)</div>
+                <div style="padding-left:72px;"><span style="color:#6f42c1;">.foregroundColor</span>(.<span style="color:#953800;">secondary</span>)</div>
+                <div style="padding-left:36px;">}</div>
+                <div style="padding-left:36px;"><span style="color:#6f42c1;">.padding</span>()</div>
+                <div style="padding-left:18px;">}</div>
+                <div>}</div>
             </div>
         `;
     } else {
@@ -1547,8 +1547,8 @@ function openQuickLook(itemId) {
             <div style="display:flex; flex-direction:column; align-items:center; gap:16px; padding:30px; font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">
                 ${fileIcon(item, 110)}
                 <div style="text-align:center;">
-                    <div style="font-size:16px; font-weight:600; color:#ffffff;">${item.name}</div>
-                    <div style="font-size:12.5px; color:rgba(255,255,255,0.55); margin-top:3px;">${item.kind} • ${item.size}</div>
+                    <div style="font-size:16px; font-weight:600; color:#1d1d1f;">${item.name}</div>
+                    <div style="font-size:12.5px; color:rgba(0,0,0,0.5); margin-top:3px;">${item.kind} • ${item.size}</div>
                 </div>
             </div>
         `;
@@ -1569,7 +1569,7 @@ function openQuickLook(itemId) {
             }
             #finder-quicklook-card::-webkit-scrollbar-thumb,
             #finder-quicklook-card *::-webkit-scrollbar-thumb {
-                background: rgba(255, 255, 255, 0.22);
+                background: rgba(0, 0, 0, 0.18);
                 border-radius: 4px;
             }
             #finder-quicklook-card::-webkit-scrollbar-track,
@@ -1577,9 +1577,9 @@ function openQuickLook(itemId) {
                 background: transparent;
             }
             .apple-ql-btn {
-                background: rgba(255, 255, 255, 0.1);
-                border: 0.5px solid rgba(255, 255, 255, 0.16);
-                color: #ffffff;
+                background: rgba(0, 0, 0, 0.05);
+                border: 0.5px solid rgba(0, 0, 0, 0.12);
+                color: #1d1d1f;
                 font-size: 12.5px;
                 font-weight: 500;
                 padding: 5px 14px;
@@ -1593,8 +1593,8 @@ function openQuickLook(itemId) {
                 user-select: none;
             }
             .apple-ql-btn:hover {
-                background: rgba(255, 255, 255, 0.18);
-                border-color: rgba(255, 255, 255, 0.26);
+                background: rgba(0, 0, 0, 0.09);
+                border-color: rgba(0, 0, 0, 0.18);
             }
             .apple-ql-btn:active {
                 transform: scale(0.97);
@@ -1611,22 +1611,22 @@ function openQuickLook(itemId) {
                 display: inline-flex;
                 align-items: center;
                 gap: 6px;
-                box-shadow: 0 1px 3px rgba(0, 113, 227, 0.4);
+                box-shadow: 0 1px 3px rgba(0, 113, 227, 0.35);
                 transition: all 0.15s ease;
                 font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
                 user-select: none;
             }
             .apple-ql-primary-btn:hover {
                 background: #0077ed;
-                box-shadow: 0 2px 6px rgba(0, 119, 237, 0.5);
+                box-shadow: 0 2px 6px rgba(0, 119, 237, 0.45);
             }
             .apple-ql-primary-btn:active {
                 transform: scale(0.97);
             }
             .apple-ql-toolbar-btn {
-                background: rgba(255, 255, 255, 0.08);
-                border: 0.5px solid rgba(255, 255, 255, 0.14);
-                color: #ffffff;
+                background: rgba(0, 0, 0, 0.05);
+                border: 0.5px solid rgba(0, 0, 0, 0.1);
+                color: #1d1d1f;
                 font-size: 12px;
                 font-weight: 500;
                 padding: 4px 10px;
@@ -1639,33 +1639,33 @@ function openQuickLook(itemId) {
                 font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
             }
             .apple-ql-toolbar-btn:hover {
-                background: rgba(255, 255, 255, 0.16);
+                background: rgba(0, 0, 0, 0.09);
             }
         </style>
 
         <div id="finder-quicklook-card" style="
-            background: rgba(30, 30, 34, 0.86);
-            backdrop-filter: blur(50px) saturate(210%);
-            -webkit-backdrop-filter: blur(50px) saturate(210%);
+            background: rgba(246, 246, 248, 0.94);
+            backdrop-filter: blur(50px) saturate(190%);
+            -webkit-backdrop-filter: blur(50px) saturate(190%);
             border-radius: 18px;
-            border: 0.5px solid rgba(255, 255, 255, 0.18);
+            border: 0.5px solid rgba(0, 0, 0, 0.12);
             max-width: ${modalWidth};
             width: 92%;
             max-height: 88vh;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.7), 0 0 0 0.5px rgba(255, 255, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            box-shadow: 0 28px 70px rgba(0, 0, 0, 0.22), 0 0 0 0.5px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
             overflow: hidden;
         ">
-            <!-- Native macOS Quick Look Titlebar -->
+            <!-- Native macOS Light Mode Quick Look Titlebar -->
             <div style="
                 height: 48px;
                 padding: 0 16px;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
-                background: rgba(255, 255, 255, 0.03);
+                border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+                background: rgba(255, 255, 255, 0.55);
             ">
                 <!-- Left: Traffic Lights -->
                 <div class="traffic-lights" style="padding:0; gap:8px;">
@@ -1682,8 +1682,8 @@ function openQuickLook(itemId) {
                     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
                 ">
                     ${fileIcon(item, 18)}
-                    <span style="color:#ffffff; font-size:13.5px; font-weight:600; letter-spacing:-0.01em;">${item.name}</span>
-                    <span style="color:rgba(255,255,255,0.4); font-size:12px; font-weight:400;">— ${item.size || 'Document'}</span>
+                    <span style="color:#1d1d1f; font-size:13.5px; font-weight:600; letter-spacing:-0.01em;">${item.name}</span>
+                    <span style="color:rgba(0,0,0,0.45); font-size:12px; font-weight:400;">— ${item.size || 'Document'}</span>
                 </div>
 
                 <!-- Right: Native macOS Quick Look Toolbar Actions -->
@@ -1700,21 +1700,21 @@ function openQuickLook(itemId) {
             </div>
 
             <!-- Content Area -->
-            <div style="flex:1; display:flex; flex-direction:column; overflow:hidden; background:rgba(0,0,0,0.12);">
+            <div style="flex:1; display:flex; flex-direction:column; overflow:hidden; background:rgba(0,0,0,0.02);">
                 ${previewContent}
             </div>
 
-            <!-- Apple macOS Bottom Action Bar -->
+            <!-- Apple macOS Light Action Bar -->
             <div style="
                 height: 52px;
                 padding: 0 20px;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                border-top: 0.5px solid rgba(255, 255, 255, 0.08);
-                background: rgba(255, 255, 255, 0.02);
+                border-top: 0.5px solid rgba(0, 0, 0, 0.08);
+                background: rgba(255, 255, 255, 0.55);
             ">
-                <div style="font-size:12px; color:rgba(255,255,255,0.5); display:flex; align-items:center; gap:7px; font-family:-apple-system, sans-serif;">
+                <div style="font-size:12px; color:rgba(0,0,0,0.48); display:flex; align-items:center; gap:7px; font-family:-apple-system, sans-serif;">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
                     <span>macOS Sequoia Document Reader</span>
                 </div>
