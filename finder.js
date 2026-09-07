@@ -1404,144 +1404,328 @@ function openQuickLook(itemId) {
 
     const ql = document.createElement('div');
     ql.id = 'finder-quicklook';
-    ql.style.cssText = `position:fixed; inset:0; z-index:65000; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.55); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); animation:fadeIn 0.15s ease;`;
+    ql.style.cssText = `
+        position: fixed;
+        inset: 0;
+        z-index: 65000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        animation: qlFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    `;
 
     let previewContent = '';
     let isLegalDocument = !!(item.sections || item.docTitle);
 
     if (isLegalDocument) {
-        const sectionsHtml = (item.sections || []).map(sec => `
-            <div style="background:rgba(255,255,255,0.03); border:0.5px solid rgba(255,255,255,0.1); border-radius:10px; padding:16px 18px; margin-bottom:14px;">
-                <div style="font-size:13.5px; font-weight:700; color:#38bdf8; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
-                    <i class="fas fa-chevron-right" style="font-size:10px; opacity:0.7;"></i>
+        const sectionsHtml = (item.sections || []).map((sec, idx) => `
+            <div style="background:rgba(255,255,255,0.035); border:0.5px solid rgba(255,255,255,0.08); border-radius:12px; padding:16px 20px; margin-bottom:12px; transition:background 0.15s ease;">
+                <div style="font-size:13.5px; font-weight:600; color:#ffffff; margin-bottom:8px; display:flex; align-items:center; gap:8px; letter-spacing:-0.01em;">
+                    <span style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:6px; background:rgba(10,132,255,0.15); color:#0a84ff; font-size:11px; font-weight:700;">${idx + 1}</span>
                     <span>${sec.title}</span>
                 </div>
-                <div style="font-size:12.5px; line-height:1.65; color:rgba(255,255,255,0.85); white-space:pre-line; font-family:-apple-system, sans-serif;">${sec.text.replace(/\*\*(.*?)\*\*/g, '<strong style="color:#ffffff; font-weight:600;">$1</strong>')}</div>
+                <div style="font-size:12.5px; line-height:1.7; color:rgba(255,255,255,0.82); white-space:pre-line; font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; font-weight:400;">${sec.text.replace(/\*\*(.*?)\*\*/g, '<strong style="color:#ffffff; font-weight:600;">$1</strong>')}</div>
             </div>
         `).join('');
 
         previewContent = `
-            <div style="width:100%; height:460px; overflow-y:auto; padding:20px 24px; font-family:-apple-system, 'SF Pro Display', sans-serif; box-sizing:border-box;">
-                <div style="text-align:center; padding-bottom:18px; margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.12);">
-                    <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(56,189,248,0.15); border:0.5px solid rgba(56,189,248,0.35); padding:4px 12px; border-radius:20px; font-size:10.5px; font-weight:700; color:#38bdf8; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:12px;">
-                        <i class="fas fa-shield-alt"></i> ${item.docBadge || 'OFFICIAL COMPLIANCE DOCUMENT'}
+            <div style="width:100%; height:480px; overflow-y:auto; padding:24px 28px; font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif; box-sizing:border-box;">
+                <!-- Apple Document Hero Header -->
+                <div style="text-align:center; padding-bottom:20px; margin-bottom:20px; border-bottom:0.5px solid rgba(255,255,255,0.08);">
+                    <div style="margin-bottom:12px; display:inline-flex; align-items:center; justify-content:center;">
+                        <div style="width:52px; height:52px; border-radius:14px; background:linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)); border:0.5px solid rgba(255,255,255,0.18); box-shadow:0 8px 20px rgba(0,0,0,0.3); display:flex; align-items:center; justify-content:center;">
+                            ${fileIcon(item, 34)}
+                        </div>
                     </div>
-                    <div style="font-size:19px; font-weight:800; color:#ffffff; letter-spacing:-0.4px; line-height:1.3;">
+                    <div style="display:block; margin-bottom:8px;">
+                        <span style="display:inline-flex; align-items:center; gap:6px; background:rgba(10,132,255,0.12); border:0.5px solid rgba(10,132,255,0.28); padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; color:#5ac8fa; letter-spacing:0.3px;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            ${item.docBadge || 'OFFICIAL COMPLIANCE DOCUMENT'}
+                        </span>
+                    </div>
+                    <div style="font-size:20px; font-weight:700; color:#ffffff; letter-spacing:-0.02em; line-height:1.3; margin-top:6px;">
                         ${item.docTitle || item.name}
                     </div>
-                    <div style="font-size:11.5px; color:rgba(255,255,255,0.5); margin-top:6px; display:flex; align-items:center; justify-content:center; gap:16px;">
-                        <span><i class="far fa-calendar-alt"></i> Effective: 2026</span>
-                        <span>•</span>
-                        <span><i class="fas fa-lock"></i> Client-Side Sandbox</span>
-                        <span>•</span>
-                        <span><i class="fas fa-certificate"></i> Verified Educational License</span>
+                    <div style="font-size:12px; color:rgba(255,255,255,0.5); margin-top:8px; display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap;">
+                        <span style="display:inline-flex; align-items:center; gap:5px;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            Effective 2026
+                        </span>
+                        <span style="opacity:0.4;">•</span>
+                        <span style="display:inline-flex; align-items:center; gap:5px;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            Client-Side Sandbox
+                        </span>
+                        <span style="opacity:0.4;">•</span>
+                        <span style="display:inline-flex; align-items:center; gap:5px;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+                            Apple HIG Compliant
+                        </span>
                     </div>
                 </div>
 
+                <!-- Structured Sections -->
                 <div style="display:flex; flex-direction:column; gap:2px;">
                     ${sectionsHtml}
                 </div>
 
-                <div style="margin-top:20px; padding:16px; background:linear-gradient(135deg, rgba(10,132,255,0.12), rgba(175,82,222,0.12)); border:0.5px solid rgba(255,255,255,0.18); border-radius:12px; display:flex; align-items:center; justify-content:space-between;">
+                <!-- Apple Verification & Copyright Card -->
+                <div style="margin-top:16px; padding:16px 20px; background:rgba(255,255,255,0.035); border:0.5px solid rgba(255,255,255,0.08); border-radius:12px; display:flex; align-items:center; justify-content:space-between; gap:16px;">
                     <div>
-                        <div style="font-size:12.5px; font-weight:700; color:#ffffff;">Authenticity & Compliance Verification</div>
-                        <div style="font-size:11px; color:rgba(255,255,255,0.6); margin-top:2px;">All trademarks belong to their respective holders. Designed with Apple HIG standards.</div>
+                        <div style="font-size:12.5px; font-weight:600; color:#ffffff; display:flex; align-items:center; gap:6px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            Authenticity & Compliance Verification
+                        </div>
+                        <div style="font-size:11.5px; color:rgba(255,255,255,0.55); margin-top:3px; line-height:1.4;">All trademarks belong to their respective holders. Executed under 17 U.S.C. § 107 Fair Use.</div>
                     </div>
-                    <button onclick="Finder.copyDocText('${item.id}')" style="background:rgba(255,255,255,0.14); border:0.5px solid rgba(255,255,255,0.25); color:#ffffff; font-size:11.5px; font-weight:600; padding:6px 14px; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:6px;">
-                        <i class="far fa-copy"></i> Copy Text
+                    <button onclick="Finder.copyDocText('${item.id}')" style="background:rgba(255,255,255,0.1); hover:background:rgba(255,255,255,0.16); border:0.5px solid rgba(255,255,255,0.18); color:#ffffff; font-size:11.5px; font-weight:500; padding:6px 12px; border-radius:7px; cursor:pointer; display:flex; align-items:center; gap:6px; white-space:nowrap; transition:all 0.15s ease;">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        Copy Text
                     </button>
                 </div>
             </div>
         `;
     } else if (item.ext === 'mp3' || item.ext === 'flac') {
         previewContent = `
-            <div style="display:flex; flex-direction:column; align-items:center; gap:20px; padding:20px;">
-                ${fileIcon(item, 100)}
-                <div style="text-align:center;">
-                    <div style="font-size:18px; font-weight:700; color:white;">${item.name}</div>
-                    <div style="font-size:13px; color:rgba(255,255,255,0.6); margin-top:2px;">${item.kind} · ${item.size}</div>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:20px; padding:30px; font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">
+                <div style="width:140px; height:140px; border-radius:20px; background:linear-gradient(135deg, #fa2d48, #c62368); display:flex; align-items:center; justify-content:center; box-shadow:0 16px 36px rgba(250,45,72,0.35);">
+                    <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3" fill="#ffffff"/><circle cx="18" cy="16" r="3" fill="#ffffff"/></svg>
                 </div>
-                <div style="display:flex; align-items:center; gap:14px; background:rgba(255,255,255,0.12); padding:10px 24px; border-radius:30px;">
-                    <i class="fas fa-play" style="color:#0a84ff; font-size:18px; cursor:pointer;" onclick="Finder.showToast('Playing audio track preview...')"></i>
-                    <div style="width:200px; height:5px; background:rgba(255,255,255,0.2); border-radius:3px; position:relative;">
-                        <div style="width:45%; height:100%; background:#0a84ff; border-radius:3px;"></div>
+                <div style="text-align:center;">
+                    <div style="font-size:18px; font-weight:600; color:#ffffff; letter-spacing:-0.01em;">${item.name}</div>
+                    <div style="font-size:13px; color:rgba(255,255,255,0.55); margin-top:4px;">${item.kind} • ${item.size} • 320 kbps AAC</div>
+                </div>
+                <div style="width:100%; max-width:380px; background:rgba(255,255,255,0.06); border:0.5px solid rgba(255,255,255,0.12); padding:12px 20px; border-radius:24px; display:flex; align-items:center; gap:16px;">
+                    <button onclick="Finder.showToast('Playing audio track...')" style="width:34px; height:34px; border-radius:50%; background:#ffffff; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#000; box-shadow:0 2px 8px rgba(0,0,0,0.3);">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#000" stroke="#000"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    </button>
+                    <div style="flex:1; height:4px; background:rgba(255,255,255,0.15); border-radius:2px; position:relative; overflow:hidden;">
+                        <div style="width:42%; height:100%; background:#ffffff; border-radius:2px;"></div>
                     </div>
-                    <span style="font-size:12px; color:white;">1:32 / 3:45</span>
+                    <span style="font-size:12px; color:rgba(255,255,255,0.6); font-variant-numeric:tabular-nums;">1:32 / 3:45</span>
                 </div>
             </div>
         `;
     } else if (['jpg', 'png', 'heic', 'svg'].includes(item.ext)) {
         previewContent = `
-            <div style="display:flex; flex-direction:column; align-items:center; gap:16px; padding:20px;">
-                <div style="width:280px; height:200px; border-radius:12px; overflow:hidden; background:rgba(0,0,0,0.3); display:flex; align-items:center; justify-content:center;">
-                    ${fileIcon(item, 120)}
+            <div style="display:flex; flex-direction:column; align-items:center; gap:16px; padding:24px; font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">
+                <div style="max-width:480px; max-height:300px; border-radius:14px; overflow:hidden; background:rgba(0,0,0,0.4); border:0.5px solid rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; box-shadow:0 12px 30px rgba(0,0,0,0.4);">
+                    ${fileIcon(item, 160)}
                 </div>
-                <div style="font-size:15px; font-weight:600; color:white;">${item.name}</div>
-                <div style="font-size:12px; color:rgba(255,255,255,0.6);">${item.kind} · 3840 × 2160 · ${item.size}</div>
+                <div style="text-align:center;">
+                    <div style="font-size:15px; font-weight:600; color:#ffffff;">${item.name}</div>
+                    <div style="font-size:12px; color:rgba(255,255,255,0.55); margin-top:2px;">${item.kind} • 3840 × 2160 • ${item.size}</div>
+                </div>
             </div>
         `;
-    } else if (['js', 'html', 'css', 'swift', 'md', 'txt'].includes(item.ext)) {
+    } else if (['js', 'html', 'css', 'swift', 'md', 'txt', 'py', 'ts'].includes(item.ext)) {
         previewContent = `
-            <div style="width:100%; height:280px; background:rgba(0,0,0,0.4); border-radius:10px; padding:16px; font-family:ui-monospace,SFMono-Regular,monospace; font-size:12px; color:#34c759; overflow:auto; line-height:1.6;">
-                <div style="color:rgba(255,255,255,0.4);">// Preview of ${item.name}</div>
-                <div>import Foundation</div>
-                <div>import SwiftUI</div>
+            <div style="width:100%; height:320px; background:rgba(18,18,20,0.7); border-radius:12px; padding:18px 22px; font-family:'SF Mono', ui-monospace, Menlo, Monaco, monospace; font-size:12.5px; color:#e0e0e0; overflow:auto; line-height:1.65; border:0.5px solid rgba(255,255,255,0.08);">
+                <div style="color:rgba(255,255,255,0.4); margin-bottom:10px;">// ${item.name} — Apple OS Sonoma Simulator</div>
+                <div style="color:#ff7b72;">import <span style="color:#79c0ff;">SwiftUI</span></div>
+                <div style="color:#ff7b72;">import <span style="color:#79c0ff;">Foundation</span></div>
                 <br>
-                <div style="color:#38bdf8;">struct ${item.name.replace(/\.[^.]+$/, '')}: View {</div>
-                <div style="padding-left:16px; color:#ff7b72;">var body: some View {</div>
-                <div style="padding-left:32px; color:#fff;">Text("Apple OS Sonoma Interface")</div>
-                <div style="padding-left:16px; color:#ff7b72;">}</div>
-                <div style="color:#38bdf8;">}</div>
+                <div style="color:#d2a8ff;">struct <span style="color:#ffa657;">${item.name.replace(/[^a-zA-Z0-9]/g, '')}Preview</span>: <span style="color:#79c0ff;">View</span> {</div>
+                <div style="padding-left:18px; color:#ff7b72;">var <span style="color:#79c0ff;">body</span>: some <span style="color:#79c0ff;">View</span> {</div>
+                <div style="padding-left:36px; color:#a5d6ff;">VStack(spacing: 12) {</div>
+                <div style="padding-left:54px; color:#7ee787;">Text("${item.name}")</div>
+                <div style="padding-left:72px; color:#79c0ff;">.font(.title2)</div>
+                <div style="padding-left:72px; color:#79c0ff;">.fontWeight(.semibold)</div>
+                <div style="padding-left:54px; color:#7ee787;">Text("macOS Sequoia Authentic Experience")</div>
+                <div style="padding-left:72px; color:#79c0ff;">.foregroundColor(.secondary)</div>
+                <div style="padding-left:36px; color:#a5d6ff;">}</div>
+                <div style="padding-left:36px; color:#79c0ff;">.padding()</div>
+                <div style="padding-left:18px; color:#ff7b72;">}</div>
+                <div style="color:#d2a8ff;">}</div>
             </div>
         `;
     } else {
         previewContent = `
-            <div style="display:flex; flex-direction:column; align-items:center; gap:16px; padding:20px;">
+            <div style="display:flex; flex-direction:column; align-items:center; gap:16px; padding:30px; font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">
                 ${fileIcon(item, 110)}
-                <div style="font-size:16px; font-weight:600; color:white;">${item.name}</div>
-                <div style="font-size:12px; color:rgba(255,255,255,0.6);">${item.kind} · ${item.size}</div>
+                <div style="text-align:center;">
+                    <div style="font-size:16px; font-weight:600; color:#ffffff;">${item.name}</div>
+                    <div style="font-size:12.5px; color:rgba(255,255,255,0.55); margin-top:3px;">${item.kind} • ${item.size}</div>
+                </div>
             </div>
         `;
     }
 
-    const modalWidth = isLegalDocument ? '680px' : '600px';
+    const modalWidth = isLegalDocument ? '700px' : '580px';
 
     ql.innerHTML = `
-        <div style="background:rgba(28,28,30,0.94); backdrop-filter:blur(36px); -webkit-backdrop-filter:blur(36px); border-radius:16px; border:0.5px solid rgba(255,255,255,0.22); padding:20px; max-width:${modalWidth}; width:92%; max-height:88vh; display:flex; flex-direction:column; gap:14px; box-shadow:0 30px 80px rgba(0,0,0,0.75);">
-            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:0.5px solid rgba(255,255,255,0.08); padding-bottom:12px;">
-                <div style="display:flex; align-items:center; gap:12px;">
-                    ${fileIcon(item, 32)}
-                    <div>
-                        <div style="color:white; font-size:14px; font-weight:600;">${item.name}</div>
-                        <div style="color:rgba(255,255,255,0.5); font-size:11px;">${item.kind} · ${item.size} · Modified ${item.modified || 'Today'}</div>
-                    </div>
+        <style>
+            @keyframes qlFadeIn {
+                from { opacity: 0; transform: scale(0.96) translateY(4px); }
+                to { opacity: 1; transform: scale(1) translateY(0); }
+            }
+            #finder-quicklook-card::-webkit-scrollbar,
+            #finder-quicklook-card *::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+            }
+            #finder-quicklook-card::-webkit-scrollbar-thumb,
+            #finder-quicklook-card *::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.22);
+                border-radius: 4px;
+            }
+            #finder-quicklook-card::-webkit-scrollbar-track,
+            #finder-quicklook-card *::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            .apple-ql-btn {
+                background: rgba(255, 255, 255, 0.1);
+                border: 0.5px solid rgba(255, 255, 255, 0.16);
+                color: #ffffff;
+                font-size: 12.5px;
+                font-weight: 500;
+                padding: 5px 14px;
+                border-radius: 7px;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                transition: all 0.15s ease;
+                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+                user-select: none;
+            }
+            .apple-ql-btn:hover {
+                background: rgba(255, 255, 255, 0.18);
+                border-color: rgba(255, 255, 255, 0.26);
+            }
+            .apple-ql-btn:active {
+                transform: scale(0.97);
+            }
+            .apple-ql-primary-btn {
+                background: #0071e3;
+                border: none;
+                color: #ffffff;
+                font-size: 12.5px;
+                font-weight: 500;
+                padding: 6px 18px;
+                border-radius: 7px;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                box-shadow: 0 1px 3px rgba(0, 113, 227, 0.4);
+                transition: all 0.15s ease;
+                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+                user-select: none;
+            }
+            .apple-ql-primary-btn:hover {
+                background: #0077ed;
+                box-shadow: 0 2px 6px rgba(0, 119, 237, 0.5);
+            }
+            .apple-ql-primary-btn:active {
+                transform: scale(0.97);
+            }
+            .apple-ql-toolbar-btn {
+                background: rgba(255, 255, 255, 0.08);
+                border: 0.5px solid rgba(255, 255, 255, 0.14);
+                color: #ffffff;
+                font-size: 12px;
+                font-weight: 500;
+                padding: 4px 10px;
+                border-radius: 6px;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                transition: all 0.15s ease;
+                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+            }
+            .apple-ql-toolbar-btn:hover {
+                background: rgba(255, 255, 255, 0.16);
+            }
+        </style>
+
+        <div id="finder-quicklook-card" style="
+            background: rgba(30, 30, 34, 0.86);
+            backdrop-filter: blur(50px) saturate(210%);
+            -webkit-backdrop-filter: blur(50px) saturate(210%);
+            border-radius: 18px;
+            border: 0.5px solid rgba(255, 255, 255, 0.18);
+            max-width: ${modalWidth};
+            width: 92%;
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.7), 0 0 0 0.5px rgba(255, 255, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            overflow: hidden;
+        ">
+            <!-- Native macOS Quick Look Titlebar -->
+            <div style="
+                height: 48px;
+                padding: 0 16px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
+                background: rgba(255, 255, 255, 0.03);
+            ">
+                <!-- Left: Traffic Lights -->
+                <div class="traffic-lights" style="padding:0; gap:8px;">
+                    <div class="tl-btn tl-close" onclick="Finder.closeQuickLook()" title="Close (Esc)"></div>
+                    <div class="tl-btn tl-min" style="opacity:0.6; cursor:default;"></div>
+                    <div class="tl-btn tl-max" style="opacity:0.6; cursor:default;"></div>
                 </div>
+
+                <!-- Center: Title & Filename -->
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+                ">
+                    ${fileIcon(item, 18)}
+                    <span style="color:#ffffff; font-size:13.5px; font-weight:600; letter-spacing:-0.01em;">${item.name}</span>
+                    <span style="color:rgba(255,255,255,0.4); font-size:12px; font-weight:400;">— ${item.size || 'Document'}</span>
+                </div>
+
+                <!-- Right: Native macOS Quick Look Toolbar Actions -->
                 <div style="display:flex; align-items:center; gap:8px;">
-                    ${isLegalDocument ? `
-                        <button onclick="Finder.copyDocText('${item.id}')" title="Copy text to clipboard" style="padding:5px 10px; border-radius:6px; border:0.5px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); color:white; font-size:11px; cursor:pointer;">
-                            <i class="far fa-copy"></i> Copy
-                        </button>
-                    ` : ''}
-                    <div onclick="Finder.closeQuickLook()" style="width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; cursor:pointer; color:white; font-size:13px;" title="Close QuickLook">✕</div>
+                    <button class="apple-ql-toolbar-btn" onclick="Finder.copyDocText('${item.id}')" title="Copy to Clipboard">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        <span>Copy</span>
+                    </button>
+                    <button class="apple-ql-toolbar-btn" onclick="Finder.showToast('Opened in Preview mode')" title="Open with Preview">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        <span>Preview</span>
+                    </button>
                 </div>
             </div>
 
-            <div style="flex:1; background:rgba(255,255,255,0.03); border-radius:12px; border:0.5px solid rgba(255,255,255,0.06); min-height:220px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+            <!-- Content Area -->
+            <div style="flex:1; display:flex; flex-direction:column; overflow:hidden; background:rgba(0,0,0,0.12);">
                 ${previewContent}
             </div>
 
-            <div style="display:flex; justify-content:space-between; align-items:center; padding-top:4px;">
-                <div style="font-size:11px; color:rgba(255,255,255,0.45); display:flex; align-items:center; gap:6px;">
-                    <i class="fas fa-check-circle" style="color:#34c759;"></i>
-                    <span>Apple OS Compliance & Policy System</span>
+            <!-- Apple macOS Bottom Action Bar -->
+            <div style="
+                height: 52px;
+                padding: 0 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-top: 0.5px solid rgba(255, 255, 255, 0.08);
+                background: rgba(255, 255, 255, 0.02);
+            ">
+                <div style="font-size:12px; color:rgba(255,255,255,0.5); display:flex; align-items:center; gap:7px; font-family:-apple-system, sans-serif;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                    <span>macOS Sequoia Document Reader</span>
                 </div>
-                <div style="display:flex; gap:8px;">
+                <div style="display:flex; gap:10px; align-items:center;">
                     ${isLegalDocument ? `
-                        <button onclick="Finder.acceptLegalTerms('${item.id}')" style="padding:6px 14px; border-radius:7px; border:none; background:#34c759; color:white; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px;">
-                            <i class="fas fa-check"></i> Accept & Acknowledge
+                        <button class="apple-ql-primary-btn" onclick="Finder.acceptLegalTerms('${item.id}')">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span>Accept & Acknowledge</span>
                         </button>
                     ` : ''}
-                    <button onclick="Finder.closeQuickLook()" style="padding:6px 14px; border-radius:7px; border:1px solid rgba(255,255,255,0.2); background:transparent; color:white; font-size:12px; cursor:pointer;">Done</button>
+                    <button class="apple-ql-btn" onclick="Finder.closeQuickLook()">Done</button>
                 </div>
             </div>
         </div>

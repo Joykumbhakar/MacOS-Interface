@@ -849,8 +849,27 @@ const ICONS = {
         
 
         window.toggleQuickLook = function(file = null) {
+            if (document.getElementById('finder-quicklook')) {
+                if (window.Finder && Finder.closeQuickLook) Finder.closeQuickLook();
+                return;
+            }
+
+            let targetId = null;
+            if (typeof file === 'string') {
+                targetId = file;
+            } else if (file && file.id) {
+                targetId = file.id;
+            } else if (window.appState && appState.selectedItemIds && appState.selectedItemIds.size === 1) {
+                targetId = Array.from(appState.selectedItemIds)[0];
+            }
+
+            if (targetId && window.Finder && typeof Finder.openQuickLook === 'function') {
+                Finder.openQuickLook(targetId);
+                return;
+            }
+
             const overlay = document.getElementById('quicklook-overlay');
-            if(!overlay) return;
+            if (!overlay) return;
             if (overlay.classList.contains('active')) {
                 overlay.classList.remove('active');
             } else if (file) {
