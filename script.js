@@ -286,7 +286,7 @@ const ICONS = {
             { id: 'machash', name: 'MacHash', icon: 'images/Icons/MacHash.png', category: 'utility', isOpen: false }
         ];
 
-        const DOCK_APP_IDS = ['finder', 'launchpad', 'Browser', 'messages', 'mail', 'maps', 'photos', 'calendar', 'notes', 'music', 'vscode', 'github', 'terminal', 'settings', 'trash'];
+        const DOCK_APP_IDS = ['finder', 'launchpad', 'Browser', 'messages', 'mail', 'maps', 'photos', 'calendar', 'notes', 'music', 'word', 'excel', 'powerpoint', 'outlook', 'onenote', 'vscode', 'github', 'terminal', 'settings', 'trash'];
         APP_DATA.forEach(app => { app.inDock = DOCK_APP_IDS.includes(app.id); });
 
         const SKELETON_TEMPLATES = {
@@ -1259,6 +1259,116 @@ const ICONS = {
                         if (window.renderCalculatorApp) {
                             window.renderCalculatorApp();
                         }
+                    }
+                } else if (appId === 'word') {
+                    if (!document.getElementById('word-window')) {
+                        const winContainer = document.getElementById('windows-container');
+                        const win = document.createElement('div');
+                        win.id = 'word-window';
+                        win.className = 'mac-window';
+                        win.style.width = '1000px';
+                        win.style.maxWidth = '95vw';
+                        win.style.height = '700px';
+                        win.style.maxHeight = '90vh';
+                        win.style.marginTop = `${Math.floor(Math.random() * 40 - 20)}px`;
+                        win.style.marginLeft = `${Math.floor(Math.random() * 40 - 20)}px`;
+                        win.innerHTML = `<div class="traffic-lights window-header" style="position: absolute; top:0; left:0; z-index: 50;"><div class="tl-btn tl-close"></div><div class="tl-btn tl-min"></div><div class="tl-btn tl-max"></div></div><div id="word-react-root" style="width:100%;height:100%;border-radius:inherit;overflow:hidden;background:#f4f5f7;"></div>`;
+                        winContainer.appendChild(win);
+                        makeDraggable(win);
+                        win.addEventListener('mousedown', () => focusWindow(win));
+                        win.querySelector('.tl-close').addEventListener('click', (e) => { e.stopPropagation(); this.closeApp('word'); });
+                        win.querySelector('.tl-min').addEventListener('click', (e) => { e.stopPropagation(); this.minimize('word'); });
+                        win.querySelector('.tl-max').addEventListener('click', (e) => { e.stopPropagation(); this.maximize(win); });
+                        
+                        if (window.renderWordApp) window.renderWordApp();
+                    }
+                } else if (appId === 'excel') {
+                    if (!document.getElementById('excel-window')) {
+                        const winContainer = document.getElementById('windows-container');
+                        const win = document.createElement('div');
+                        win.id = 'excel-window';
+                        win.className = 'mac-window';
+                        win.style.width = '1000px';
+                        win.style.maxWidth = '95vw';
+                        win.style.height = '700px';
+                        win.style.maxHeight = '90vh';
+                        win.style.marginTop = `${Math.floor(Math.random() * 40 - 20)}px`;
+                        win.style.marginLeft = `${Math.floor(Math.random() * 40 - 20)}px`;
+                        win.innerHTML = `<div class="traffic-lights window-header" style="position: absolute; top:0; left:0; z-index: 50;"><div class="tl-btn tl-close"></div><div class="tl-btn tl-min"></div><div class="tl-btn tl-max"></div></div><div id="excel-react-root" style="width:100%;height:100%;border-radius:inherit;overflow:hidden;background:#f4f5f7;"></div>`;
+                        winContainer.appendChild(win);
+                        makeDraggable(win);
+                        win.addEventListener('mousedown', () => focusWindow(win));
+                        win.querySelector('.tl-close').addEventListener('click', (e) => { e.stopPropagation(); this.closeApp('excel'); });
+                        win.querySelector('.tl-min').addEventListener('click', (e) => { e.stopPropagation(); this.minimize('excel'); });
+                        win.querySelector('.tl-max').addEventListener('click', (e) => { e.stopPropagation(); this.maximize(win); });
+                        
+                        if (window.renderExcelApp) window.renderExcelApp();
+                    }
+                } else if (appId === 'powerpoint') {
+                    if (!document.getElementById('powerpoint-window')) {
+                        const winContainer = document.getElementById('windows-container');
+                        const win = document.createElement('div');
+                        win.id = 'powerpoint-window';
+                        win.className = 'mac-window';
+                        win.style.width = '1000px';
+                        win.style.maxWidth = '95vw';
+                        win.style.height = '700px';
+                        win.style.maxHeight = '90vh';
+                        win.style.marginTop = `${Math.floor(Math.random() * 40 - 20)}px`;
+                        win.style.marginLeft = `${Math.floor(Math.random() * 40 - 20)}px`;
+                        win.innerHTML = `<div class="traffic-lights window-header" style="position: absolute; top:0; left:0; z-index: 50;"><div class="tl-btn tl-close"></div><div class="tl-btn tl-min"></div><div class="tl-btn tl-max"></div></div><div id="powerpoint-react-root" style="width:100%;height:100%;border-radius:inherit;overflow:hidden;background:#f4f5f7;"></div>`;
+                        winContainer.appendChild(win);
+                        makeDraggable(win);
+                        win.addEventListener('mousedown', () => focusWindow(win));
+                        win.querySelector('.tl-close').addEventListener('click', (e) => { e.stopPropagation(); this.closeApp('powerpoint'); });
+                        win.querySelector('.tl-min').addEventListener('click', (e) => { e.stopPropagation(); this.minimize('powerpoint'); });
+                        win.querySelector('.tl-max').addEventListener('click', (e) => { e.stopPropagation(); this.maximize(win); });
+                        
+                        if (window.renderPowerPointApp) window.renderPowerPointApp();
+                    }
+                } else if (appId === 'outlook') {
+                    if (!document.getElementById('outlook-window')) {
+                        const winContainer = document.getElementById('windows-container');
+                        const win = document.createElement('div');
+                        win.id = 'outlook-window';
+                        win.className = 'mac-window';
+                        win.style.width = '1000px';
+                        win.style.maxWidth = '95vw';
+                        win.style.height = '700px';
+                        win.style.maxHeight = '90vh';
+                        win.style.marginTop = `${Math.floor(Math.random() * 40 - 20)}px`;
+                        win.style.marginLeft = `${Math.floor(Math.random() * 40 - 20)}px`;
+                        win.innerHTML = `<div class="traffic-lights window-header" style="position: absolute; top:0; left:0; z-index: 50;"><div class="tl-btn tl-close"></div><div class="tl-btn tl-min"></div><div class="tl-btn tl-max"></div></div><div id="outlook-react-root" style="width:100%;height:100%;border-radius:inherit;overflow:hidden;background:#f4f5f7;"></div>`;
+                        winContainer.appendChild(win);
+                        makeDraggable(win);
+                        win.addEventListener('mousedown', () => focusWindow(win));
+                        win.querySelector('.tl-close').addEventListener('click', (e) => { e.stopPropagation(); this.closeApp('outlook'); });
+                        win.querySelector('.tl-min').addEventListener('click', (e) => { e.stopPropagation(); this.minimize('outlook'); });
+                        win.querySelector('.tl-max').addEventListener('click', (e) => { e.stopPropagation(); this.maximize(win); });
+                        
+                        if (window.renderOutlookApp) window.renderOutlookApp();
+                    }
+                } else if (appId === 'onenote') {
+                    if (!document.getElementById('onenote-window')) {
+                        const winContainer = document.getElementById('windows-container');
+                        const win = document.createElement('div');
+                        win.id = 'onenote-window';
+                        win.className = 'mac-window';
+                        win.style.width = '1000px';
+                        win.style.maxWidth = '95vw';
+                        win.style.height = '700px';
+                        win.style.maxHeight = '90vh';
+                        win.style.marginTop = `${Math.floor(Math.random() * 40 - 20)}px`;
+                        win.style.marginLeft = `${Math.floor(Math.random() * 40 - 20)}px`;
+                        win.innerHTML = `<div class="traffic-lights window-header" style="position: absolute; top:0; left:0; z-index: 50;"><div class="tl-btn tl-close"></div><div class="tl-btn tl-min"></div><div class="tl-btn tl-max"></div></div><div id="onenote-react-root" style="width:100%;height:100%;border-radius:inherit;overflow:hidden;background:#f4f5f7;"></div>`;
+                        winContainer.appendChild(win);
+                        makeDraggable(win);
+                        win.addEventListener('mousedown', () => focusWindow(win));
+                        win.querySelector('.tl-close').addEventListener('click', (e) => { e.stopPropagation(); this.closeApp('onenote'); });
+                        win.querySelector('.tl-min').addEventListener('click', (e) => { e.stopPropagation(); this.minimize('onenote'); });
+                        win.querySelector('.tl-max').addEventListener('click', (e) => { e.stopPropagation(); this.maximize(win); });
+                        
+                        if (window.renderOneNoteApp) window.renderOneNoteApp();
                     }
                 } else if (appId === 'music') {
                     if (!document.getElementById('music-window')) {
