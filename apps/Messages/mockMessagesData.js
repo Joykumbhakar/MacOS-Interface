@@ -1,10 +1,10 @@
-﻿// Apple Messages (iMessage) Mock Data Engine & State Store
+﻿// Apple Messages (iMessage) Mock Data Engine & State Store with Official Apple Gradients
 
 const INITIAL_CONVERSATIONS = [
     {
         id: 'c1',
         name: 'Tim Cook',
-        avatarBg: 'linear-gradient(135deg, #007AFF 0%, #0051A8 100%)',
+        avatarBg: 'linear-gradient(180deg, #38A0FF 0%, #007AFF 100%)',
         avatarInitials: 'TC',
         avatarImage: '',
         status: 'iMessage',
@@ -56,7 +56,7 @@ const INITIAL_CONVERSATIONS = [
     {
         id: 'c2',
         name: 'Craig Federighi',
-        avatarBg: 'linear-gradient(135deg, #FF9500 0%, #FF5E3A 100%)',
+        avatarBg: 'linear-gradient(180deg, #FF9F0A 0%, #FF6B00 100%)',
         avatarInitials: 'CF',
         avatarImage: '',
         status: 'iMessage',
@@ -100,7 +100,7 @@ const INITIAL_CONVERSATIONS = [
     {
         id: 'c3',
         name: 'Sarah Jenkins',
-        avatarBg: 'linear-gradient(135deg, #AF52DE 0%, #5856D6 100%)',
+        avatarBg: 'linear-gradient(180deg, #BF5AF2 0%, #8944AB 100%)',
         avatarInitials: 'SJ',
         status: 'iMessage',
         phone: '+1 (408) 555-0199',
@@ -142,7 +142,7 @@ const INITIAL_CONVERSATIONS = [
     {
         id: 'c4',
         name: 'Apple Developer Team',
-        avatarBg: 'linear-gradient(135deg, #30D158 0%, #007AFF 100%)',
+        avatarBg: 'linear-gradient(180deg, #30D158 0%, #1B9E3E 100%)',
         avatarInitials: 'DT',
         status: 'iMessage • 4 People',
         phone: 'Group Chat',
@@ -186,7 +186,7 @@ const INITIAL_CONVERSATIONS = [
     {
         id: 'c5',
         name: 'Steve Jobs',
-        avatarBg: 'linear-gradient(135deg, #8E8E93 0%, #1C1C1E 100%)',
+        avatarBg: 'linear-gradient(180deg, #5E5E62 0%, #2C2C2E 100%)',
         avatarInitials: 'SJ',
         status: 'iMessage',
         phone: 'steve@apple.com',
@@ -219,7 +219,7 @@ const INITIAL_CONVERSATIONS = [
     {
         id: 'c6',
         name: 'Apple Support',
-        avatarBg: 'linear-gradient(135deg, #007AFF 0%, #5AC8FA 100%)',
+        avatarBg: 'linear-gradient(180deg, #64D2FF 0%, #0A84FF 100%)',
         avatarIcon: 'apple',
         avatarInitials: 'AS',
         status: 'Verified Business',
@@ -251,7 +251,7 @@ const INITIAL_CONVERSATIONS = [
     {
         id: 'c7',
         name: 'Alex Rivera',
-        avatarBg: 'linear-gradient(135deg, #34C759 0%, #30B0C7 100%)',
+        avatarBg: 'linear-gradient(180deg, #34C759 0%, #169E38 100%)',
         avatarInitials: 'AR',
         status: 'SMS',
         phone: '+1 (555) 349-2041',
