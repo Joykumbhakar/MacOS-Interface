@@ -1319,7 +1319,7 @@ const ICONS = {
                         win.style.maxWidth = '90vw';
                         win.style.height = '580px';
                         win.style.maxHeight = '78vh';
-                        win.innerHTML = `<div class="traffic-lights window-header" style="position: absolute; top:0; left:0; z-index: 50;"><div class="tl-btn tl-close"></div><div class="tl-btn tl-min"></div><div class="tl-btn tl-max"></div></div><div id="powerpoint-react-root" style="width:100%;height:100%;border-radius:inherit;overflow:hidden;background:#f4f5f7;"></div>`;
+                        win.innerHTML = `<div class="traffic-lights window-header" style="position: absolute; top:0; left:0; z-index: 50;"><div class="tl-btn tl-close"></div><div class="tl-btn tl-min"></div><div class="tl-btn tl-max"></div></div><div id="powerpoint-react-root" style="width:100%;height:100%;border-radius:inherit;overflow:hidden;background:transparent;"></div>`;
                         winContainer.appendChild(win);
                         makeDraggable(win);
                         win.addEventListener('mousedown', () => focusWindow(win));
@@ -3376,6 +3376,11 @@ const SETTINGS_VIEWS = {
                             inp.placeholder = 'Enter Password'; 
                         }
                     }, 1500);
+                    return;
+                }
+                
+                if (!force && window.authenticateFaceID) {
+                    window.authenticateFaceID();
                     return;
                 }
                 

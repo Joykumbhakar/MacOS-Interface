@@ -58,10 +58,45 @@ const TAPBACK_EMOJIS = ['❤️', '👍', '👎', '😂', '‼️', '❓'];
 
 const renderAvatar = (c, size = 16) => {
     if (!c) return '';
+    if (c.avatarImage) {
+        return <img src={c.avatarImage} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />;
+    }
     if (c.avatarIcon === 'apple' || c.avatarInitials === '' || c.name === 'Apple Support') {
         return <i className="fab fa-apple" style={{ fontSize: `${Math.max(Math.round(size * 0.55), 14)}px` }}></i>;
     }
-    return c.avatarInitials;
+    
+    // Dynamic Professional Avatar SVG with fallbacks
+    const startColor = c.avatarStart || '#E2E5E9';
+    const endColor = c.avatarEnd || '#9BA2AE';
+    const id = c.id || Math.random().toString(36).substr(2, 9);
+    
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style={{ width: '100%', height: '100%', display: 'block' }}>
+            <defs>
+                <linearGradient id={`bgGradient-${id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor={startColor} />
+                    <stop offset="100%" stopColor={endColor} />
+                </linearGradient>
+                <linearGradient id={`silGradient-${id}`} x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse">
+                    <stop offset="10%" stopColor="#FFFFFF" />
+                    <stop offset="90%" stopColor="#D5D9E0" />
+                </linearGradient>
+                <linearGradient id={`borderGradient-${id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="rgba(255,255,255,0.6)" />
+                    <stop offset="100%" stopColor="rgba(0,0,0,0.3)" />
+                </linearGradient>
+                <clipPath id={`circleClip-${id}`}>
+                    <circle cx="256" cy="256" r="256" />
+                </clipPath>
+            </defs>
+            <circle cx="256" cy="256" r="256" fill={`url(#bgGradient-${id})`} />
+            <circle cx="256" cy="256" r="254.5" fill="none" stroke={`url(#borderGradient-${id})`} strokeWidth="3" />
+            <g clipPath={`url(#circleClip-${id})`}>
+                <circle cx="256" cy="165" r="95" fill={`url(#silGradient-${id})`} />
+                <circle cx="256" cy="530" r="250" fill={`url(#silGradient-${id})`} />
+            </g>
+        </svg>
+    );
 };
 
 const MessagesApp = () => {
