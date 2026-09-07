@@ -40,7 +40,7 @@ npm run build
 ### 3. Locate the Output
 Once the build completes (it typically takes 1-2 minutes to download binaries and compile), your installer will be securely output to:
 
-> 📁 `dist-electron/MacOS-Interface Fan Made Setup 1.0.0.exe`
+> 📁 `dist-electron/macOS-Interface Fan Made Setup 1.0.0.exe`
 
 Double-click the setup file to install the fan-made macOS interface directly onto your Windows machine.
 
@@ -63,7 +63,7 @@ The desktop app relies on three key files to bridge the web environment to your 
 If you wish to change the desktop app's configuration (like the window size, icon, or metadata), you can edit the following:
 
 - **Window Properties:** Open `main.js` and modify the `BrowserWindow` object. You can enable full-screen, change the default width/height, or enable Node integration.
-- **App Name & Icon:** Open `package.json` and edit the `productName` inside the `"build"` block. To change the icon, replace `images/Icons/MacOS.png` with your desired icon.
+- **App Name & Icon:** Open `package.json` and edit the `productName` inside the `"build"` block. To change the icon, replace `images/Icons/macOS.png` with your desired icon.
 
 ---
 

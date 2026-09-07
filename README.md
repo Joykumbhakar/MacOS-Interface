@@ -1,8 +1,8 @@
-# 🍎 macOS Interface — Web Simulation
+# 🍎 Apple OS Interface — Web Simulation
 
-A **pixel-perfect macOS desktop** experience built entirely for the browser. No frameworks, no build step — just clean HTML, CSS, and JavaScript delivering an authentic Apple experience on the web.
+A **pixel-perfect Apple OS desktop** experience built entirely for the browser. No frameworks, no build step — just clean HTML, CSS, and JavaScript delivering an authentic Apple experience on the web.
 
-[![Download for Windows](https://img.shields.io/badge/Download_for_Windows-.exe-0078D6?style=for-the-badge&logo=windows)](https://github.com/Joykumbhakar/MacOS-Interface/releases/latest)
+[![Download for Windows](https://img.shields.io/badge/Download_for_Windows-.exe-0078D6?style=for-the-badge&logo=windows)](https://github.com/Joykumbhakar/Apple OS-Interface/releases/latest)
 
 > 🖥️ **Want to build this yourself?**
 > Check out the [Desktop App Build Guide](DESKTOP_APP.md) to learn how to compile the source code!
@@ -21,7 +21,7 @@ A **pixel-perfect macOS desktop** experience built entirely for the browser. No 
 - **Menu Bar** — Clock, battery, Wi-Fi, Spotlight search
 - **Custom Cursor** — Paper-plane pointer that auto-switches black/white by background
 - **Dark Mode** — Full system-wide dark/light/auto theme switching
-- **Liquid Glass Toggles** — macOS-style physics-based toggle animations
+- **Liquid Glass Toggles** — Apple OS-style physics-based toggle animations
 
 ---
 
@@ -63,8 +63,8 @@ A **pixel-perfect macOS desktop** experience built entirely for the browser. No 
 
 ```bash
 # Clone
-git clone https://github.com/yourusername/macos-interface.git
-cd macos-interface
+git clone https://github.com/yourusername/Apple OS-interface.git
+cd Apple OS-interface
 
 # Run with Python (built-in)
 python -m http.server 3000
@@ -94,9 +94,9 @@ open http://localhost:3000
 ## 📁 Project Structure
 
 ```
-macos-interface/
+Apple OS-interface/
 ├── index.html          # Main entry point
-├── script.js           # Core macOS interface logic (~210KB)
+├── script.js           # Core Apple OS interface logic (~210KB)
 ├── finder.js           # Finder app (~106KB)
 ├── island.js           # Dynamic Island logic
 ├── settings_engine.js  # Settings system engine
@@ -120,4 +120,4 @@ macos-interface/
 
 ## 📄 License
 
-MIT © macOS Interface
+MIT © Apple OS Interface

@@ -1,0 +1,2032 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Code Studio Pro — Visual Studio Code</title>
+    <meta name="description" content="A macOS/iOS-inspired HTML/CSS/JS editor.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" id="pwa-manifest">
+
+    <!-- 0. Error Suppression (Must be first) -->
+    <script>
+        window.addEventListener('error', function(e) {
+            if (e.message && (
+                e.message.includes('ResizeObserver loop') || 
+                e.message === 'Script error.'
+            )) {
+                e.stopImmediatePropagation();
+                e.preventDefault();
+            }
+        });
+
+        // Inherit Apple Modal Dialogs if embedded in macOS interface
+        if (window.parent && window.parent.showMacDialog) {
+            window.showMacDialog = window.parent.showMacDialog;
+            window.alert = window.parent.alert;
+            window.confirm = window.parent.confirm;
+            window.prompt = window.parent.prompt;
+        }
+
+        window.addEventListener('pointerdown', () => {
+            if (window.parent && window.parent.MacWindowManager) {
+                const win = window.parent.document.getElementById('vscode-window');
+                if (win) window.parent.MacWindowManager.focus(win);
+            }
+        });
+    </script>
+
+    <!-- 1. Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Safe Tailwind Config
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.tailwind) {
+                tailwind.config = {
+                    darkMode: 'class',
+                    theme: {
+                        extend: {
+                            fontFamily: {
+                                sans: ['-apple-system', 'system-ui', 'system-ui', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+                                mono: ['"SF Mono"', '"Menlo"', '"Monaco"', '"Courier New"', 'monospace'],
+                            },
+                            colors: {
+                                ios: {
+                                    bg: 'var(--ios-bg)',
+                                    surface: 'var(--ios-surface)',
+                                    surface2: 'var(--ios-surface-2)',
+                                    blue: '#007AFF',
+                                    green: '#34C759',
+                                    red: '#FF3B30',
+                                    orange: '#FF9500',
+                                    gray: '#8E8E93',
+                                    border: 'var(--ios-border)',
+                                    text: 'var(--ios-text)',
+                                    textSec: 'var(--ios-text-sec)',
+                                    separator: 'var(--ios-separator)',
+                                    hover: 'var(--ios-hover)',
+                                }
+                            },
+                            boxShadow: {
+                                'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
+                                'floating': '0 20px 40px -10px rgba(0,0,0,0.15)',
+                                'sheet': '0 -10px 40px -10px rgba(0,0,0,0.1)',
+                                'menu': '0 6px 30px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05)',
+                            }
+                        }
+                    }
+                };
+            }
+        });
+    </script>
+
+    <!-- 2. Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- 3. Conflict Management: IMPORTANT - Set to undefined, not null -->
+    <script>
+        window.__define = window.define;
+        window.__module = window.module;
+        window.define = undefined;
+        window.module = undefined;
+    </script>
+
+    <!-- 4. Utilities (Load as Globals) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <!-- 5. Monaco Editor Loader (Loads last) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+
+    <script>
+        // Monaco Environment Config
+        window.MonacoEnvironment = {
+            getWorkerUrl: function (workerId, label) {
+                return `data:text/javascript;charset=utf-8,${encodeURIComponent(`
+                    self.MonacoEnvironment = {
+                        baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/'
+                    };
+                    importScripts('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/base/worker/workerMain.js');`
+                )}`;
+            }
+        };
+    </script>
+
+    <style>
+        :root {
+            --ios-bg: #F2F2F7;
+            --ios-surface: rgba(255, 255, 255, 0.85);
+            --ios-surface-2: #FFFFFF;
+            --ios-border: rgba(0, 0, 0, 0.1);
+            --ios-separator: rgba(60, 60, 67, 0.18);
+            --ios-text: #000000;
+            --ios-text-sec: #86868b;
+            --ios-hover: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark {
+            --ios-bg: #000000;
+            --ios-surface: rgba(28, 28, 30, 0.85);
+            --ios-surface-2: #1C1C1E;
+            --ios-border: rgba(255, 255, 255, 0.15);
+            --ios-separator: rgba(84, 84, 88, 0.35);
+            --ios-text: #FFFFFF;
+            --ios-text-sec: #98989D;
+            --ios-hover: rgba(255, 255, 255, 0.15);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(128, 128, 128, 0.3);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(128, 128, 128, 0.5);
+        }
+
+        body {
+            background-color: var(--ios-bg);
+            color: var(--ios-text);
+            transition: background-color 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .glass, .modal-glass, .sheet-glass, .dropdown-menu {
+            background-color: var(--ios-surface-2);
+        }
+        .glass { border-bottom: 0.5px solid var(--ios-separator); }
+        .modal-glass { border: 1px solid var(--ios-border); }
+        .sheet-glass { border-top: 1px solid var(--ios-border); }
+
+        .monaco-editor {
+            padding-top: 12px;
+        }
+
+        .lite-editor {
+            outline: none;
+            resize: none;
+            tab-size: 2;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .device-frame {
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            margin: 0 auto;
+            box-sizing: content-box;
+            position: relative;
+        }
+
+        .device-desktop {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 0;
+        }
+
+        .device-mobile {
+            width: 375px;
+            height: 80%;
+            border: 12px solid #2c2c2e;
+            border-radius: 48px;
+            background: #000;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .device-mobile::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90px;
+            height: 26px;
+            background: #1a1a1a;
+            border-bottom-left-radius: 14px;
+            border-bottom-right-radius: 14px;
+            z-index: 20;
+        }
+
+        .device-mobile::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 4px;
+            background: #fff;
+            border-radius: 100px;
+            z-index: 20;
+            opacity: 0.4;
+        }
+
+        .device-mobile iframe {
+            border-radius: 36px;
+            background: white;
+        }
+
+        .device-mobile.landscape {
+            width: 700px;
+            height: 375px;
+            border-width: 14px;
+        }
+
+        .device-mobile.landscape::before {
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            width: 28px;
+            height: 96px;
+            border-radius: 0 16px 16px 0;
+        }
+
+        .device-mobile.landscape::after {
+            bottom: 50%;
+            right: 8px;
+            left: auto;
+            transform: translateY(50%);
+            width: 4px;
+            height: 120px;
+        }
+
+        .device-tablet {
+            width: 768px;
+            height: 90%;
+            border: 12px solid #2c2c2e;
+            border-radius: 32px;
+            background: #000;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+        }
+
+        .device-tablet::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 4px;
+            background: #fff;
+            border-radius: 100px;
+            z-index: 20;
+            opacity: 0.4;
+        }
+
+        .device-tablet iframe {
+            border-radius: 20px;
+            background: white;
+        }
+
+        .device-tablet.landscape {
+            width: 95%;
+            height: 768px;
+            max-width: 1024px;
+        }
+
+        .menu-btn {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--ios-text);
+            cursor: default;
+            transition: background 0.15s;
+        }
+
+        .menu-btn:hover,
+        .menu-btn.active {
+            background: var(--ios-hover);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid var(--ios-border);
+            border-radius: 12px;
+            box-shadow: var(--shadow-menu);
+            padding: 6px;
+            display: none;
+            flex-direction: column;
+            z-index: 100;
+            margin-top: 6px;
+            animation: fadeIn 0.15s ease-out;
+        }
+
+        .dark .dropdown-menu {
+            background: rgba(30, 30, 30, 0.75);
+        }
+
+        .dropdown-menu.show {
+            display: flex;
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 10px;
+            font-size: 13px;
+            color: var(--ios-text);
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background: var(--ios-blue);
+            color: white;
+        }
+
+        .menu-item:hover .menu-shortcut {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .menu-shortcut {
+            font-size: 11px;
+            opacity: 0.5;
+            font-family: sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-separator {
+            height: 1px;
+            background: var(--ios-border);
+            margin: 4px 6px;
+        }
+
+        /* Custom Apple macOS Context Menu */
+        .vscode-context-menu {
+            position: fixed;
+            z-index: 99999;
+            min-width: 220px;
+            background: rgba(36, 36, 38, 0.88);
+            backdrop-filter: blur(35px) saturate(190%);
+            -webkit-backdrop-filter: blur(35px) saturate(190%);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), 0 0 0 0.5px rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 5px;
+            display: none;
+            flex-direction: column;
+            user-select: none;
+            animation: ctxScaleIn 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-origin: top left;
+        }
+
+        html:not(.dark) .vscode-context-menu {
+            background: rgba(245, 245, 247, 0.92);
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18), 0 0 0 0.5px rgba(0, 0, 0, 0.08);
+        }
+
+        .ctx-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 6px 10px;
+            border-radius: 7px;
+            font-size: 12.5px;
+            font-weight: 500;
+            color: var(--ios-text, #ffffff);
+            cursor: pointer;
+            transition: background 0.1s ease, color 0.1s ease;
+        }
+
+        .ctx-item:hover {
+            background: #007aff !important;
+            color: #ffffff !important;
+        }
+
+        .ctx-item:hover .ctx-icon,
+        .ctx-item:hover .ctx-shortcut {
+            color: rgba(255, 255, 255, 0.92) !important;
+        }
+
+        .ctx-item-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ctx-icon {
+            font-size: 14px;
+            opacity: 0.85;
+            width: 16px;
+            text-align: center;
+            color: var(--ios-text, #ffffff);
+        }
+
+        .ctx-shortcut {
+            font-size: 11px;
+            opacity: 0.55;
+            font-family: -apple-system, sans-serif;
+            letter-spacing: 0.5px;
+            color: var(--ios-text-sec, #8e8e93);
+        }
+
+        .ctx-separator {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 4px 6px;
+        }
+
+        html:not(.dark) .ctx-separator {
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        @keyframes ctxScaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .animate-slide-up { animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-scale-in { animation: scaleIn 0.2s ease-out forwards; }
+        .animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
+        .animate-enter-modal { animation: enterModal 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        @keyframes enterModal {
+            0% { transform: scale(0.95) translateY(10px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        .segmented-control {
+            background: rgba(118, 118, 128, 0.12);
+            padding: 2px;
+            border-radius: 9px;
+            display: inline-flex;
+        }
+
+        .segmented-btn {
+            padding: 4px 12px;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .segmented-btn.active {
+            background: var(--ios-surface-2);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            color: var(--ios-text);
+        }
+
+        .segmented-btn.inactive {
+            color: var(--ios-text-sec);
+        }
+
+        .resizer-handle::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: -8px;
+            right: -8px;
+            z-index: 10;
+        }
+
+        .log-entry {
+            font-family: 'SF Mono', 'Menlo', monospace;
+            font-size: 12px;
+            padding: 6px 10px;
+            border-bottom: 0.5px solid var(--ios-separator);
+            display: flex;
+            gap: 8px;
+        }
+
+        .log-info { color: var(--ios-text); }
+        .log-warn { background: rgba(255, 149, 0, 0.1); color: #FF9500; }
+        .log-error { background: rgba(255, 59, 48, 0.1); color: #FF3B30; }
+
+        .log-time {
+            opacity: 0.5;
+            font-size: 10px;
+            margin-top: 2px;
+            min-width: 50px;
+        }
+
+        .quick-keys-bar {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .quick-keys-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .file-tab {
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            border-right: 1px solid var(--ios-border);
+            color: var(--ios-text-sec);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .file-tab:hover {
+            background: var(--ios-hover);
+        }
+
+        .file-tab.active {
+            background: var(--ios-surface-2);
+            color: var(--ios-blue);
+            border-top: 2px solid var(--ios-blue);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .color-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.1s;
+        }
+
+        .color-dot:active {
+            transform: scale(0.9);
+        }
+
+        .color-dot.selected {
+            border-color: var(--ios-text);
+        }
+
+        .project-item {
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--ios-border);
+            transition: all 0.15s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+
+        .project-item:hover {
+            background: var(--ios-hover);
+        }
+    </style>
+</head>
+
+<body class="h-screen w-screen overflow-hidden flex flex-col font-sans selection:bg-ios-blue selection:text-white"
+    id="appRoot">
+
+    <!-- Hidden Input -->
+    <input type="file" id="fileInput" class="hidden" accept=".html,.htm,.txt">
+
+    <!-- Dynamic Island / Toast -->
+    <div class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] transition-all duration-500 pointer-events-none transform -translate-y-32"
+        id="dynamicIsland">
+        <div
+            class="bg-black text-white dark:bg-white dark:text-black px-6 py-3 rounded-full flex items-center gap-3 min-w-[200px] justify-center scale-95 transition-all duration-300 ring-1 ring-white/10">
+            <i id="toastIcon" class="ph-bold ph-check-circle text-green-500 text-xl"></i>
+            <span id="toastMsg" class="font-medium text-sm">Action Successful</span>
+        </div>
+    </div>
+
+    <!-- Desktop Toolbar -->
+    <header
+        class="h-12 shrink-0 px-4 pl-20 flex items-center justify-between glass z-40 transition-transform duration-300 select-none hidden md:flex"
+        id="desktopHeader">
+        <!-- Left: Project Breadcrumb & Quick Actions -->
+        <div class="flex items-center gap-3">
+            <button onclick="app.toggleProjectsModal()" class="flex items-center gap-2 px-2.5 py-1 rounded-md hover:bg-white/10 text-xs font-medium text-ios-text/80 transition-colors" title="Open Project Manager (⇧⌘P)">
+                <i class="ph-bold ph-folder text-ios-blue text-sm"></i>
+                <span id="currentProjectBadge" class="font-medium">Projects</span>
+            </button>
+            <div class="h-3.5 w-[1px] bg-white/15"></div>
+            <button onclick="document.getElementById('fileInput').click()" class="flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-white/10 text-xs text-ios-text/70 transition-colors" title="Open File (⌘O)">
+                <i class="ph-bold ph-file-plus text-xs"></i>
+                <span>Open</span>
+            </button>
+            <button onclick="app.saveCode(true)" class="flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-white/10 text-xs text-ios-text/70 transition-colors" title="Save File (⌘S)">
+                <i class="ph-bold ph-floppy-disk text-xs"></i>
+                <span>Save</span>
+            </button>
+        </div>
+
+        <!-- Center: Command Palette Pill -->
+        <div class="absolute left-1/2 -translate-x-1/2 flex items-center">
+            <button onclick="app.toggleSpotlight()" class="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:hover:bg-white/15 border border-white/10 text-xs text-ios-text/85 transition-all shadow-sm cursor-pointer" title="Command Palette & Quick Open">
+                <i class="ph-bold ph-magnifying-glass text-ios-blue text-xs"></i>
+                <span id="headerTitle" class="font-semibold tracking-tight">Code Studio Pro</span>
+                <kbd class="text-[10px] opacity-60 bg-white/15 px-1 py-0.5 rounded font-mono ml-1">⌘P</kbd>
+            </button>
+        </div>
+
+        <!-- Right: Quick Actions -->
+        <div class="flex items-center gap-3">
+            <div class="segmented-control">
+                <button onclick="app.setMode('lite')" id="btnModeLite" class="segmented-btn inactive">Lite</button>
+                <button onclick="app.setMode('vscode')" id="btnModeVS" class="segmented-btn active">Pro</button>
+            </div>
+            <button id="installBtn" onclick="app.installPWA()" class="hidden p-1.5 rounded-full hover:bg-ios-hover text-ios-text transition-colors" title="Install App"><i class="ph-bold ph-download-simple"></i></button>
+            <button onclick="app.toggleSpotlight()" class="p-1.5 rounded-full hover:bg-ios-hover text-ios-text transition-colors" title="Command Palette"><i class="ph-bold ph-magnifying-glass"></i></button>
+            <button onclick="app.toggleSettingsModal()" class="p-1.5 rounded-full hover:bg-ios-hover text-ios-text transition-colors" title="Settings"><i class="ph-bold ph-gear"></i></button>
+        </div>
+    </header>
+
+    <!-- Mobile Header -->
+    <header
+        class="h-12 shrink-0 px-4 flex items-center justify-between glass z-40 md:hidden bg-ios-bg/80 backdrop-blur-lg">
+        <div class="font-bold text-lg text-ios-text tracking-tight flex items-center gap-2">
+            <i class="ph-bold ph-code text-ios-blue"></i> <span id="mobileHeaderTitle">Code Studio</span></div>
+        <div class="flex items-center gap-3">
+            <button id="mobileInstallBtn" onclick="app.installPWA()" class="hidden text-ios-blue"><i class="ph-bold ph-download-simple text-xl"></i></button>
+            <button onclick="app.toggleProjectsModal()" class="text-ios-blue"><i class="ph-bold ph-folder-open text-xl"></i></button>
+            <button onclick="app.toggleShareSheet()" class="text-ios-blue"><i class="ph-bold ph-share-network text-xl"></i></button>
+        </div>
+    </header>
+
+    <!-- Workspace -->
+    <main class="flex-1 flex overflow-hidden relative" id="workspace">
+
+        <!-- Editor Column -->
+        <div id="editorPane"
+            class="flex-1 flex flex-col min-w-0 bg-transparent relative border-r border-ios-separator transition-all duration-300">
+            <!-- File Tabs -->
+            <div
+                class="h-9 border-b border-ios-separator flex items-end px-2 bg-ios-surface/30 backdrop-blur-sm shrink-0 select-none gap-1 overflow-x-auto">
+                <div onclick="app.setActiveFile('html')" id="tab-html" class="file-tab active"><i
+                        class="ph-bold ph-file-html text-orange-500"></i> index.html</div>
+                <div onclick="app.setActiveFile('css')" id="tab-css" class="file-tab"><i
+                        class="ph-bold ph-file-css text-blue-400"></i> style.css</div>
+                <div onclick="app.setActiveFile('js')" id="tab-js" class="file-tab"><i
+                        class="ph-bold ph-file-js text-yellow-400"></i> script.js</div>
+                <div class="ml-auto flex items-center gap-3 pr-2 text-ios-text-sec">
+                    <div class="text-[10px] font-mono text-ios-text-sec opacity-70 hidden sm:block" id="cursorPos">Ln 1, Col 1</div>
+                    <div id="saveIndicator" class="w-2 h-2 rounded-full bg-ios-green opacity-0 transition-opacity">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Editor Container -->
+            <div class="flex-1 relative bg-transparent">
+                <div id="liteEditorContainer" class="hidden w-full h-full">
+                    <textarea id="liteInput"
+                        class="lite-editor w-full h-full bg-transparent text-ios-text font-mono text-sm p-4 leading-relaxed border-none focus:ring-0"
+                        placeholder="Start typing..."></textarea>
+                </div>
+                <div id="monacoContainer" class="w-full h-full"></div>
+            </div>
+
+            <!-- Mobile Quick Keys -->
+            <div id="quickKeys"
+                class="md:hidden h-10 bg-ios-surface border-t border-ios-separator flex items-center px-2 gap-2 quick-keys-bar shrink-0 z-30">
+            </div>
+        </div>
+
+        <!-- Resizer -->
+        <div id="resizer"
+            class="resizer-handle w-1 bg-transparent hover:bg-ios-blue cursor-col-resize z-30 transition-colors flex-col justify-center items-center group relative hidden md:flex">
+            <div class="h-8 w-1 bg-gray-300 dark:bg-gray-600 rounded-full group-hover:bg-white transition-colors">
+            </div>
+        </div>
+
+        <!-- Preview Column -->
+        <div id="previewPane"
+            class="flex-1 flex flex-col min-w-0 bg-[#f2f2f6] dark:bg-[#111] relative transition-colors duration-300 overflow-hidden items-center justify-center hidden md:flex">
+
+            <div class="flex gap-2 absolute top-4 left-4 z-20">
+                <button onclick="app.rotateDevice()"
+                    class="bg-ios-surface/80 backdrop-blur p-2 rounded-full shadow-lg text-ios-text hover:scale-110 transition-transform"
+                    title="Rotate"><i class="ph-bold ph-arrows-clockwise"></i></button>
+            </div>
+
+            <div id="deviceWrapper"
+                class="device-desktop relative overflow-hidden bg-white shadow-sm transition-all duration-500">
+                <div id="statusBar"
+                    class="hidden absolute top-0 left-0 right-0 h-10 flex justify-between items-center px-6 z-20 text-xs font-semibold text-black/80 dark:text-white/80 select-none">
+                    <span id="clock">9:41</span>
+                    <div class="flex gap-1.5"><i class="ph-fill ph-wifi-high"></i><i
+                            class="ph-fill ph-battery-full"></i></div>
+                </div>
+                <iframe id="previewFrame" class="w-full h-full border-none bg-white rounded-[inherit]"
+                    sandbox="allow-scripts allow-modals allow-same-origin"></iframe>
+                <div id="iframeOverlay" class="absolute inset-0 bg-transparent hidden z-10"></div>
+            </div>
+
+            <!-- Floating Console Button -->
+            <button onclick="app.toggleConsole()"
+                class="absolute bottom-4 right-4 bg-ios-surface-2/80 backdrop-blur-md text-ios-text border border-ios-border px-3 py-2 rounded-lg text-xs font-mono shadow-lg hover:scale-105 transition-transform flex items-center gap-2 group z-30">
+                <i class="ph-bold ph-terminal-window text-ios-blue"></i> Console
+                <span id="consoleBadge" class="hidden w-2 h-2 rounded-full bg-ios-red"></span>
+            </button>
+
+            <!-- Console Drawer -->
+            <div id="consolePane"
+                class="absolute bottom-0 left-0 right-0 h-0 bg-ios-surface-2/95 backdrop-blur-xl border-t border-ios-border transition-all duration-300 flex flex-col z-20 overflow-hidden shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
+                <div
+                    class="h-9 flex items-center justify-between px-4 border-b border-ios-separator bg-ios-bg/50 select-none">
+                    <span class="text-xs font-bold uppercase tracking-wider text-ios-text-sec">Console Output</span>
+                    <div class="flex gap-2">
+                        <button onclick="app.clearConsole()"><i class="ph-bold ph-prohibit text-ios-text"></i></button>
+                        <button onclick="app.toggleConsole()"><i class="ph-bold ph-caret-down text-ios-text"></i></button>
+                    </div>
+                </div>
+                <div id="consoleOutput" class="flex-1 overflow-y-auto p-0 font-mono text-xs bg-ios-surface-2"></div>
+                <div class="h-8 border-t border-ios-separator flex items-center bg-ios-bg px-2">
+                    <i class="ph-bold ph-caret-right text-ios-blue mr-2 text-xs"></i>
+                    <input type="text" id="consoleInput" placeholder="Run JavaScript..."
+                        class="bg-transparent border-none text-xs font-mono text-ios-text w-full focus:ring-0 outline-none h-full"
+                        onkeydown="app.handleConsoleInput(event)">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Nav -->
+    <nav
+        class="md:hidden h-[83px] bg-ios-surface/90 backdrop-blur-lg border-t border-ios-separator flex items-start justify-around pt-2 shrink-0 z-50 pb-safe">
+        <button onclick="app.switchMobileTab('editor')" id="tab-editor" class="flex flex-col items-center gap-1 w-16 group">
+            <i class="ph-fill ph-code text-2xl text-ios-blue transition-colors group-active:scale-95"></i>
+            <span class="text-[10px] font-medium text-ios-blue">Editor</span>
+        </button>
+        <button onclick="app.switchMobileTab('preview')" id="tab-preview" class="flex flex-col items-center gap-1 w-16 group">
+            <i class="ph-fill ph-play-circle text-2xl text-ios-text-sec transition-colors group-active:scale-95"></i>
+            <span class="text-[10px] font-medium text-ios-text-sec">Run</span>
+        </button>
+        <button onclick="app.toggleSpotlight()" id="tab-search" class="flex flex-col items-center gap-1 w-16 group">
+            <i class="ph-bold ph-magnifying-glass text-2xl text-ios-text-sec transition-colors group-active:scale-95"></i>
+            <span class="text-[10px] font-medium text-ios-text-sec">Search</span>
+        </button>
+        <button onclick="app.toggleLibraryModal()" id="tab-libs" class="flex flex-col items-center gap-1 w-16 group">
+            <i class="ph-bold ph-package text-2xl text-ios-text-sec transition-colors group-active:scale-95"></i>
+            <span class="text-[10px] font-medium text-ios-text-sec">Libs</span>
+        </button>
+        <button onclick="app.toggleProjectsModal()" id="tab-new" class="flex flex-col items-center gap-1 w-16 group">
+            <i class="ph-bold ph-folder-open text-2xl text-ios-text-sec transition-colors"></i>
+            <span class="text-[10px] font-medium text-ios-text-sec">Projects</span>
+        </button>
+    </nav>
+
+    <!-- Projects Modal -->
+    <div id="projectsModal"
+        class="fixed inset-0 spotlight-backdrop z-[80] hidden flex items-center justify-center opacity-0 transition-opacity duration-200">
+        <div class="w-full max-w-md modal-glass rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-200 h-[70vh] flex flex-col animate-enter-modal"
+            id="projectsContent">
+            <div class="p-4 border-b border-ios-separator flex justify-between items-center bg-ios-surface/50">
+                <h3 class="font-bold text-ios-text text-lg">My Projects</h3>
+                <button onclick="app.toggleProjectsModal()"
+                    class="w-8 h-8 rounded-full bg-ios-bg flex items-center justify-center text-ios-text-sec hover:bg-ios-hover transition-colors"><i
+                        class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="p-4 flex-1 overflow-y-auto space-y-2" id="projectList"></div>
+            <div class="p-4 border-t border-ios-separator bg-ios-surface/50">
+                <button onclick="app.toggleTemplateModal(); app.toggleProjectsModal(false)"
+                    class="w-full bg-ios-blue text-white font-medium py-3 rounded-xl shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2 hover:bg-blue-600">
+                    <i class="ph-bold ph-plus"></i> New Project
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal"
+        class="fixed inset-0 spotlight-backdrop z-[70] hidden flex items-center justify-center opacity-0 transition-opacity duration-200">
+        <div class="w-full max-w-sm modal-glass rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-200 animate-enter-modal"
+            id="settingsContent">
+            <div class="p-4 border-b border-ios-separator flex justify-between items-center bg-ios-surface/50">
+                <h3 class="font-bold text-ios-text">Preferences</h3>
+                <button onclick="app.toggleSettingsModal()"
+                    class="w-7 h-7 rounded-full bg-ios-bg flex items-center justify-center text-ios-text-sec"><i
+                        class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="p-4 space-y-4">
+                <div>
+                    <h4 class="text-xs font-semibold text-ios-text-sec uppercase mb-2">Theme</h4>
+                    <div class="bg-ios-bg/50 rounded-xl p-1 flex">
+                        <button onclick="app.setTheme('light')"
+                            class="flex-1 py-1.5 rounded-lg text-sm font-medium transition-all"
+                            id="theme-light">Light</button>
+                        <button onclick="app.setTheme('dark')"
+                            class="flex-1 py-1.5 rounded-lg text-sm font-medium transition-all"
+                            id="theme-dark">Dark</button>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-xs font-semibold text-ios-text-sec uppercase mb-2">Accent Color</h4>
+                    <div class="flex justify-between px-2" id="accentColors"></div>
+                </div>
+                <div>
+                    <h4 class="text-xs font-semibold text-ios-text-sec uppercase mb-2">Editor</h4>
+                    <div class="space-y-3 bg-ios-surface rounded-xl border border-ios-border p-3">
+                        <div class="flex justify-between items-center"><span class="text-sm text-ios-text">Font
+                                Size</span>
+                            <div class="flex items-center gap-2 bg-ios-bg rounded-lg p-0.5"><button
+                                    onclick="app.changeFontSize(-1)"
+                                    class="w-7 h-7 flex items-center justify-center text-ios-text hover:bg-white dark:hover:bg-gray-700 rounded shadow-sm transition-colors">-</button><span
+                                    class="text-xs font-mono w-6 text-center" id="setting-fontSize">13</span><button
+                                    onclick="app.changeFontSize(1)"
+                                    class="w-7 h-7 flex items-center justify-center text-ios-text hover:bg-white dark:hover:bg-gray-700 rounded shadow-sm transition-colors">+</button>
+                            </div>
+                        </div>
+                        <div class="h-px bg-ios-separator"></div>
+                        <div class="flex justify-between items-center"><span class="text-sm text-ios-text">Word
+                                Wrap</span><button onclick="app.toggleSetting('wordWrap')" id="toggle-wordWrap"
+                                class="w-10 h-6 rounded-full bg-gray-300 relative transition-colors duration-300">
+                                <div
+                                    class="w-5 h-5 bg-white rounded-full absolute top-0.5 left-0.5 shadow-sm transition-transform duration-300">
+                                </div>
+                            </button></div>
+                        <div class="h-px bg-ios-separator"></div>
+                        <div class="flex justify-between items-center"><span
+                                class="text-sm text-ios-text">Minimap</span><button
+                                onclick="app.toggleSetting('minimap')" id="toggle-minimap"
+                                class="w-10 h-6 rounded-full bg-gray-300 relative transition-colors duration-300">
+                                <div
+                                    class="w-5 h-5 bg-white rounded-full absolute top-0.5 left-0.5 shadow-sm transition-transform duration-300">
+                                </div>
+                            </button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spotlight / Command Palette -->
+    <div id="spotlightModal"
+        class="fixed inset-0 spotlight-backdrop z-[60] hidden flex items-start justify-center pt-[15vh] px-4 opacity-0 transition-opacity duration-200">
+        <div class="w-full max-w-xl modal-glass rounded-xl shadow-2xl overflow-hidden ring-1 ring-black/5 transform scale-95 transition-transform duration-200 animate-enter-modal"
+            id="spotlightContent">
+            <div class="p-4 border-b border-ios-separator flex items-center gap-3">
+                <i class="ph-bold ph-magnifying-glass text-xl text-ios-text-sec"></i>
+                <input type="text" id="spotlightInput" placeholder="Type a command..."
+                    class="w-full bg-transparent border-none text-lg text-ios-text focus:ring-0 placeholder-gray-400 font-light outline-none h-8">
+                <div
+                    class="text-xs font-mono text-ios-text-sec border border-ios-border px-1.5 py-0.5 rounded shadow-sm hidden sm:block">
+                    ESC</div>
+                <button onclick="app.toggleSpotlight(false)"
+                    class="sm:hidden text-ios-blue text-sm font-medium">Cancel</button>
+            </div>
+            <div class="max-h-[300px] overflow-y-auto p-2" id="spotlightResults"></div>
+        </div>
+    </div>
+
+    <!-- Library Modal -->
+    <div id="libraryModal"
+        class="fixed inset-0 spotlight-backdrop z-[60] hidden flex items-end sm:items-center justify-center sm:p-4 opacity-0 transition-opacity duration-200">
+        <div class="w-full sm:max-w-md modal-glass sm:rounded-2xl rounded-t-2xl shadow-2xl overflow-hidden transform transition-transform duration-300 translate-y-full sm:translate-y-0 flex flex-col max-h-[85vh] animate-enter-modal"
+            id="libraryContent">
+            <div class="p-4 border-b border-ios-separator flex justify-between items-center bg-ios-surface/50">
+                <h3 class="font-bold text-ios-text flex items-center gap-2 text-lg">Add Library</h3>
+                <button onclick="app.toggleLibraryModal()"
+                    class="w-7 h-7 rounded-full bg-ios-bg flex items-center justify-center text-ios-text-sec"><i
+                        class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="p-3 border-b border-ios-separator bg-ios-surface/30">
+                <input type="text" id="libSearchInput" placeholder="Search cdnjs..."
+                    class="w-full bg-ios-bg border border-ios-border rounded-lg px-3 py-2 text-sm focus:border-ios-blue outline-none transition-colors">
+            </div>
+            <div class="p-2 overflow-y-auto flex-1 space-y-1" id="libList"></div>
+        </div>
+    </div>
+
+    <!-- Templates Modal -->
+    <div id="templateModal"
+        class="fixed inset-0 spotlight-backdrop z-[60] hidden flex items-end sm:items-center justify-center sm:p-4 opacity-0 transition-opacity duration-200">
+        <div class="w-full sm:max-w-sm modal-glass sm:rounded-2xl rounded-t-2xl shadow-2xl overflow-hidden transform transition-transform duration-300 translate-y-full sm:translate-y-0 flex flex-col max-h-[85vh] animate-enter-modal"
+            id="templateContent">
+            <div class="p-4 border-b border-ios-separator flex justify-between items-center bg-ios-surface/50">
+                <h3 class="font-bold text-ios-text flex items-center gap-2 text-lg">New Project</h3>
+                <button onclick="app.toggleTemplateModal()"
+                    class="w-7 h-7 rounded-full bg-ios-bg flex items-center justify-center text-ios-text-sec"><i
+                        class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="p-4 space-y-2 overflow-y-auto" id="templateList"></div>
+        </div>
+    </div>
+
+    <!-- Share Sheet -->
+    <div id="shareSheet"
+        class="fixed inset-0 spotlight-backdrop z-[70] hidden flex items-end justify-center sm:items-center opacity-0 transition-opacity duration-200">
+        <div class="w-full sm:max-w-sm sheet-glass rounded-t-2xl sm:rounded-2xl shadow-sheet overflow-hidden transform translate-y-full sm:translate-y-0 transition-transform duration-300 p-4"
+            id="shareContent">
+            <div class="flex items-center gap-4 mb-6 border-b border-ios-separator pb-4">
+                <div
+                    class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-white shadow-lg text-3xl">
+                    <i class="ph-bold ph-file-html"></i>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-ios-text text-lg">Project</h3>
+                    <p class="text-sm text-ios-text-sec">HTML • CSS • JS • <span id="fileSize">0 KB</span></p>
+                </div>
+                <button onclick="app.toggleShareSheet()"
+                    class="ml-auto w-7 h-7 rounded-full bg-ios-bg flex items-center justify-center text-ios-text-sec"><i
+                        class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="space-y-2">
+                <button onclick="app.downloadCode()"
+                    class="w-full bg-ios-surface-2 p-3 rounded-xl flex items-center gap-3 hover:bg-ios-bg transition-colors text-left border border-ios-separator/50">
+                    <i class="ph-bold ph-download-simple text-ios-blue text-xl"></i><span
+                        class="font-medium text-ios-text">Save HTML File</span>
+                </button>
+                <button onclick="app.downloadZip()"
+                    class="w-full bg-ios-surface-2 p-3 rounded-xl flex items-center gap-3 hover:bg-ios-bg transition-colors text-left border border-ios-separator/50">
+                    <i class="ph-bold ph-file-zip text-ios-blue text-xl"></i><span
+                        class="font-medium text-ios-text">Export as ZIP</span>
+                </button>
+                <button onclick="app.copyToClipboard()"
+                    class="w-full bg-ios-surface-2 p-3 rounded-xl flex items-center gap-3 hover:bg-ios-bg transition-colors text-left border border-ios-separator/50">
+                    <i class="ph-bold ph-copy text-ios-blue text-xl"></i><span class="font-medium text-ios-text">Copy
+                        Full Code</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shortcuts Modal -->
+    <div id="shortcutsModal"
+        class="fixed inset-0 spotlight-backdrop z-[60] hidden flex items-center justify-center opacity-0 transition-opacity duration-200 p-4">
+        <div class="w-full max-w-sm modal-glass rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-200 animate-enter-modal"
+            id="shortcutsContent">
+            <div class="p-4 border-b border-ios-separator flex justify-between items-center bg-ios-surface/50">
+                <h3 class="font-bold text-ios-text">Shortcuts</h3>
+                <button onclick="app.toggleShortcutsModal()"
+                    class="w-7 h-7 rounded-full bg-ios-bg flex items-center justify-center text-ios-text-sec"><i
+                        class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="p-4 space-y-3 text-sm text-ios-text">
+                <div class="flex justify-between border-b border-ios-separator pb-2"><span>Command Palette</span> <kbd
+                        class="bg-ios-bg px-2 py-0.5 rounded text-xs font-mono border border-ios-separator">⌘K</kbd>
+                </div>
+                <div class="flex justify-between border-b border-ios-separator pb-2"><span>Projects</span> <kbd
+                        class="bg-ios-bg px-2 py-0.5 rounded text-xs font-mono border border-ios-separator">⇧⌘P</kbd>
+                </div>
+                <div class="flex justify-between border-b border-ios-separator pb-2"><span>Save</span> <kbd
+                        class="bg-ios-bg px-2 py-0.5 rounded text-xs font-mono border border-ios-separator">⌘S</kbd>
+                </div>
+                <div class="flex justify-between border-b border-ios-separator pb-2"><span>Format</span> <kbd
+                        class="bg-ios-bg px-2 py-0.5 rounded text-xs font-mono border border-ios-separator">⇧⌥F</kbd>
+                </div>
+                <div class="flex justify-between border-b border-ios-separator pb-2"><span>Console</span> <kbd
+                        class="bg-ios-bg px-2 py-0.5 rounded text-xs font-mono border border-ios-separator">⌘J</kbd>
+                </div>
+                <div class="flex justify-between border-b border-ios-separator pb-2"><span>Zen Mode</span> <kbd
+                        class="bg-ios-bg px-2 py-0.5 rounded text-xs font-mono border border-ios-separator">⌘B</kbd>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Compiled Code Modal -->
+    <div id="compiledModal"
+        class="fixed inset-0 spotlight-backdrop z-[70] hidden flex items-center justify-center opacity-0 transition-opacity duration-200 p-4">
+        <div class="w-full max-w-2xl modal-glass rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-200 h-[80vh] flex flex-col animate-enter-modal"
+            id="compiledContent">
+            <div class="p-4 border-b border-ios-separator flex justify-between items-center bg-ios-surface/50">
+                <h3 class="font-bold text-ios-text text-lg">Compiled Source</h3>
+                <button onclick="app.toggleModal(document.getElementById('compiledModal'))"
+                    class="w-8 h-8 rounded-full bg-ios-bg flex items-center justify-center text-ios-text-sec"><i
+                        class="ph-bold ph-x"></i></button>
+            </div>
+            <textarea id="compiledOutput" class="flex-1 bg-transparent p-4 font-mono text-xs resize-none outline-none text-ios-text"
+                readonly></textarea>
+        </div>
+    </div>
+
+    <!-- Custom Apple macOS VSCode Context Menu -->
+    <div id="vscodeContextMenu" class="vscode-context-menu">
+        <!-- Editor Section -->
+        <div id="ctx-section-editor" class="ctx-section">
+            <div class="ctx-item" onclick="app.cut(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-scissors ctx-icon"></i><span>Cut</span></div>
+                <span class="ctx-shortcut">⌘X</span>
+            </div>
+            <div class="ctx-item" onclick="app.copy(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-copy ctx-icon"></i><span>Copy</span></div>
+                <span class="ctx-shortcut">⌘C</span>
+            </div>
+            <div class="ctx-item" onclick="app.paste(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-clipboard-text ctx-icon"></i><span>Paste</span></div>
+                <span class="ctx-shortcut">⌘V</span>
+            </div>
+            <div class="ctx-item" onclick="app.selectAll(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-selection-all ctx-icon"></i><span>Select All</span></div>
+                <span class="ctx-shortcut">⌘A</span>
+            </div>
+            <div class="ctx-separator"></div>
+            <div class="ctx-item" onclick="app.formatCode(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-magic-wand ctx-icon"></i><span>Format Document</span></div>
+                <span class="ctx-shortcut">⇧⌥F</span>
+            </div>
+            <div class="ctx-item" onclick="app.find(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-magnifying-glass ctx-icon"></i><span>Find</span></div>
+                <span class="ctx-shortcut">⌘F</span>
+            </div>
+            <div class="ctx-item" onclick="app.replace(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-arrows-left-right ctx-icon"></i><span>Replace</span></div>
+                <span class="ctx-shortcut">⌥⌘F</span>
+            </div>
+            <div class="ctx-item" onclick="app.changeAllOccurrences(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-cursor-text ctx-icon"></i><span>Change All Occurrences</span></div>
+                <span class="ctx-shortcut">⌘F2</span>
+            </div>
+            <div class="ctx-separator"></div>
+            <div class="ctx-item" onclick="app.toggleSpotlight(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-terminal ctx-icon"></i><span>Command Palette...</span></div>
+                <span class="ctx-shortcut">⌘P</span>
+            </div>
+            <div class="ctx-item" onclick="app.toggleSettingsModal(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-gear ctx-icon"></i><span>Preferences...</span></div>
+                <span class="ctx-shortcut">⌘,</span>
+            </div>
+        </div>
+
+        <!-- Preview Section -->
+        <div id="ctx-section-preview" class="ctx-section" style="display: none;">
+            <div class="ctx-item" onclick="app.updatePreview(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-arrows-clockwise ctx-icon"></i><span>Reload Preview</span></div>
+                <span class="ctx-shortcut">⌘R</span>
+            </div>
+            <div class="ctx-item" onclick="app.toggleConsole(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-terminal-window ctx-icon"></i><span>Inspect Console</span></div>
+                <span class="ctx-shortcut">⌘J</span>
+            </div>
+            <div class="ctx-item" onclick="app.rotateDevice(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-arrows-counter-clockwise ctx-icon"></i><span>Rotate Screen</span></div>
+            </div>
+            <div class="ctx-separator"></div>
+            <div class="ctx-item" onclick="app.setDevice('desktop'); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-desktop ctx-icon"></i><span>Desktop View</span></div>
+            </div>
+            <div class="ctx-item" onclick="app.setDevice('mobile'); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-device-mobile ctx-icon"></i><span>Mobile Frame View</span></div>
+            </div>
+            <div class="ctx-separator"></div>
+            <div class="ctx-item" onclick="app.showCompiledCode(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-file-code ctx-icon"></i><span>View Compiled Source</span></div>
+            </div>
+            <div class="ctx-item" onclick="app.toggleLibraryModal(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-package ctx-icon"></i><span>Add CDN Library...</span></div>
+            </div>
+            <div class="ctx-item" onclick="app.toggleZenMode(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-arrows-out-simple ctx-icon"></i><span>Toggle Zen Mode</span></div>
+                <span class="ctx-shortcut">⌘B</span>
+            </div>
+        </div>
+
+        <!-- General / Header Section -->
+        <div id="ctx-section-general" class="ctx-section" style="display: none;">
+            <div class="ctx-item" onclick="app.saveCode(true); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-floppy-disk ctx-icon"></i><span>Save Project</span></div>
+                <span class="ctx-shortcut">⌘S</span>
+            </div>
+            <div class="ctx-item" onclick="app.toggleProjectsModal(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-folder-open ctx-icon"></i><span>Switch Project...</span></div>
+                <span class="ctx-shortcut">⇧⌘P</span>
+            </div>
+            <div class="ctx-item" onclick="app.toggleTemplateModal(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-plus-circle ctx-icon"></i><span>New Project Template...</span></div>
+            </div>
+            <div class="ctx-separator"></div>
+            <div class="ctx-item" onclick="app.downloadZip(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-file-zip ctx-icon"></i><span>Export as ZIP</span></div>
+            </div>
+            <div class="ctx-item" onclick="app.downloadCode(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-download-simple ctx-icon"></i><span>Export HTML File</span></div>
+            </div>
+            <div class="ctx-item" onclick="app.copyToClipboard(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-copy ctx-icon"></i><span>Copy All Source</span></div>
+            </div>
+            <div class="ctx-separator"></div>
+            <div class="ctx-item" onclick="app.toggleTheme(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-moon ctx-icon"></i><span>Toggle Theme</span></div>
+            </div>
+            <div class="ctx-item" onclick="app.toggleSettingsModal(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-gear ctx-icon"></i><span>Preferences...</span></div>
+                <span class="ctx-shortcut">⌘,</span>
+            </div>
+            <div class="ctx-item" onclick="app.toggleShortcutsModal(); app.hideContextMenu()">
+                <div class="ctx-item-left"><i class="ph-bold ph-keyboard ctx-icon"></i><span>Keyboard Shortcuts</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Templates
+        const templates = {
+            basic: { name: "Basic HTML5", icon: "ph-file-html", color: "bg-orange-500", code: `<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>App</title>\n</head>\n<body>\n    <div class="container">\n        <h1>Hello World</h1>\n        <p>Start editing!</p>\n        <button id="btn">Click Me</button>\n    </div>\n</body>\n</html>`, css: `body { font-family: -apple-system, sans-serif; display: grid; place-items: center; min-height: 100vh; margin: 0; background: #f2f2f7; }\n.container { background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }\nbutton { background: #007aff; color: white; border: none; padding: 10px 20px; border-radius: 99px; cursor: pointer; margin-top: 10px; }`, js: `document.getElementById('btn').addEventListener('click', () => {\n    alert('Hello from JS!');\n});` },
+            react: { name: "React", icon: "ph-atom", color: "bg-blue-400", code: `<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="UTF-8" />\n  <script src="https://unpkg.com/react@18/umd/react.development.js"><\/script>\n  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"><\/script>\n  <script src="https://unpkg.com/@babel/standalone/babel.min.js"><\/script>\n  <link href="style.css" rel="stylesheet" />\n</head>\n<body>\n  <div id="root"></div>\n  <script type="text/babel" src="script.js"><\/script>\n</body>\n</html>`, css: `body { font-family: sans-serif; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f5f5f7; }`, js: `function App() {\n  const [count, setCount] = React.useState(0);\n  return (\n    <div style={{background: 'white', padding: '2rem', borderRadius: '1rem', textAlign: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}}>\n      <h1>Hello React!</h1>\n      <p>Count: {count}</p>\n      <button onClick={() => setCount(count + 1)} style={{padding: '8px 16px', background: '#007aff', color: 'white', border: 'none', borderRadius: '8px'}}>Increment</button>\n    </div>\n  );\n}\n\nconst root = ReactDOM.createRoot(document.getElementById('root'));\nroot.render(<App />);` },
+            vue: { name: "Vue.js", icon: "ph-vue-logo", color: "bg-green-500", code: `<!DOCTYPE html>\n<html>\n<head>\n  <script src="https://unpkg.com/vue@3/dist/vue.global.js"><\/script>\n</head>\n<body>\n  <div id="app">{{ message }}</div>\n  <script src="script.js"><\/script>\n</body>\n</html>`, css: `body { display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; font-size: 2em; }`, js: `const { createApp } = Vue\ncreateApp({\n  data() {\n    return {\n      message: 'Hello Vue!'\n    }\n  }\n}).mount('#app')` },
+            tailwind: { name: "Tailwind CSS", icon: "ph-paint-brush", color: "bg-cyan-500", code: `<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <script src="https://cdn.tailwindcss.com"><\/script>\n</head>\n<body class="bg-gray-100 flex items-center justify-center h-screen">\n    <div class="bg-white p-8 rounded-xl shadow-lg text-center">\n        <h1 class="text-2xl font-bold text-gray-800 mb-2">Hello Tailwind</h1>\n        <button class="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition">Button</button>\n    </div>\n</body>\n</html>`, css: `/* Tailwind loaded via CDN */`, js: `console.log("Tailwind Ready");` },
+            gsap: { name: "GSAP Animation", icon: "ph-film-strip", color: "bg-green-600", code: `<!DOCTYPE html>\n<html>\n<head>\n  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"><\/script>\n</head>\n<body>\n  <div class="box"></div>\n  <script src="script.js"><\/script>\n</body>\n</html>`, css: `body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #111; }\n.box { width: 100px; height: 100px; background: #007aff; border-radius: 12px; }`, js: `gsap.to(".box", { rotation: 360, duration: 2, repeat: -1, ease: "linear" });` },
+            three: { name: "Three.js 3D", icon: "ph-cube", color: "bg-purple-500", code: `<!DOCTYPE html>\n<html>\n<head><title>Three.js</title>\n<style>body { margin: 0; overflow: hidden; }</style>\n<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>\n</head>\n<body>\n<script>\nconst scene = new THREE.Scene();\nconst camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);\nconst renderer = new THREE.WebGLRenderer();\nrenderer.setSize(window.innerWidth, window.innerHeight);\ndocument.body.appendChild(renderer.domElement);\nconst geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);\nconst material = new THREE.MeshNormalMaterial();\nconst torus = new THREE.Mesh(geometry, material);\nscene.add(torus);\ncamera.position.z = 30;\nfunction animate() { requestAnimationFrame(animate); torus.rotation.x += 0.01; torus.rotation.y += 0.01; renderer.render(scene, camera); }\nanimate();\nwindow.addEventListener('resize', () => {\ncamera.aspect = window.innerWidth / window.innerHeight;\ncamera.updateProjectionMatrix();\nrenderer.setSize(window.innerWidth, window.innerHeight);\n});\n<\/script>\n</body>\n</html>`, css: ``, js: `` },
+            anime: { name: "Anime.js", icon: "ph-asterisk", color: "bg-red-500", code: `<!DOCTYPE html>\n<html><body><div class="grid"></div></body></html>`, css: `body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #111; overflow: hidden; }\n.grid { display: grid; grid-template-columns: repeat(14, 1fr); gap: 5px; }\n.el { width: 20px; height: 20px; background: #FF4B4B; border-radius: 4px; }`, js: `const grid = document.querySelector('.grid');\nfor(let i=0; i<70; i++) { const div = document.createElement('div'); div.classList.add('el'); grid.appendChild(div); }\nanime({ targets: '.el', scale: [{value: .1, easing: 'easeOutSine', duration: 500}, {value: 1, easing: 'easeInOutQuad', duration: 1200}], delay: anime.stagger(200, {grid: [14, 5], from: 'center'}), loop: true });` },
+            p5: { name: "P5.js", icon: "ph-pen-nib", color: "bg-pink-500", code: `<!DOCTYPE html>\n<html>\n<head>\n  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"><\/script>\n</head>\n<body></body>\n</html>`, css: `body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f0f0; }`, js: `function setup() {\n  createCanvas(400, 400);\n}\n\nfunction draw() {\n  background(220);\n  if (mouseIsPressed) {\n    fill(0);\n  } else {\n    fill(255);\n  }\n  ellipse(mouseX, mouseY, 80, 80);\n}` },
+            bootstrap: { name: "Bootstrap 5", icon: "ph-layout", color: "bg-purple-600", code: `<!DOCTYPE html>\n<html>\n<head>\n  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">\n</head>\n<body class="d-flex align-items-center justify-content-center vh-100 bg-light">\n  <div class="card shadow" style="width: 18rem;">\n    <div class="card-body">\n      <h5 class="card-title">Bootstrap</h5>\n      <p class="card-text">Quickly build responsive sites.</p>\n      <a href="#" class="btn btn-primary">Go somewhere</a>\n    </div>\n  </div>\n</body>\n</html>`, css: ``, js: `` }
+        };
+
+        const initialLibs = {
+            tailwind: { name: "Tailwind CSS", icon: "ph-paint-brush", color: "bg-cyan-500", tag: '<script src="https://cdn.tailwindcss.com"><\/script>' },
+            bootstrap: { name: "Bootstrap 5", icon: "ph-layout", color: "bg-purple-500", tag: '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">' },
+            threejs: { name: "Three.js", icon: "ph-cube", color: "bg-black text-white", tag: '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>' },
+            animejs: { name: "Anime.js", icon: "ph-asterisk", color: "bg-red-500", tag: '<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"><\/script>' },
+            react: { name: "React", icon: "ph-atom", color: "bg-blue-400", tag: '<script src="https://unpkg.com/react@18/umd/react.development.js"><\/script>\n<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"><\/script>\n<script src="https://unpkg.com/@babel/standalone/babel.min.js"><\/script>' },
+            p5: { name: "P5.js", icon: "ph-pen-nib", color: "bg-pink-500", tag: '<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"><\/script>' }
+        };
+
+        const app = {
+            state: {
+                projects: {},
+                activeProjectId: null,
+                project: { html: '', css: '', js: '' },
+                activeFile: 'html', 
+                theme: localStorage.getItem('iosEditor_theme') || 'dark',
+                mode: 'vscode',
+                device: 'desktop',
+                fontSize: parseInt(localStorage.getItem('iosEditor_fs') || 13),
+                wordWrap: localStorage.getItem('iosEditor_ww') === 'true',
+                minimap: localStorage.getItem('iosEditor_mm') === 'true',
+                accentColor: localStorage.getItem('iosEditor_accent') || '#007AFF',
+                monacoInstance: null,
+                models: {},
+                isZen: false,
+                isConsoleOpen: false,
+                consoleHistory: [],
+                historyIndex: -1,
+                activeMenu: null,
+                deferredPrompt: null,
+                commands: [
+                    { id: 'format', icon: 'ph-magic-wand', label: 'Format Document', action: () => app.formatCode() },
+                    { id: 'save', icon: 'ph-floppy-disk', label: 'Save Project', action: () => app.saveCode(true) },
+                    { id: 'theme', icon: 'ph-moon', label: 'Toggle Theme', action: () => app.toggleTheme() },
+                    { id: 'projects', icon: 'ph-folder-open', label: 'Switch Project...', action: () => app.toggleProjectsModal() },
+                    { id: 'library', icon: 'ph-package', label: 'Add Library...', action: () => app.toggleLibraryModal() },
+                    { id: 'exportzip', icon: 'ph-file-zip', label: 'Export ZIP', action: () => app.downloadZip() },
+                    { id: 'zen', icon: 'ph-arrows-out-simple', label: 'Toggle Zen Mode', action: () => app.toggleZenMode() }
+                ]
+            },
+            elements: {},
+
+            init() {
+                ['editorPane','previewPane','deviceWrapper','previewFrame','consolePane','consoleOutput','spotlightModal','libraryModal','templateModal','shortcutsModal','shareSheet','projectsModal','compiledModal','spotlightInput','spotlightResults','dynamicIsland','toastMsg','monacoContainer','liteInput','resizer','workspace','desktopHeader','libList','templateList','projectList','saveIndicator','fileSize','quickKeys','statusBar','consoleInput','libSearchInput','headerTitle','mobileHeaderTitle','compiledOutput'].forEach(id => { this.elements[id] = document.getElementById(id); });
+
+                this.loadProjects();
+                this.setTheme(this.state.theme);
+                this.setAccent(this.state.accentColor);
+                this.setMode(window.innerWidth < 768 ? 'lite' : 'vscode');
+                this.bindEvents();
+                this.renderLibraries(initialLibs);
+                this.renderTemplates();
+                this.renderQuickKeys();
+                this.renderAccentColors();
+                this.updateSettingsUI();
+                this.initPWA();
+                
+                if (window.innerWidth < 768) { this.switchMobileTab('editor'); this.state.device = 'desktop'; } 
+                else { this.setDevice('desktop'); }
+
+                document.addEventListener('click', (e) => { if (!e.target.closest('.menu-group')) this.closeMenu(); });
+                window.addEventListener('keydown', (e) => {
+                    const cmd = e.metaKey || e.ctrlKey;
+                    if (cmd && e.key === 'k') { e.preventDefault(); this.toggleSpotlight(); }
+                    if (cmd && e.shiftKey && e.code === 'KeyP') { e.preventDefault(); this.toggleProjectsModal(); }
+                    if (cmd && e.key === 's') { e.preventDefault(); this.saveCode(true); }
+                    if (cmd && e.key === 'j') { e.preventDefault(); this.toggleConsole(); }
+                    if (cmd && e.key === 'b') { e.preventDefault(); this.toggleZenMode(); }
+                    if (e.key === 'Escape') { this.closeAllModals(); }
+                });
+                
+                setInterval(() => {
+                    const el = document.getElementById('clock');
+                    if(el) el.innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                }, 1000);
+            },
+
+            loadProjects() {
+                try {
+                    const rawProjects = localStorage.getItem('ios_projects');
+                    const rawActive = localStorage.getItem('ios_active_project_id');
+                    const oldLegacy = localStorage.getItem('ios_project');
+
+                    if (rawProjects) {
+                        this.state.projects = JSON.parse(rawProjects);
+                        this.state.activeProjectId = rawActive && this.state.projects[rawActive] ? rawActive : Object.keys(this.state.projects)[0];
+                    } else if (oldLegacy) {
+                        const legacyData = JSON.parse(oldLegacy);
+                        const id = 'default';
+                        this.state.projects = { [id]: { id, name: 'Default Project', data: legacyData, lastModified: Date.now() } };
+                        this.state.activeProjectId = id;
+                        localStorage.removeItem('ios_project');
+                    } else {
+                        this.createProject('My Project', 'basic', false);
+                    }
+                } catch(e) {
+                    this.state.projects = {};
+                    this.createProject('My Project', 'basic', false);
+                }
+                this.loadProject(this.state.activeProjectId);
+            },
+
+            loadProject(id) {
+                if (!this.state.projects[id]) return;
+                this.state.activeProjectId = id;
+                this.state.project = JSON.parse(JSON.stringify(this.state.projects[id].data));
+                localStorage.setItem('ios_active_project_id', id);
+                this.saveProjectsToStorage();
+                
+                const title = this.state.projects[id].name;
+                if(this.elements.headerTitle) this.elements.headerTitle.innerText = title;
+                if(this.elements.mobileHeaderTitle) this.elements.mobileHeaderTitle.innerText = title;
+
+                this.syncEditors();
+                this.setActiveFile('html');
+                this.updatePreview();
+                this.renderProjectList();
+            },
+
+            createProject(name, templateKey, switchNow = true) {
+                const id = crypto.randomUUID ? crypto.randomUUID() : 'proj-' + Date.now();
+                const tpl = templates[templateKey] || templates.basic;
+                const newProj = {
+                    id,
+                    name: name || 'Untitled Project',
+                    data: { html: tpl.code, css: tpl.css || '', js: tpl.js || '' },
+                    lastModified: Date.now()
+                };
+                this.state.projects[id] = newProj;
+                this.saveProjectsToStorage();
+                this.renderProjectList();
+                if (switchNow) {
+                    this.loadProject(id);
+                    this.showToast('Project Created');
+                }
+            },
+
+            async deleteProject(id) {
+                if (Object.keys(this.state.projects).length <= 1) return this.showToast('Cannot delete last project', 'warn');
+                let proceed = true;
+                if (window.showMacDialog) {
+                    proceed = await window.showMacDialog({
+                        title: 'Delete Project',
+                        message: `Are you sure you want to delete "${this.state.projects[id]?.name || 'this project'}"? This action cannot be undone.`,
+                        icon: 'images/Icons/VSCode.png',
+                        destructive: true,
+                        buttons: [
+                            { label: 'Cancel', primary: false, value: false },
+                            { label: 'Delete', primary: true, destructive: true, value: true }
+                        ]
+                    });
+                } else {
+                    proceed = confirm('Delete this project?');
+                }
+                if (!proceed) return;
+                delete this.state.projects[id];
+                if (this.state.activeProjectId === id) {
+                    this.loadProject(Object.keys(this.state.projects)[0]);
+                } else {
+                    this.saveProjectsToStorage();
+                    this.renderProjectList();
+                }
+            },
+
+            saveProjectsToStorage() {
+                localStorage.setItem('ios_projects', JSON.stringify(this.state.projects));
+            },
+
+            renderProjectList() {
+                const list = this.elements.projectList;
+                if(!list) return;
+                list.innerHTML = Object.values(this.state.projects)
+                    .sort((a,b) => b.lastModified - a.lastModified)
+                    .map(p => `
+                    <div class="project-item ${p.id === this.state.activeProjectId ? 'bg-ios-blue/10 border-ios-blue' : ''}" onclick="app.loadProject('${p.id}'); app.toggleProjectsModal(false)">
+                        <div class="w-10 h-10 rounded-lg ${p.id === this.state.activeProjectId ? 'bg-ios-blue text-white' : 'bg-gray-200 dark:bg-gray-700 text-ios-text'} flex items-center justify-center text-xl shrink-0">
+                            <i class="ph-bold ph-folder"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="font-semibold text-ios-text text-sm truncate">${p.name}</div>
+                            <div class="text-[10px] text-ios-text-sec">Last edited: ${new Date(p.lastModified).toLocaleDateString()}</div>
+                        </div>
+                        <button onclick="event.stopPropagation(); app.deleteProject('${p.id}')" class="p-2 text-ios-text-sec hover:text-red-500 transition-colors"><i class="ph-bold ph-trash"></i></button>
+                    </div>
+                `).join('');
+            },
+
+            setActiveFile(file) {
+                this.state.activeFile = file;
+                ['html', 'css', 'js'].forEach(t => {
+                    const tab = document.getElementById(`tab-${t}`);
+                    if(tab) {
+                        if(t === file) tab.classList.add('active'); else tab.classList.remove('active');
+                    }
+                });
+                
+                this.elements.liteInput.value = this.state.project[file];
+                
+                if(this.state.monacoInstance) {
+                    if (!this.state.models[file]) {
+                        this.state.models[file] = monaco.editor.createModel(this.state.project[file], file === 'js' ? 'javascript' : file);
+                        this.state.models[file].onDidChangeContent(() => {
+                            if(this.state.mode === 'vscode') this.updateProjectCode(this.state.models[file].getValue());
+                        });
+                    }
+                    this.state.monacoInstance.setModel(this.state.models[file]);
+                }
+            },
+
+            updateProjectCode(newContent) {
+                this.state.project[this.state.activeFile] = newContent;
+                this.state.projects[this.state.activeProjectId].data = this.state.project;
+                this.state.projects[this.state.activeProjectId].lastModified = Date.now();
+                this.handleInput();
+            },
+
+            syncEditors() {
+                if(this.elements.liteInput) {
+                    this.elements.liteInput.value = this.state.project[this.state.activeFile];
+                }
+
+                if(typeof monaco !== 'undefined') {
+                    ['html', 'css', 'js'].forEach(k => {
+                        if(!this.state.models[k]) {
+                             this.state.models[k] = monaco.editor.createModel(this.state.project[k], k === 'js' ? 'javascript' : k);
+                             this.state.models[k].onDidChangeContent(() => {
+                                if(this.state.mode === 'vscode') this.updateProjectCode(this.state.models[k].getValue());
+                            });
+                        } else if(this.state.models[k].getValue() !== this.state.project[k]) {
+                            this.state.models[k].setValue(this.state.project[k]);
+                        }
+                    });
+                }
+            },
+
+            handleInput() {
+                if (this.state.debounceTimer) clearTimeout(this.state.debounceTimer);
+                this.state.debounceTimer = setTimeout(() => { this.updatePreview(); this.saveCode(false); }, 800);
+            },
+
+            updatePreview() {
+                const { html, css, js } = this.state.project;
+                const combined = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset="utf-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1">
+                        <style>${css}</style>
+                        <script>
+                            window.onerror = (m,u,l) => window.parent.postMessage({type:'console', level:'error', args:[m+' (L'+l+')']}, '*');
+                            const _log = (l, args) => window.parent.postMessage({type:'console', level:l, args:args}, '*');
+                            const safeStringify = (obj) => {
+                                try { return typeof obj === 'object' ? JSON.stringify(obj, null, 2) : String(obj); } 
+                                catch(e) { return String(obj); }
+                            };
+                            console.log = (...a) => _log('info', a.map(safeStringify));
+                            console.warn = (...a) => _log('warn', a.map(safeStringify));
+                            console.error = (...a) => _log('error', a.map(safeStringify));
+
+                            // Intercept right-click inside preview and forward to parent
+                            window.addEventListener('contextmenu', (e) => {
+                                e.preventDefault();
+                                window.parent.postMessage({
+                                    type: 'preview-contextmenu',
+                                    clientX: e.clientX,
+                                    clientY: e.clientY
+                                }, '*');
+                            });
+
+                            window.addEventListener('click', () => {
+                                window.parent.postMessage({ type: 'preview-click' }, '*');
+                            });
+
+                            window.addEventListener('message', (e) => {
+                                if(e.data.type === 'eval') {
+                                    try { console.log(eval(e.data.code)); } catch(err) { console.error(err); }
+                                }
+                            });
+                        <\/script>
+                    </head>
+                    <body>
+                        ${html}
+                        <script>${js}<\/script>
+                    </body>
+                    </html>
+                `;
+                const blob = new Blob([combined], { type: 'text/html' });
+                this.elements.previewFrame.src = URL.createObjectURL(blob);
+            },
+
+            showCompiledCode() {
+                const { html, css, js } = this.state.project;
+                const combined = `<!DOCTYPE html>\n<html>\n<head>\n<style>\n${css}\n</style>\n</head>\n<body>\n${html}\n<script>\n${js}\n<\/script>\n</body>\n</html>`;
+                this.elements.compiledOutput.value = combined;
+                this.toggleModal(this.elements.compiledModal);
+            },
+
+            handleConsoleInput(e) {
+                if (e.key === 'Enter') {
+                    const code = e.target.value;
+                    if(!code.trim()) return;
+                    this.state.consoleHistory.push(code);
+                    this.state.historyIndex = this.state.consoleHistory.length;
+                    this.runConsole(code);
+                    e.target.value = '';
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (this.state.historyIndex > 0) {
+                        this.state.historyIndex--;
+                        e.target.value = this.state.consoleHistory[this.state.historyIndex];
+                    }
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (this.state.historyIndex < this.state.consoleHistory.length - 1) {
+                        this.state.historyIndex++;
+                        e.target.value = this.state.consoleHistory[this.state.historyIndex];
+                    } else {
+                        this.state.historyIndex = this.state.consoleHistory.length;
+                        e.target.value = '';
+                    }
+                }
+            },
+
+            runConsole(code) {
+                if(this.elements.previewFrame.contentWindow) {
+                    this.elements.previewFrame.contentWindow.postMessage({type: 'eval', code}, '*');
+                    const div = document.createElement('div');
+                    div.className = 'log-entry text-ios-text-sec opacity-70 italic';
+                    div.innerHTML = `<span class="mr-2">></span> ${code}`;
+                    this.elements.consoleOutput.appendChild(div);
+                }
+            },
+
+            handleConsoleMessage(e) {
+                if (e.data?.type === 'preview-contextmenu') {
+                    const rect = this.elements.previewFrame.getBoundingClientRect();
+                    const targetX = rect.left + (e.data.clientX || 0);
+                    const targetY = rect.top + (e.data.clientY || 0);
+                    this.showContextMenu({ clientX: targetX, clientY: targetY, preventDefault: () => {} }, 'preview');
+                    return;
+                }
+                if (e.data?.type === 'preview-click') {
+                    this.hideContextMenu();
+                    return;
+                }
+                if (e.data?.type === 'console') {
+                    const div = document.createElement('div');
+                    const cls = e.data.level === 'error' ? 'log-error' : (e.data.level === 'warn' ? 'log-warn' : 'log-info');
+                    div.className = `log-entry ${cls} animate-slide-up`;
+                    const args = Array.isArray(e.data.args) ? e.data.args : [String(e.data.args)];
+                    div.innerHTML = `<div class="log-time">${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}</div><div class="flex-1 break-all whitespace-pre-wrap">${args.join(' ')}</div>`;
+                    this.elements.consoleOutput.appendChild(div);
+                    this.elements.consoleOutput.scrollTop = this.elements.consoleOutput.scrollHeight;
+                    if (!this.state.isConsoleOpen && e.data.level === 'error') {
+                         const badge = document.getElementById('consoleBadge');
+                         if(badge) badge.classList.remove('hidden');
+                    }
+                }
+            },
+
+            setTheme(theme) {
+                this.state.theme = theme;
+                localStorage.setItem('iosEditor_theme', theme);
+                document.documentElement.classList.toggle('dark', theme === 'dark');
+                const lightBtn = document.getElementById('theme-light');
+                const darkBtn = document.getElementById('theme-dark');
+                if(lightBtn && darkBtn) {
+                    lightBtn.className = `flex-1 py-1.5 rounded-lg text-sm font-medium transition-all ${theme === 'light' ? 'bg-white shadow text-ios-text' : 'text-ios-text-sec hover:bg-ios-hover'}`;
+                    darkBtn.className = `flex-1 py-1.5 rounded-lg text-sm font-medium transition-all ${theme === 'dark' ? 'bg-gray-700 shadow text-white' : 'text-ios-text-sec hover:bg-ios-hover'}`;
+                }
+                if (window.monaco && this.state.monacoInstance) monaco.editor.setTheme(theme === 'dark' ? 'mac-dark' : 'mac-light');
+            },
+            
+            setAccent(color) {
+                this.state.accentColor = color;
+                localStorage.setItem('iosEditor_accent', color);
+                document.documentElement.style.setProperty('--ios-accent', color);
+                this.renderAccentColors();
+            },
+
+            renderAccentColors() {
+                const colors = ['#007AFF', '#34C759', '#FF9500', '#FF3B30', '#AF52DE', '#5856D6'];
+                const container = document.getElementById('accentColors');
+                if(container) {
+                    container.innerHTML = colors.map(c => 
+                        `<div onclick="app.setAccent('${c}')" class="color-dot ${this.state.accentColor === c ? 'selected' : ''}" style="background:${c}"></div>`
+                    ).join('');
+                }
+            },
+
+            async initMonaco() {
+                if (window.monaco) return;
+                const defineAppleTheme = () => {
+                    monaco.editor.defineTheme('mac-light', { base: 'vs', inherit: true, rules: [{ token: 'comment', foreground: '8E8E93', fontStyle: 'italic' }, { token: 'keyword', foreground: 'FF2D55', fontStyle: 'bold' }, { token: 'string', foreground: '007AFF' }], colors: { 'editor.background': '#FFFFFF', 'editor.lineHighlightBackground': '#F5F5F7', 'editorLineNumber.foreground': '#D1D1D6' }});
+                    monaco.editor.defineTheme('mac-dark', { base: 'vs-dark', inherit: true, rules: [{ token: 'comment', foreground: '98989D', fontStyle: 'italic' }, { token: 'keyword', foreground: 'FF375F', fontStyle: 'bold' }, { token: 'string', foreground: '0A84FF' }], colors: { 'editor.background': '#1C1C1E', 'editor.lineHighlightBackground': '#2C2C2E', 'editorLineNumber.foreground': '#636366' }});
+                };
+                return new Promise(resolve => {
+                    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' }});
+                    require(["vs/editor/editor.main"], () => {
+                        defineAppleTheme();
+                        this.syncEditors();
+                        this.state.monacoInstance = monaco.editor.create(this.elements.monacoContainer, {
+                            model: this.state.models[this.state.activeFile],
+                            theme: this.state.theme === 'dark' ? 'mac-dark' : 'mac-light',
+                            fontFamily: "'SF Mono', 'Menlo', monospace",
+                            fontSize: this.state.fontSize,
+                            minimap: { enabled: this.state.minimap },
+                            wordWrap: this.state.wordWrap ? 'on' : 'off',
+                            padding: { top: 20, bottom: 20 },
+                            smoothScrolling: true,
+                            automaticLayout: true,
+                            fontLigatures: true,
+                            contextmenu: false
+                        });
+                        this.state.monacoInstance.onDidChangeCursorPosition((e) => { 
+                            const pos = document.getElementById('cursorPos');
+                            if (pos) pos.innerText = `Ln ${e.position.lineNumber}, Col ${e.position.column}`; 
+                        });
+                        resolve();
+                    });
+                });
+            },
+
+            toggleMenu(menuId, event) {
+                if(event) event.stopPropagation();
+                const menuEl = document.getElementById(`menu-${menuId}`);
+                const btn = event ? event.currentTarget : null;
+                document.querySelectorAll('.dropdown-menu').forEach(m => { if(m.id !== `menu-${menuId}`) m.classList.remove('show'); });
+                document.querySelectorAll('.menu-btn').forEach(b => { if(b !== btn) b.classList.remove('active'); });
+                if (this.state.activeMenu === menuId) this.closeMenu();
+                else { menuEl.classList.add('show'); if(btn) btn.classList.add('active'); this.state.activeMenu = menuId; }
+            },
+            closeMenu() { document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show')); document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active')); this.state.activeMenu = null; },
+            
+            toggleModal(modal, contentId, force, onOpen) {
+                if(!modal) return;
+                const content = modal.firstElementChild;
+                const show = force !== undefined ? force : modal.classList.contains('hidden');
+                if (show) {
+                    modal.classList.remove('hidden'); if(onOpen) onOpen();
+                    requestAnimationFrame(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95', 'translate-y-full'); content.classList.add('scale-100', 'translate-y-0'); });
+                } else {
+                    modal.classList.add('opacity-0'); content.classList.remove('scale-100', 'translate-y-0'); content.classList.add(window.innerWidth < 640 && modal.id !== 'spotlightModal' ? 'translate-y-full' : 'scale-95');
+                    setTimeout(() => modal.classList.add('hidden'), 200);
+                }
+            },
+            closeAllModals() { ['spotlightModal', 'libraryModal', 'templateModal', 'shareSheet', 'shortcutsModal', 'settingsModal', 'projectsModal', 'compiledModal'].forEach(m => this.toggleModal(document.getElementById(m), null, false)); this.closeMenu(); if(this.state.isZen) this.toggleZenMode(); },
+            
+            toggleSettingsModal() { this.toggleModal(document.getElementById('settingsModal')); },
+            toggleProjectsModal(force) { this.toggleModal(document.getElementById('projectsModal'), 'projectsContent', force); },
+            toggleSpotlight() { this.toggleModal(this.elements.spotlightModal, null, undefined, () => { this.elements.spotlightInput.focus(); this.renderSpotlight(''); }); },
+            toggleLibraryModal() { this.toggleModal(this.elements.libraryModal, null, undefined, () => { this.elements.libSearchInput.focus(); }); },
+            toggleTemplateModal(force) { this.toggleModal(this.elements.templateModal, 'templateContent', force); },
+            toggleShareSheet() { 
+                const size = new Blob([this.state.project.html, this.state.project.css, this.state.project.js]).size / 1024;
+                this.elements.fileSize.innerText = size.toFixed(1) + ' KB';
+                this.toggleModal(this.elements.shareSheet); 
+            },
+            toggleShortcutsModal() { this.toggleModal(this.elements.shortcutsModal); },
+
+            setMode(mode) {
+                this.state.mode = mode;
+                document.getElementById('btnModeLite').className = `segmented-btn ${mode === 'lite' ? 'active' : 'inactive'}`;
+                document.getElementById('btnModeVS').className = `segmented-btn ${mode === 'vscode' ? 'active' : 'inactive'}`;
+                if (mode === 'lite') {
+                    this.elements.monacoContainer.classList.add('hidden');
+                    this.elements.liteInput.parentElement.classList.remove('hidden');
+                    this.elements.liteInput.value = this.state.project[this.state.activeFile];
+                    this.elements.quickKeys.classList.remove('hidden');
+                } else {
+                    this.elements.liteInput.parentElement.classList.add('hidden');
+                    this.elements.monacoContainer.classList.remove('hidden');
+                    this.elements.quickKeys.classList.add('hidden');
+                    if (!this.state.monacoInstance) this.initMonaco();
+                    else {
+                        this.syncEditors();
+                        this.state.monacoInstance.setModel(this.state.models[this.state.activeFile]);
+                    }
+                }
+            },
+            setDevice(d) {
+                this.state.device = d;
+                const wrapper = this.elements.deviceWrapper;
+                const bar = document.getElementById('statusBar');
+                if(wrapper) {
+                    wrapper.className = `device-frame device-${d} relative overflow-hidden bg-white shadow-sm transition-all duration-500`;
+                    wrapper.classList.remove('landscape');
+                }
+                if(bar) d === 'desktop' ? bar.classList.add('hidden') : bar.classList.remove('hidden');
+            },
+            rotateDevice() {
+                const wrapper = this.elements.deviceWrapper;
+                if(this.state.device !== 'desktop') {
+                    wrapper.classList.toggle('landscape');
+                }
+            },
+            saveCode(n) { 
+                this.saveProjectsToStorage();
+                if(n) this.showToast('Project Saved'); 
+            },
+            
+            injectLib(k, name, tag) {
+                const libTag = tag || initialLibs[k]?.tag;
+                const libName = name || initialLibs[k]?.name;
+                
+                if (this.state.project.html.includes(libTag)) return this.showToast('Already Added', 'warn');
+                const he = this.state.project.html.indexOf('</head>'); 
+                const newHtml = he !== -1 ? this.state.project.html.slice(0, he) + '    ' + libTag + '\n' + this.state.project.html.slice(he) : libTag + '\n' + this.state.project.html;
+                
+                this.updateProjectCode(newHtml);
+                if(this.state.activeFile === 'html') this.syncEditors();
+                
+                this.toggleLibraryModal(); this.showToast(`${libName} Added`);
+            },
+            
+            async searchLibraries(query) {
+                const list = document.getElementById('libList');
+                if(!query) { this.renderLibraries(initialLibs); return; }
+                list.innerHTML = '<div class="p-4 text-center text-sm text-ios-text-sec">Searching...</div>';
+                try {
+                    const res = await fetch(`https://api.cdnjs.com/libraries?search=${query}&fields=name,filename,version&limit=10`);
+                    const data = await res.json();
+                    if(data.results.length === 0) { list.innerHTML = '<div class="p-4 text-center text-sm text-ios-text-sec">No results found</div>'; return; }
+                    list.innerHTML = data.results.map(lib => {
+                        const tag = lib.latest.endsWith('.css') 
+                            ? `<link rel="stylesheet" href="${lib.latest}" />` 
+                            : `<script src="${lib.latest}"><\/script>`;
+                        return `
+                        <button onclick="app.injectLib(null, '${lib.name}', '${tag.replace(/"/g, '&quot;')}')" class="flex items-center gap-4 p-3 rounded-xl hover:bg-ios-bg transition-colors w-full group text-left border border-ios-separator/50 mb-1">
+                            <div class="w-10 h-10 rounded-lg bg-gray-500 flex items-center justify-center text-white text-xl shadow-md shrink-0"><i class="ph-bold ph-globe"></i></div>
+                            <div class="flex-1"><div class="font-semibold text-ios-text text-sm">${lib.name}</div><div class="text-[10px] text-ios-text-sec font-mono truncate max-w-[200px] opacity-70">${lib.latest}</div></div>
+                            <i class="ph-bold ph-plus-circle text-2xl text-ios-blue opacity-50 group-hover:opacity-100 transition-opacity"></i>
+                        </button>`;
+                    }).join('');
+                } catch(e) {
+                    list.innerHTML = '<div class="p-4 text-center text-sm text-red-500">Error searching libraries</div>';
+                }
+            },
+
+            async loadTemplate(k) { 
+                const defaultName = templates[k] ? templates[k].name : 'New Project';
+                let name = defaultName;
+                if (window.showMacDialog) {
+                    name = await window.showMacDialog({
+                        title: 'New Project',
+                        message: 'Enter a name for your new project:',
+                        icon: 'images/Icons/VSCode.png',
+                        input: { defaultValue: defaultName, placeholder: 'Project Name' },
+                        buttons: [
+                            { label: 'Cancel', primary: false, value: null },
+                            { label: 'Create', primary: true }
+                        ]
+                    });
+                } else {
+                    name = prompt('Project Name:', defaultName);
+                }
+                
+                if (name) {
+                    this.createProject(name, k);
+                    this.toggleTemplateModal(false);
+                }
+            },
+            showToast(msg, type = 'success') { 
+                const t = this.elements.dynamicIsland; this.elements.toastMsg.innerText = msg;
+                const icon = document.getElementById('toastIcon'); if(icon) icon.className = type === 'success' ? 'ph-bold ph-check-circle text-green-500 text-xl' : 'ph-bold ph-warning text-yellow-500 text-xl';
+                t.classList.remove('-translate-y-32', 'scale-95'); t.classList.add('translate-y-0', 'scale-100');
+                setTimeout(() => { t.classList.add('-translate-y-32', 'scale-95'); t.classList.remove('translate-y-0', 'scale-100'); }, 2000);
+            },
+            changeFontSize(d) { 
+                this.state.fontSize = Math.max(8, Math.min(32, this.state.fontSize + d)); 
+                localStorage.setItem('iosEditor_fs', this.state.fontSize); 
+                this.updateSettingsUI(); 
+                if(this.state.monacoInstance) this.state.monacoInstance.updateOptions({ fontSize: this.state.fontSize }); 
+            },
+            toggleSetting(k) { 
+                this.state[k] = !this.state[k]; 
+                localStorage.setItem(`iosEditor_${k==='wordWrap'?'ww':'mm'}`, this.state[k]); 
+                this.updateSettingsUI(); 
+                if(this.state.monacoInstance) this.state.monacoInstance.updateOptions(k==='wordWrap' ? {wordWrap: this.state[k]?'on':'off'} : {minimap: {enabled: this.state[k]}}); 
+            },
+            updateSettingsUI() {
+                const fs = document.getElementById('setting-fontSize');
+                if(fs) fs.innerText = this.state.fontSize;
+                this.toggleSwitchUI('wordWrap', this.state.wordWrap);
+                this.toggleSwitchUI('minimap', this.state.minimap);
+            },
+            toggleSwitchUI(id, isActive) {
+                const btn = document.getElementById(`toggle-${id}`);
+                if(!btn) return;
+                const knob = btn.firstElementChild;
+                btn.className = `w-10 h-6 rounded-full relative transition-colors duration-300 ${isActive ? 'bg-ios-green' : 'bg-gray-300 dark:bg-gray-600'}`;
+                knob.className = `w-5 h-5 bg-white rounded-full absolute top-0.5 shadow-sm transition-transform duration-300 ${isActive ? 'translate-x-4' : 'translate-x-0.5'}`;
+            },
+            toggleTheme() { this.setTheme(this.state.theme === 'light' ? 'dark' : 'light'); },
+            toggleConsole() { this.state.isConsoleOpen = !this.state.isConsoleOpen; this.elements.consolePane.style.height = this.state.isConsoleOpen ? '200px' : '0px'; document.getElementById('consoleBadge').classList.add('hidden'); },
+            toggleZenMode() {
+                this.state.isZen = !this.state.isZen;
+                const header = this.elements.desktopHeader;
+                if (this.state.isZen) {
+                    header.classList.add('-translate-y-full'); this.elements.editorPane.classList.add('hidden'); this.elements.resizer.classList.add('hidden');
+                    this.elements.previewPane.classList.replace('flex-1', 'w-screen'); this.elements.previewPane.classList.replace('h-full', 'h-screen');
+                    this.showToast('Zen Mode On (Esc to exit)');
+                } else {
+                    header.classList.remove('-translate-y-full'); this.elements.editorPane.classList.remove('hidden'); this.elements.resizer.classList.remove('hidden');
+                    this.elements.previewPane.classList.replace('w-screen', 'flex-1'); this.elements.previewPane.classList.replace('h-screen', 'h-full');
+                    if(this.state.monacoInstance) this.state.monacoInstance.layout();
+                }
+            },
+            formatCode() { if(this.state.monacoInstance) { this.state.monacoInstance.getAction('editor.action.formatDocument').run(); this.showToast('Formatted'); } },
+            renderQuickKeys() { this.elements.quickKeys.innerHTML = ['<','>','/','=','"',"'",'{','}','(',')',';','!','-','class','div','style'].map(k => `<button onclick="app.insertText('${k}')" class="px-3 py-1.5 bg-ios-surface-2 rounded-lg text-sm font-mono shadow-sm border border-ios-separator active:bg-ios-separator transition-colors shrink-0">${k}</button>`).join(''); },
+            insertText(t) { const i = this.elements.liteInput; const s = i.selectionStart; i.value = i.value.substring(0,s) + t + i.value.substring(i.selectionEnd); i.selectionStart = i.selectionEnd = s + t.length; i.focus(); this.updateProjectCode(i.value); },
+            renderSpotlight(f) { const r = this.state.commands.filter(c => c.label.toLowerCase().includes(f.toLowerCase())); this.elements.spotlightResults.innerHTML = r.map(c => `<button onclick="app.runCmd('${c.id}')" class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-ios-blue hover:text-white group transition-colors text-left"><i class="ph-bold ${c.icon} text-lg text-ios-text-sec group-hover:text-white"></i><span class="font-medium text-sm text-ios-text group-hover:text-white">${c.label}</span></button>`).join(''); },
+            runCmd(id) { this.state.commands.find(c => c.id === id).action(); this.toggleSpotlight(); },
+            clearConsole() { this.elements.consoleOutput.innerHTML = ''; },
+            downloadCode() { 
+                const blob = new Blob([this.state.project.html], {type:'text/html'}); 
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'index.html'; a.click(); 
+                this.toggleShareSheet(); 
+            },
+            downloadZip() {
+                const zip = new JSZip();
+                zip.file("index.html", this.state.project.html);
+                zip.file("style.css", this.state.project.css);
+                zip.file("script.js", this.state.project.js);
+                zip.generateAsync({type:"blob"}).then(function(content) {
+                    saveAs(content, `${app.state.projects[app.state.activeProjectId].name}.zip`);
+                });
+                this.toggleShareSheet();
+                this.showToast('ZIP Downloaded');
+            },
+            copyToClipboard() { 
+                navigator.clipboard.writeText(`<!-- HTML -->\n${this.state.project.html}\n\n/* CSS */\n${this.state.project.css}\n\n// JS\n${this.state.project.js}`); 
+                this.showToast('Copied All Code'); this.toggleShareSheet(); 
+            },
+            switchMobileTab(t) {
+                ['editor','preview'].forEach(x => { const el = document.getElementById(`tab-${x}`); const i = el.querySelector('i'); const s = el.querySelector('span'); if(x === t) { i.classList.replace('text-ios-text-sec','text-ios-blue'); s.classList.replace('text-ios-text-sec','text-ios-blue'); } else { i.classList.replace('text-ios-blue','text-ios-text-sec'); s.classList.replace('text-ios-blue','text-ios-text-sec'); } });
+                if(t==='editor') { this.elements.editorPane.classList.remove('hidden'); this.elements.previewPane.classList.add('hidden'); } else { this.elements.editorPane.classList.add('hidden'); this.elements.previewPane.classList.remove('hidden'); this.updatePreview(); }
+            },
+            bindEvents() {
+                this.elements.liteInput.addEventListener('input', (e) => { this.updateProjectCode(e.target.value); });
+                this.elements.spotlightInput.addEventListener('input', (e) => this.renderSpotlight(e.target.value));
+                this.elements.libSearchInput.addEventListener('input', (e) => {
+                    clearTimeout(this.state.searchTimer);
+                    this.state.searchTimer = setTimeout(() => this.searchLibraries(e.target.value), 500);
+                });
+                
+                window.addEventListener('message', (e) => this.handleConsoleMessage(e));
+                const r = this.elements.resizer;
+                r.addEventListener('mousedown', (e) => { e.preventDefault(); document.getElementById('iframeOverlay').classList.remove('hidden'); document.body.style.cursor = 'col-resize'; r.querySelector('div').classList.add('bg-ios-blue'); const mv = (ev) => { const p = (ev.clientX / window.innerWidth) * 100; if(p > 20 && p < 80) { this.elements.editorPane.style.flex = `0 0 ${p}%`; if(this.state.monacoInstance) this.state.monacoInstance.layout(); }}; const up = () => { document.getElementById('iframeOverlay').classList.add('hidden'); document.body.style.cursor = ''; r.querySelector('div').classList.remove('bg-ios-blue'); window.removeEventListener('mousemove', mv); window.removeEventListener('mouseup', up); }; window.addEventListener('mousemove', mv); window.addEventListener('mouseup', up); });
+
+                // Intercept global right-clicks inside the VS Code App
+                document.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    let ctxType = 'general';
+                    if (e.target.closest('#editorPane, #monacoContainer, #liteEditorContainer, .monaco-editor, .lite-editor')) {
+                        ctxType = 'editor';
+                    } else if (e.target.closest('#previewPane, #previewFrame, #deviceWrapper, #consolePane')) {
+                        ctxType = 'preview';
+                    } else if (e.target.closest('#desktopHeader, .file-tab, #quickKeys, #workspace')) {
+                        ctxType = 'general';
+                    }
+                    this.showContextMenu(e, ctxType);
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('#vscodeContextMenu')) {
+                        this.hideContextMenu();
+                    }
+                });
+
+                window.addEventListener('blur', () => this.hideContextMenu());
+                window.addEventListener('resize', () => this.hideContextMenu());
+            },
+
+            showContextMenu(e, type = 'general') {
+                const menu = document.getElementById('vscodeContextMenu');
+                if (!menu) return;
+                
+                this.closeMenu();
+                
+                const secEditor = document.getElementById('ctx-section-editor');
+                const secPreview = document.getElementById('ctx-section-preview');
+                const secGeneral = document.getElementById('ctx-section-general');
+                
+                if (secEditor) secEditor.style.display = 'none';
+                if (secPreview) secPreview.style.display = 'none';
+                if (secGeneral) secGeneral.style.display = 'none';
+                
+                if (type === 'editor' && secEditor) {
+                    secEditor.style.display = 'block';
+                } else if (type === 'preview' && secPreview) {
+                    secPreview.style.display = 'block';
+                } else if (secGeneral) {
+                    secGeneral.style.display = 'block';
+                }
+                
+                menu.style.visibility = 'hidden';
+                menu.style.display = 'flex';
+                
+                let x = e.clientX || 0;
+                let y = e.clientY || 0;
+                
+                const menuW = menu.offsetWidth || 230;
+                const menuH = menu.offsetHeight || 300;
+                const winW = window.innerWidth;
+                const winH = window.innerHeight;
+                
+                if (x + menuW > winW - 8) {
+                    x = Math.max(8, winW - menuW - 8);
+                }
+                if (y + menuH > winH - 8) {
+                    y = Math.max(8, winH - menuH - 8);
+                }
+                
+                menu.style.left = `${Math.max(8, x)}px`;
+                menu.style.top = `${Math.max(8, y)}px`;
+                menu.style.visibility = 'visible';
+            },
+
+            hideContextMenu() {
+                const menu = document.getElementById('vscodeContextMenu');
+                if (menu) {
+                    menu.style.display = 'none';
+                }
+            },
+
+            async cut() {
+                if (this.state.monacoInstance && this.state.mode === 'vscode') {
+                    const selection = this.state.monacoInstance.getSelection();
+                    const text = this.state.monacoInstance.getModel().getValueInRange(selection);
+                    if (text) {
+                        try { await navigator.clipboard.writeText(text); } catch(err) {}
+                        this.state.monacoInstance.executeEdits('cut', [{ range: selection, text: '' }]);
+                        this.showToast('Cut');
+                    }
+                } else if (this.elements.liteInput) {
+                    const i = this.elements.liteInput;
+                    const sel = i.value.substring(i.selectionStart, i.selectionEnd);
+                    if (sel) {
+                        try { await navigator.clipboard.writeText(sel); } catch(err) {}
+                        i.value = i.value.substring(0, i.selectionStart) + i.value.substring(i.selectionEnd);
+                        this.updateProjectCode(i.value);
+                        this.showToast('Cut');
+                    }
+                }
+            },
+
+            async copy() {
+                if (this.state.monacoInstance && this.state.mode === 'vscode') {
+                    const selection = this.state.monacoInstance.getSelection();
+                    const text = this.state.monacoInstance.getModel().getValueInRange(selection);
+                    if (text) {
+                        try { await navigator.clipboard.writeText(text); } catch(err) {}
+                        this.showToast('Copied');
+                    } else {
+                        try { await navigator.clipboard.writeText(this.state.monacoInstance.getValue()); } catch(err) {}
+                        this.showToast('Copied All');
+                    }
+                } else if (this.elements.liteInput) {
+                    const i = this.elements.liteInput;
+                    const sel = i.value.substring(i.selectionStart, i.selectionEnd);
+                    if (sel) {
+                        try { await navigator.clipboard.writeText(sel); } catch(err) {}
+                        this.showToast('Copied');
+                    } else {
+                        try { await navigator.clipboard.writeText(i.value); } catch(err) {}
+                        this.showToast('Copied All');
+                    }
+                }
+            },
+
+            async paste() {
+                try {
+                    const text = await navigator.clipboard.readText();
+                    if (!text) return;
+                    if (this.state.monacoInstance && this.state.mode === 'vscode') {
+                        const selection = this.state.monacoInstance.getSelection();
+                        this.state.monacoInstance.executeEdits('paste', [{ range: selection, text: text, forceMoveMarkers: true }]);
+                    } else if (this.elements.liteInput) {
+                        this.insertText(text);
+                    }
+                    this.showToast('Pasted');
+                } catch(e) {
+                    this.showToast('Paste requires clipboard permission', 'warn');
+                }
+            },
+
+            selectAll() {
+                if (this.state.monacoInstance && this.state.mode === 'vscode') {
+                    const fullRange = this.state.monacoInstance.getModel().getFullModelRange();
+                    this.state.monacoInstance.setSelection(fullRange);
+                    this.state.monacoInstance.focus();
+                } else if (this.elements.liteInput) {
+                    this.elements.liteInput.select();
+                    this.elements.liteInput.focus();
+                }
+            },
+
+            find() {
+                if (this.state.monacoInstance && this.state.mode === 'vscode') {
+                    this.state.monacoInstance.focus();
+                    const action = this.state.monacoInstance.getAction('actions.find');
+                    if (action) action.run();
+                } else {
+                    this.toggleSpotlight();
+                }
+            },
+
+            replace() {
+                if (this.state.monacoInstance && this.state.mode === 'vscode') {
+                    this.state.monacoInstance.focus();
+                    const action = this.state.monacoInstance.getAction('editor.action.startFindReplaceAction');
+                    if (action) action.run();
+                }
+            },
+
+            changeAllOccurrences() {
+                if (this.state.monacoInstance && this.state.mode === 'vscode') {
+                    this.state.monacoInstance.focus();
+                    const action = this.state.monacoInstance.getAction('editor.action.changeAll');
+                    if (action) action.run();
+                }
+            },
+            initPWA() {
+                const icon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="120" fill="#007AFF"/><path d="M170 200L256 120L342 200M170 312L256 392L342 312M120 256H392" stroke="white" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`;
+                const blob = new Blob([JSON.stringify({ name: "Code Studio", short_name: "Studio", start_url: ".", display: "standalone", background_color: "#F2F2F7", theme_color: "#F2F2F7", icons: [{ src: 'data:image/svg+xml;base64,' + btoa(icon), sizes: "512x512", type: "image/svg+xml" }] })], {type: 'application/json'});
+                document.getElementById('pwa-manifest').setAttribute('href', URL.createObjectURL(blob));
+
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    this.state.deferredPrompt = e;
+                    const btn = document.getElementById('installBtn');
+                    const mobileBtn = document.getElementById('mobileInstallBtn');
+                    if(btn) btn.classList.remove('hidden');
+                    if(mobileBtn) mobileBtn.classList.remove('hidden');
+                });
+            },
+            async installPWA() {
+                if (!this.state.deferredPrompt) return;
+                this.state.deferredPrompt.prompt();
+                const { outcome } = await this.state.deferredPrompt.userChoice;
+                this.state.deferredPrompt = null;
+                if (outcome === 'accepted') {
+                    const btn = document.getElementById('installBtn');
+                    const mobileBtn = document.getElementById('mobileInstallBtn');
+                    if(btn) btn.classList.add('hidden');
+                    if(mobileBtn) mobileBtn.classList.add('hidden');
+                }
+            },
+            renderLibraries(libs) {
+                const list = this.elements.libList;
+                const data = libs || initialLibs;
+                list.innerHTML = Object.entries(data).map(([k, l]) => `
+                    <button onclick="app.injectLib('${k}')" class="flex items-center gap-4 p-3 rounded-xl hover:bg-ios-bg transition-colors w-full group text-left border border-ios-separator/50 mb-1">
+                        <div class="w-10 h-10 rounded-lg ${l.color || 'bg-gray-500'} flex items-center justify-center text-white text-xl shadow-md shrink-0"><i class="ph-bold ${l.icon || 'ph-package'}"></i></div>
+                        <div class="flex-1"><div class="font-semibold text-ios-text text-sm">${l.name}</div><div class="text-[10px] text-ios-text-sec font-mono truncate max-w-[200px] opacity-70">${l.tag.replace(/</g, '&lt;')}</div></div>
+                        <i class="ph-bold ph-plus-circle text-2xl text-ios-blue opacity-50 group-hover:opacity-100 transition-opacity"></i>
+                    </button>`).join('');
+            },
+            renderTemplates() {
+                this.elements.templateList.innerHTML = Object.entries(templates).map(([k, t]) => `
+                    <button onclick="app.loadTemplate('${k}')" class="flex items-center gap-4 p-3 rounded-xl hover:bg-ios-bg transition-colors w-full group text-left border border-ios-separator/50">
+                        <div class="w-10 h-10 rounded-lg ${t.color} flex items-center justify-center text-white text-xl shadow-md shrink-0"><i class="ph-bold ${t.icon}"></i></div>
+                        <div class="flex-1"><div class="font-semibold text-ios-text text-sm">${t.name}</div><div class="text-[10px] text-ios-text-sec">Starter Template</div></div>
+                        <i class="ph-bold ph-caret-right text-ios-text-sec"></i>
+                    </button>`).join('');
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
+</body>
+
+</html>

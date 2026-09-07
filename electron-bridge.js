@@ -1,9 +1,9 @@
-﻿/**
+/**
  * electron-bridge.js
  *
  * Loaded only when running inside Electron (detected by presence of
  * window.require). Reads real local files via IPC and injects them into
- * the Finder FS and the Music library — while keeping all built-in
+ * the Finder FS and the Music library � while keeping all built-in
  * mock files intact.
  */
 (async function () {
@@ -14,9 +14,9 @@
 
     const { ipcRenderer } = require('electron');
 
-    // ─────────────────────────────────────────────────────────────────────────
+    // -------------------------------------------------------------------------
     // WAIT FOR FINDER TO INITIALIZE
-    // ─────────────────────────────────────────────────────────────────────────
+    // -------------------------------------------------------------------------
     function waitFor(fn, timeout = 10000) {
         return new Promise((resolve, reject) => {
             const start = Date.now();
@@ -34,21 +34,21 @@
         // Wait until Finder's global FS is available
         await waitFor(() => window.FS && typeof window.FS === 'object');
 
-        // ─────────────────────────────────────────────────────────────────
+        // -----------------------------------------------------------------
         // FETCH LOCAL FILE SYSTEM FROM MAIN PROCESS
-        // ─────────────────────────────────────────────────────────────────
+        // -----------------------------------------------------------------
         const { allNodes, folderPatch, musicFiles, username } = await ipcRenderer.invoke('get-local-fs');
 
-        // ─────────────────────────────────────────────────────────────────
+        // -----------------------------------------------------------------
         // FETCH SYSTEM INFO FOR SETTINGS APP
-        // ─────────────────────────────────────────────────────────────────
+        // -----------------------------------------------------------------
         window.MacSystemInfo   = await ipcRenderer.invoke('system-info').catch(() => ({}));
         window.MacDiskInfo     = await ipcRenderer.invoke('disk-info').catch(() => ({}));
         window.MacNetworkStatus = await ipcRenderer.invoke('network-status').catch(() => ({ online: true }));
 
-        // ─────────────────────────────────────────────────────────────────
+        // -----------------------------------------------------------------
         // INJECT INTO FINDER FS
-        // ─────────────────────────────────────────────────────────────────
+        // -----------------------------------------------------------------
 
         // 1. Merge all new nodes into the global FS
         Object.assign(window.FS, allNodes);
@@ -81,9 +81,9 @@
             window.FS['user-ashley'].name = username || 'Me';
         }
 
-        // ─────────────────────────────────────────────────────────────────
+        // -----------------------------------------------------------------
         // INJECT INTO MUSIC APP
-        // ─────────────────────────────────────────────────────────────────
+        // -----------------------------------------------------------------
         if (musicFiles && musicFiles.length > 0) {
             const localTracks = musicFiles.map((node, i) => ({
                 id:         'local-track-' + i,
@@ -131,9 +131,9 @@
             }
         }
 
-        // ─────────────────────────────────────────────────────────────────
+        // -----------------------------------------------------------------
         // ADD "Add Folder" BUTTON TO FINDER SIDEBAR
-        // ─────────────────────────────────────────────────────────────────
+        // -----------------------------------------------------------------
         function injectAddFolderButton() {
             const sidebar = document.querySelector('.finder-sidebar');
             if (!sidebar || document.getElementById('electron-add-folder')) return;
@@ -217,17 +217,17 @@
     }
 })();
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // AUTO-UPDATE NOTIFICATION SYSTEM
-// Listens for update events from main.js and shows a native macOS-style
+// Listens for update events from main.js and shows a native Apple OS-style
 // notification banner with Download / Install & Restart / Dismiss actions.
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 (function () {
     if (typeof window === 'undefined' || !window.process || !window.process.versions || !window.process.versions.electron) return;
 
     const { ipcRenderer } = require('electron');
 
-    // ── Inject styles ─────────────────────────────────────────────────────────
+    // -- Inject styles ---------------------------------------------------------
     const style = document.createElement('style');
     style.textContent = `
         #electron-update-banner {
@@ -243,7 +243,7 @@
             box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
             padding: 16px 18px 14px;
             z-index: 999999;
-            font-family: -apple-system, 'SF Pro Text', sans-serif;
+            font-family: -apple-system, sans-serif;
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -319,7 +319,7 @@
     `;
     document.head.appendChild(style);
 
-    // ── Banner helpers ────────────────────────────────────────────────────────
+    // -- Banner helpers --------------------------------------------------------
     function removeBanner() {
         const el = document.getElementById('electron-update-banner');
         if (!el) return;
@@ -346,7 +346,7 @@
         </svg>`;
     }
 
-    // ── Handle update events from main process ────────────────────────────────
+    // -- Handle update events from main process --------------------------------
     ipcRenderer.on('update-status', (_, info) => {
         if (info.type === 'available') {
             const banner = createBanner(`
@@ -354,7 +354,7 @@
                 <div class="update-banner-header">
                     <div class="update-banner-icon">${iconSVG()}</div>
                     <div>
-                        <div class="update-banner-title">Update Available — v${info.version}</div>
+                        <div class="update-banner-title">Update Available � v${info.version}</div>
                         <div class="update-banner-sub">${String(info.notes).replace(/<[^>]+>/g, '').slice(0, 80)}</div>
                     </div>
                 </div>
@@ -375,20 +375,20 @@
                 const fill  = existing.querySelector('.update-progress-bar-fill');
                 const label = existing.querySelector('.update-progress-label');
                 if (fill)  fill.style.width  = info.percent + '%';
-                if (label) label.textContent  = `${info.percent}% · ${info.speed}`;
+                if (label) label.textContent  = `${info.percent}% � ${info.speed}`;
             } else {
                 createBanner(`
                     <div class="update-banner-header">
                         <div class="update-banner-icon">${iconSVG()}</div>
                         <div>
-                            <div class="update-banner-title">Downloading Update…</div>
+                            <div class="update-banner-title">Downloading Update�</div>
                             <div class="update-banner-sub">Please wait while the update is downloaded.</div>
                         </div>
                     </div>
                     <div class="update-progress-bar-wrap">
                         <div class="update-progress-bar-fill" style="width:${info.percent}%"></div>
                     </div>
-                    <div class="update-progress-label">${info.percent}% · ${info.speed}</div>
+                    <div class="update-progress-label">${info.percent}% � ${info.speed}</div>
                 `);
             }
             // Replace actions if they still exist
@@ -398,7 +398,7 @@
                     <div class="update-progress-bar-wrap">
                         <div class="update-progress-bar-fill" style="width:${info.percent}%"></div>
                     </div>
-                    <div class="update-progress-label">${info.percent}% · ${info.speed}</div>
+                    <div class="update-progress-label">${info.percent}% � ${info.speed}</div>
                 `;
             }
         }
@@ -409,7 +409,7 @@
                 <div class="update-banner-header">
                     <div class="update-banner-icon" style="background:linear-gradient(135deg,#34c759,#30d158)">${iconSVG()}</div>
                     <div>
-                        <div class="update-banner-title">Ready to Install — v${info.version}</div>
+                        <div class="update-banner-title">Ready to Install � v${info.version}</div>
                         <div class="update-banner-sub">The update has been downloaded. Restart to apply it.</div>
                     </div>
                 </div>
@@ -430,11 +430,11 @@
     });
 })();
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // LOCAL MUSIC LIBRARY SYSTEM
 // Full local music folder management, scanning, and playback integration.
 // Injects a "Local Library" tab into the Music app with folder settings.
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 (function () {
     if (typeof window === 'undefined' || !window.process || !window.process.versions || !window.process.versions.electron) return;
 
@@ -447,7 +447,7 @@
     let localAudio   = null; // Dedicated Audio element for local files
     let isLocalPlaying = false;
 
-    // ── Audio Engine ────────────────────────────────────────────────────────────
+    // -- Audio Engine ------------------------------------------------------------
     function getLocalAudio() {
         if (!localAudio) {
             localAudio = new Audio();
@@ -538,7 +538,7 @@
         audio.currentTime = pct * audio.duration;
     }
 
-    // ── Toast ────────────────────────────────────────────────────────────────────
+    // -- Toast --------------------------------------------------------------------
     function showLocalToast(msg) {
         const t = document.createElement('div');
         t.style.cssText = `position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
@@ -549,14 +549,14 @@
         setTimeout(() => t.remove(), 3000);
     }
 
-    // ── Settings Panel Styles ───────────────────────────────────────────────────
+    // -- Settings Panel Styles ---------------------------------------------------
     const style = document.createElement('style');
     style.textContent = `
         #local-library-panel {
             position: absolute; inset: 0; background: rgba(249,249,249,0.96);
             backdrop-filter: blur(20px); z-index: 200;
             display: flex; flex-direction: column;
-            font-family: -apple-system,'SF Pro Text',sans-serif;
+            font-family: -apple-system,sans-serif;
             overflow: hidden;
         }
         #local-library-panel.hidden { display: none; }
@@ -644,7 +644,7 @@
     `;
     document.head.appendChild(style);
 
-    // ── Build Panel HTML ─────────────────────────────────────────────────────────
+    // -- Build Panel HTML ---------------------------------------------------------
     function buildPanel() {
         const panel = document.createElement('div');
         panel.id = 'local-library-panel';
@@ -671,7 +671,7 @@
                 </div>
                 <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
                     <div class="ll-search-wrap">
-                        <input class="ll-search" id="ll-search" type="search" placeholder="Search songs, artists, albums…">
+                        <input class="ll-search" id="ll-search" type="search" placeholder="Search songs, artists, albums�">
                     </div>
                     <div class="ll-table-header">
                         <div class="ll-th">#</div>
@@ -713,7 +713,7 @@
         return panel;
     }
 
-    // ── Render Folder List ──────────────────────────────────────────────────────
+    // -- Render Folder List ------------------------------------------------------
     function renderFolderList() {
         const list = document.getElementById('ll-folder-list');
         if (!list) return;
@@ -739,7 +739,7 @@
         });
     }
 
-    // ── Render Track List ───────────────────────────────────────────────────────
+    // -- Render Track List -------------------------------------------------------
     function renderTrackList() {
         const list   = document.getElementById('ll-track-list');
         const search = (document.getElementById('ll-search') || {}).value || '';
@@ -771,9 +771,9 @@
                     <div class="ll-track-title ${currentLocalTrack && currentLocalTrack.id === track.id ? 'playing' : ''}">${track.title}</div>
                     <div class="ll-track-sub">${track.artist || 'Unknown Artist'}</div>
                 </div>
-                <div class="ll-track-album">${track.album || '—'}</div>
+                <div class="ll-track-album">${track.album || '�'}</div>
                 <div class="ll-track-ext"><span style="background:rgba(0,0,0,0.07);padding:2px 5px;border-radius:4px;font-size:9px;">${(track.ext || 'mp3').toUpperCase()}</span></div>
-                <div class="ll-track-dur">${track.duration || '—'}</div>
+                <div class="ll-track-dur">${track.duration || '�'}</div>
             </div>
         `).join('');
 
@@ -807,10 +807,10 @@
 
     function updateStats() {
         const el = document.getElementById('ll-stats');
-        if (el) el.textContent = `${localTracks.length} songs · ${localFolders.length} folder${localFolders.length !== 1 ? 's' : ''}`;
+        if (el) el.textContent = `${localTracks.length} songs � ${localFolders.length} folder${localFolders.length !== 1 ? 's' : ''}`;
     }
 
-    // ── Attach Panel to Music Window ────────────────────────────────────────────
+    // -- Attach Panel to Music Window --------------------------------------------
     async function attachLocalLibrary() {
         const musicWin = document.getElementById('music-window');
         if (!musicWin) return;
@@ -865,7 +865,7 @@
         updateStats();
     }
 
-    // ── Inject "Local Library" button into Music sidebar ───────────────────────
+    // -- Inject "Local Library" button into Music sidebar -----------------------
     function injectSidebarButton() {
         const musicWin = document.getElementById('music-window');
         if (!musicWin) return;
@@ -900,7 +900,7 @@
         navContainer.appendChild(btn);
     }
 
-    // ── Init ────────────────────────────────────────────────────────────────────
+    // -- Init --------------------------------------------------------------------
     // Wait for the Music window and React app to render
     let retries = 0;
     const tryInit = setInterval(async () => {

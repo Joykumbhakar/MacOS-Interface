@@ -244,7 +244,7 @@ function createWindow () {
             nodeIntegration:  true,
             contextIsolation: false,
         },
-        icon: path.join(__dirname, 'images/Icons/MacOS.png'),
+        icon: path.join(__dirname, 'images/Icons/Apple OS.png'),
         autoHideMenuBar: true,
     });
 

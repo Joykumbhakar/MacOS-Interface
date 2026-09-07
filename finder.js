@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// Finder.js — Full macOS Sonoma / Sequoia Finder Implementation
-// Includes: All 4 View Modes (Icon, List, Columns, Gallery), AirDrop Radar,
+// Finder.js — Full Apple OS Sonoma / Sequoia Finder Implementation
+// Includes: All 4 View Modes (Icon, List, Columns, Gallery), QuickDrop Radar,
 // Live Search, Grouping/Sorting, Quick Look, Inspector Pane, Action Menu,
 // Share Sheet, Tagging, Full Keyboard Shortcuts & Dynamic Island Integration
 // ═══════════════════════════════════════════════════════════════════════════
@@ -27,12 +27,15 @@ const FS = {
     applications: {
         id: 'applications', name: 'Applications', type: 'folder', icon: 'folder-blue', parent: 'root',
         children: [
-            'app-finder', 'app-safari', 'app-messages', 'app-mail', 'app-music',
+            'app-finder', 'app-Browser', 'app-messages', 'app-mail', 'app-music',
             'app-photos', 'app-vscode', 'app-github', 'app-terminal', 'app-settings',
             'app-calendar', 'app-notes', 'app-maps', 'app-weather', 'app-calculator',
             'app-appstore', 'app-launchpad', 'app-figma', 'app-photoshop', 'app-finalcut',
             'app-word', 'app-excel', 'app-powerpoint', 'app-chrome', 'app-spotify',
-            'app-chatgpt', 'app-gemini', 'app-docker', 'app-steam', 'app-zoom'
+            'app-chatgpt', 'app-gemini', 'app-docker', 'app-steam', 'app-zoom',
+            'app-python', 'app-react', 'app-nodejs', 'app-nextjs', 'app-firebase',
+            'app-supabase', 'app-tailwind', 'app-typescript', 'app-java', 'app-kotlin',
+            'app-c', 'app-sql', 'app-git', 'app-androidstudio', 'app-arduino'
         ]
     },
     users: {
@@ -51,7 +54,7 @@ const FS = {
     // Standard User Folders
     desktop: {
         id: 'desktop', name: 'Desktop', type: 'folder', icon: 'folder-blue', parent: 'user-ashley',
-        children: ['file-readme', 'file-screenshot', 'file-figma-spec', 'folder-projects', 'file-financials']
+        children: ['file-legal-disclaimer', 'file-credits-attributions', 'file-terms-acceptance', 'file-privacy-policy', 'file-readme', 'file-screenshot', 'file-figma-spec', 'folder-projects', 'file-financials']
     },
     documents: {
         id: 'documents', name: 'Documents', type: 'folder', icon: 'folder-blue', parent: 'user-ashley',
@@ -80,7 +83,7 @@ const FS = {
         children: ['folder-web', 'folder-ios', 'folder-design-assets']
     },
     'folder-web': {
-        id: 'folder-web', name: 'macOS Web Interface', type: 'folder', icon: 'folder-blue', parent: 'folder-projects',
+        id: 'folder-web', name: 'Apple OS Web Interface', type: 'folder', icon: 'folder-blue', parent: 'folder-projects',
         children: ['file-indexhtml', 'file-stylecss', 'file-scriptjs', 'file-finderjs']
     },
     'folder-ios': { id: 'folder-ios', name: 'SwiftUI Apps', type: 'folder', icon: 'folder-blue', parent: 'folder-projects', children: ['file-app-swift'] },
@@ -117,7 +120,7 @@ const FS = {
     'shared-q3-budget': { id: 'shared-q3-budget', name: 'Engineering Budget.xlsx', type: 'file', kind: 'Excel Spreadsheet', ext: 'xlsx', size: '480 KB', parent: 'shared', modified: 'Today', tags: ['green'], icon: 'doc-excel' },
 
     // Special Smart Views
-    airdrop: { id: 'airdrop', name: 'AirDrop', type: 'airdrop', icon: 'airdrop', children: [] },
+    QuickDrop: { id: 'QuickDrop', name: 'QuickDrop', type: 'QuickDrop', icon: 'QuickDrop', children: [] },
     recents: {
         id: 'recents', name: 'Recents', type: 'smart', icon: 'recents',
         children: [
@@ -130,9 +133,150 @@ const FS = {
     // ────────────────────────────
     // VIRTUAL FILES WITH RICH METADATA
     // ────────────────────────────
+    'file-legal-disclaimer': {
+        id: 'file-legal-disclaimer',
+        name: 'Legal_Disclaimer.pdf',
+        type: 'file',
+        kind: 'PDF Document',
+        ext: 'pdf',
+        size: '184 KB',
+        parent: 'desktop',
+        modified: 'Today, 2:30 PM',
+        tags: ['red'],
+        icon: 'doc-pdf',
+        docTitle: 'LEGAL DISCLAIMER & FAIR USE STATEMENT',
+        docBadge: 'OFFICIAL NOTICE · FAIR USE § 107',
+        sections: [
+            {
+                title: '1. Statutory Fair Use Declaration (17 U.S.C. § 107)',
+                text: 'This web-based interactive project ("Apple OS Web Interface") is created, published, and maintained exclusively for non-commercial educational, transformative portfolio, demonstration, and personal study purposes. Under Section 107 of the United States Copyright Act (17 U.S.C. § 107), the use of copyrighted visual assets and interface concepts for educational, non-profit, scholarship, research, or transformative criticism purposes constitutes "Fair Use" and does not constitute copyright infringement.'
+            },
+            {
+                title: '2. Trademark Attribution & Non-Affiliation Disclaimer',
+                text: '"Apple", "Apple OS", "Apple OS Sonoma", "Apple OS Sequoia", "Dynamic Island", "Browser", "Finder", "Quick Look", "SF Symbols", "Apple Music", and "App Store" are registered trademarks and proprietary assets of Apple Inc. in the United States and other jurisdictions.\n\nThis software is an independent, non-commercial open-source recreation developed strictly for educational demonstration. It is NOT affiliated with, sponsored by, endorsed by, authorized by, or in any way officially connected with Apple Inc. or any of its subsidiaries.'
+            },
+            {
+                title: '3. Third-Party Trademarks',
+                text: '• "Visual Studio Code" and "Monaco Editor" are trademarks of Microsoft Corporation.\n• "Google Chrome", "Google Drive", and "Gemini" are trademarks of Google LLC.\n• "Figma" is a trademark of Figma, Inc.\n• All other trademarks, registered brand names, and logos referenced within this simulator are the property of their respective owners.'
+            },
+            {
+                title: '4. Non-Commercial Stance & Zero Monetization',
+                text: 'This simulator generates ZERO revenue ($0.00). It does not contain advertising, affiliate programs, paid subscriptions, or sponsored placements. No commercial fees or financial gains are derived from this codebase.'
+            },
+            {
+                title: '5. Limitation of Liability & No Warranty',
+                text: 'THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHOR OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE USE OF THIS SOFTWARE.'
+            },
+            {
+                title: '6. DMCA & Rights Holder Takedown Inquiries',
+                text: 'If you are a copyright or trademark owner and believe any asset used in this educational demonstration infringes upon your intellectual property rights, please contact the maintainer immediately. We will promptly review and remove or replace the designated assets within 24 to 48 hours upon notice.'
+            }
+        ]
+    },
+    'file-credits-attributions': {
+        id: 'file-credits-attributions',
+        name: 'Credits_and_Attributions.md',
+        type: 'file',
+        kind: 'Markdown Document',
+        ext: 'md',
+        size: '64 KB',
+        parent: 'desktop',
+        modified: 'Today, 2:30 PM',
+        tags: ['blue'],
+        icon: 'doc-text',
+        docTitle: 'CREDITS, ATTRIBUTIONS & OPEN-SOURCE MANIFEST',
+        docBadge: 'OPEN SOURCE · HIG COMPLIANT',
+        sections: [
+            {
+                title: 'Author & Lead Developer',
+                text: '• **Architect & Developer**: Joy Kumbhakar (@Joykumbhakar)\n• **Project**: Apple OS Sonoma & Sequoia Web OS Experience\n• **Core Stack**: Vanilla JavaScript (ES6+), Modern Glassmorphism CSS3, HTML5, React 18 & Babel'
+            },
+            {
+                title: 'Design Philosophy & References',
+                text: '• **Apple Human Interface Guidelines (HIG)**: Inspired by Apple OS Sequoia and Sonoma UI design patterns, typography scales, translucency blurs, and micro-interactions.\n• **Dynamic Island Architecture**: Custom SVG waveforms, state machines, and real-time audio visualization.'
+            },
+            {
+                title: 'Open Source Libraries & Components',
+                text: '• **Monaco Editor**: Developed by Microsoft Corporation (MIT License).\n• **FontAwesome 6.5.1**: Vector icon set by Fonticons, Inc. (SIL OFL 1.1 / MIT License / CC BY 4.0).\n• **Lucide & Feather Icons**: Lightweight glyph collection (MIT / ISC License).\n• **Tailwind CSS**: Modern utility engine via CDN (MIT License).\n• **React 18 & Babel Standalone**: UI library by Meta Platforms, Inc. (MIT License).'
+            },
+            {
+                title: 'Media & Photography Credits',
+                text: '• **Wallpapers & Scenic Photos**: Sourced from royalty-free high-resolution collections on Unsplash and Pexels with permissive usage licenses.\n• **Audio Stems**: Creative Commons / Royalty-Free mock audio stems for interactive media player demonstrations.'
+            },
+            {
+                title: 'Community Acknowledgments',
+                text: 'Special gratitude to the global open-source community, web standards contributors, and UI/UX engineers who push web fidelity forward.'
+            }
+        ]
+    },
+    'file-terms-acceptance': {
+        id: 'file-terms-acceptance',
+        name: 'Terms_and_Acceptance.md',
+        type: 'file',
+        kind: 'Markdown Document',
+        ext: 'md',
+        size: '52 KB',
+        parent: 'desktop',
+        modified: 'Today, 2:30 PM',
+        tags: ['purple'],
+        icon: 'doc-text',
+        docTitle: 'TERMS OF SERVICE & USER ACCEPTANCE AGREEMENT',
+        docBadge: 'USER COVENANT · EDUCATIONAL LICENSE',
+        sections: [
+            {
+                title: '1. Acceptance of Terms',
+                text: 'By accessing, browsing, interacting with, cloning, or executing this Apple OS Web Interface simulation, you unconditionally agree to comply with all terms and conditions set forth in this Agreement. If you do not agree to these terms, you should terminate your session immediately.'
+            },
+            {
+                title: '2. Educational & Non-Commercial License',
+                text: 'You are granted a personal, revocable, non-exclusive, non-transferable, and royalty-free license to use this web simulation for individual evaluation, testing, code review, and educational study.\n\n**Explicit Prohibitions:**\n1. You may NOT monetize, sell, or license this software.\n2. You may NOT use this interface to deceive, scam, or phish users.\n3. You may NOT present this project as an official Apple product or service.'
+            },
+            {
+                title: '3. Browser Sandbox Environment',
+                text: 'All applications, file system operations, window management routines, and audio engines operate entirely within your local browser sandbox. No kernel modifications, system privileged operations, or remote machine actions take place.'
+            },
+            {
+                title: '4. Termination & Revisions',
+                text: 'The maintainer reserves the right to update or modify these terms at any time without prior notice. Continued use of the simulation following any changes indicates acceptance of the updated terms.'
+            }
+        ]
+    },
+    'file-privacy-policy': {
+        id: 'file-privacy-policy',
+        name: 'Privacy_Policy.md',
+        type: 'file',
+        kind: 'Markdown Document',
+        ext: 'md',
+        size: '48 KB',
+        parent: 'desktop',
+        modified: 'Today, 2:30 PM',
+        tags: ['green'],
+        icon: 'doc-text',
+        docTitle: 'PRIVACY POLICY & DATA TRANSPARENCY NOTICE',
+        docBadge: '100% CLIENT-SIDE · ZERO TRACKING',
+        sections: [
+            {
+                title: '1. Zero Data Collection Principle',
+                text: 'We firmly believe in user privacy. This web application does NOT collect, harvest, transmit, store, or sell any personal data, IP addresses, browsing histories, biometric identifiers, or hardware fingerprints. No tracking cookies or advertising scripts exist within this project.'
+            },
+            {
+                title: '2. Local-Only Storage (LocalStorage & Memory FS)',
+                text: 'All interactive states—including virtual desktop icons, wallpaper choices, notes, code snippets in VS Code, and audio playback settings—are saved exclusively in your browser\'s local storage (`window.localStorage` / `sessionStorage`). This data never leaves your personal device and is inaccessible to any external server.'
+            },
+            {
+                title: '3. Third-Party CDNs & Static Delivery',
+                text: 'External script and font dependencies (such as cdnjs, unpkg, and Google Fonts) are loaded as static CDNs. These requests do not involve user accounts or tracking identifiers.'
+            },
+            {
+                title: '4. Complete Data Eradication',
+                text: 'You may permanently delete all stored data, custom notes, and preferences at any moment by clicking "Reset to Factory Defaults" in System Settings or by clearing your browser cache and cookies.'
+            }
+        ]
+    },
+
     'file-readme':        { id: 'file-readme',        name: 'README.md',                 type: 'file', kind: 'Markdown Document',     ext: 'md',   size: '4.2 KB',   parent: 'desktop',         modified: 'Today, 2:15 PM',     tags: ['blue'],   icon: 'doc-text' },
     'file-screenshot':    { id: 'file-screenshot',    name: 'Screenshot 2026-08-19.png',  type: 'file', kind: 'PNG Image',             ext: 'png',  size: '2.4 MB',   parent: 'desktop',         modified: 'Today, 1:40 PM',     tags: ['blue'],   icon: 'image' },
-    'file-figma-spec':    { id: 'file-figma-spec',    name: 'macOS_Design_System.fig',   type: 'file', kind: 'Figma Design',          ext: 'fig',  size: '14.8 MB',  parent: 'desktop',         modified: 'Yesterday',          tags: ['purple'], icon: 'doc-figma' },
+    'file-figma-spec':    { id: 'file-figma-spec',    name: 'Apple OS_Design_System.fig',   type: 'file', kind: 'Figma Design',          ext: 'fig',  size: '14.8 MB',  parent: 'desktop',         modified: 'Yesterday',          tags: ['purple'], icon: 'doc-figma' },
     'file-financials':    { id: 'file-financials',    name: 'Q3 Financial Model.xlsx',   type: 'file', kind: 'Excel Spreadsheet',     ext: 'xlsx', size: '820 KB',   parent: 'desktop',         modified: 'Yesterday',          tags: ['green'],  icon: 'doc-excel' },
 
     'file-resume':        { id: 'file-resume',        name: 'Ashley_Resume_2026.pdf',    type: 'file', kind: 'PDF Document',          ext: 'pdf',  size: '340 KB',   parent: 'documents',       modified: 'Today, 11:30 AM',    tags: ['red'],    icon: 'doc-pdf' },
@@ -148,7 +292,7 @@ const FS = {
 
     'file-setup-dmg':     { id: 'file-setup-dmg',     name: 'Figma-124.0.0.dmg',         type: 'file', kind: 'Disk Image',            ext: 'dmg',  size: '168 MB',   parent: 'downloads',       modified: 'Today, 9:20 AM',     tags: [],         icon: 'doc-dmg' },
     'file-archive':       { id: 'file-archive',       name: 'UI_Icons_Pack_4K.zip',      type: 'file', kind: 'ZIP Archive',           ext: 'zip',  size: '45.8 MB',  parent: 'downloads',       modified: 'Yesterday',          tags: ['yellow'], icon: 'doc-zip' },
-    'file-ebook':         { id: 'file-ebook',         name: 'Designing_for_macOS.pdf',   type: 'file', kind: 'PDF Document',          ext: 'pdf',  size: '12.4 MB',  parent: 'downloads',       modified: 'Last Week',          tags: ['blue'],   icon: 'doc-pdf' },
+    'file-ebook':         { id: 'file-ebook',         name: 'Designing_for_Apple OS.pdf',   type: 'file', kind: 'PDF Document',          ext: 'pdf',  size: '12.4 MB',  parent: 'downloads',       modified: 'Last Week',          tags: ['blue'],   icon: 'doc-pdf' },
     'file-wallpaper-dl':  { id: 'file-wallpaper-dl',  name: 'Sequoia_Sunrise_8K.heic',   type: 'file', kind: 'HEIC Image',            ext: 'heic', size: '18.6 MB',  parent: 'downloads',       modified: 'Last Month',         tags: [],         icon: 'image' },
     'file-invoice-dl':    { id: 'file-invoice-dl',    name: 'Apple_Store_Invoice.pdf',   type: 'file', kind: 'PDF Document',          ext: 'pdf',  size: '210 KB',   parent: 'downloads',       modified: 'Today, 1:10 PM',     tags: ['green'],  icon: 'doc-pdf' },
     'file-node-pkg':      { id: 'file-node-pkg',      name: 'node-v20.12.2.pkg',         type: 'file', kind: 'Installer Package',     ext: 'pkg',  size: '42.1 MB',  parent: 'downloads',       modified: 'Last Week',          tags: [],         icon: 'doc-dmg' },
@@ -180,7 +324,7 @@ const FS = {
 
     // Applications with direct launch mapping
     'app-finder':      { id: 'app-finder',      appId: 'finder',      name: 'Finder',          type: 'app', kind: 'Application', size: '42 MB',  parent: 'applications', modified: 'System', tags: [], icon: 'app', appIcon: 'images/Icons/Finder.png' },
-    'app-safari':      { id: 'app-safari',      appId: 'safari',      name: 'Safari',          type: 'app', kind: 'Application', size: '64 MB',  parent: 'applications', modified: 'System', tags: [], icon: 'app', appIcon: 'images/Icons/safari.png' },
+    'app-Browser':     { id: 'app-Browser',     appId: 'Browser',     name: 'Browser',         type: 'app', kind: 'Application', size: '64 MB',  parent: 'applications', modified: 'System', tags: [], icon: 'app', appIcon: 'images/Icons/safari.png' },
     'app-messages':    { id: 'app-messages',    appId: 'messages',    name: 'Messages',        type: 'app', kind: 'Application', size: '28 MB',  parent: 'applications', modified: 'System', tags: [], icon: 'app', appIcon: 'images/Icons/Messages.png' },
     'app-mail':        { id: 'app-mail',        appId: 'mail',        name: 'Mail',            type: 'app', kind: 'Application', size: '36 MB',  parent: 'applications', modified: 'System', tags: [], icon: 'app', appIcon: 'images/Icons/Mail.png' },
     'app-music':       { id: 'app-music',       appId: 'music',       name: 'Apple Music',     type: 'app', kind: 'Application', size: '54 MB',  parent: 'applications', modified: 'System', tags: [], icon: 'app', appIcon: 'images/Icons/Music.png' },
@@ -208,7 +352,22 @@ const FS = {
     'app-gemini':      { id: 'app-gemini',      appId: 'gemini',      name: 'Gemini',          type: 'app', kind: 'Application', size: '82 MB',  parent: 'applications', modified: 'Installed', tags: [], icon: 'app', appIcon: 'images/Icons/Gemini.png' },
     'app-docker':      { id: 'app-docker',      appId: 'docker',      name: 'Docker Desktop',  type: 'app', kind: 'Application', size: '620 MB', parent: 'applications', modified: 'Installed', tags: [], icon: 'app', appIcon: 'images/Icons/Docker.png' },
     'app-steam':       { id: 'app-steam',       appId: 'steam',       name: 'Steam',           type: 'app', kind: 'Application', size: '340 MB', parent: 'applications', modified: 'Installed', tags: [], icon: 'app', appIcon: 'images/Icons/Steam.png' },
-    'app-zoom':        { id: 'app-zoom',        appId: 'zoom',        name: 'Zoom Workplace',  type: 'app', kind: 'Application', size: '138 MB', parent: 'applications', modified: 'Installed', tags: [], icon: 'app', appIcon: 'images/Icons/Zoom.png' }
+    'app-zoom':        { id: 'app-zoom',        appId: 'zoom',        name: 'Zoom Workplace',  type: 'app', kind: 'Application', size: '138 MB', parent: 'applications', modified: 'Installed', tags: [], icon: 'app', appIcon: 'images/Icons/Zoom.png' },
+    'app-python':      { id: 'app-python',      appId: 'python',      name: 'Python 3',        type: 'app', kind: 'Application', size: '85 MB',  parent: 'applications', modified: 'Installed', tags: [], icon: 'app', appIcon: 'images/Icons/Dev Tools Icons/Python.png' },
+    'app-react':       { id: 'app-react',       appId: 'react',       name: 'React Developer Tools', type: 'app', kind: 'Application', size: '45 MB', parent: 'applications', modified: 'Installed', tags: [], icon: 'app', appIcon: 'images/Icons/Dev Tools Icons/React.png' },
+    'app-nodejs':      { id: 'app-nodejs',      appId: 'nodejs',      name: 'Node.js Runtime', type: 'app', kind: 'Application', size: '110 MB', parent: 'applications', modified: 'Installed', tags: [], icon: 'app', appIcon: 'images/Icons/Dev Tools Icons/Node.js.png' },
+    'app-nextjs':      { id: 'app-nextjs',      appId: 'nextjs',      name: 'Next.js Framework', type: 'app', kind: 'Application', size: '78 MB', parent: 'applications', modified: 'Installed', tags: [], icon: 'app', appIcon: 'images/Icons/Dev Tools Icons/Next.js.png' },
+    'app-firebase':    { id: 'app-firebase',    appId: 'firebase',    name: 'Firebase Console', type: 'app', kind: 'Application', size: '32 MB', parent: 'applications', modified: 'Installed', tags: [], icon: 'app', appIcon: 'images/Icons/Dev Tools Icons/Firebase.png' },
+    'app-supabase':    { id: 'app-supabase',    appId: 'supabase',    name: 'Supabase Studio', type: 'app', kind: 'Application', size: '56 MB',  parent: 'applications', modified: 'Installed', tags: [], icon: 'app', appIcon: 'images/Icons/Dev Tools Icons/supabase.png' },
+    'app-tailwind':    { id: 'app-tailwind',    appId: 'tailwind',    name: 'Tailwind CSS',    type: 'app', kind: 'Application', size: '28 MB',  parent: 'applications', modified: 'Installed', tags: [], icon: 'app', appIcon: 'images/Icons/Dev Tools Icons/Tailwind.png' },
+    'app-typescript':  { id: 'app-typescript',  appId: 'typescript',  name: 'TypeScript',      type: 'app', kind: 'Application', size: '42 MB',  parent: 'applications', modified: 'Installed', tags: [], icon: 'app', appIcon: 'images/Icons/Dev Tools Icons/typescript.png' },
+    'app-java':        { id: 'app-java',        appId: 'java',        name: 'Java Development Kit', type: 'app', kind: 'Application', size: '320 MB', parent: 'applications', modified: 'Installed', tags: [], icon: 'app', appIcon: 'images/Icons/Dev Tools Icons/java.png' },
+    'app-kotlin':      { id: 'app-kotlin',      appId: 'kotlin',      name: 'Kotlin Compiler', type: 'app', kind: 'Application', size: '95 MB',  parent: 'applications', modified: 'Installed', tags: [], icon: 'app', appIcon: 'images/Icons/Dev Tools Icons/kotlin.png' },
+    'app-c':           { id: 'app-c',           appId: 'c',           name: 'Clang / LLVM C++', type: 'app', kind: 'Application', size: '240 MB', parent: 'applications', modified: 'Installed', tags: [], icon: 'app', appIcon: 'images/Icons/Dev Tools Icons/C.png' },
+    'app-sql':         { id: 'app-sql',         appId: 'sql',         name: 'PostgreSQL / SQL', type: 'app', kind: 'Application', size: '180 MB', parent: 'applications', modified: 'Installed', tags: [], icon: 'app', appIcon: 'images/Icons/Dev Tools Icons/sql.png' },
+    'app-git':         { id: 'app-git',         appId: 'git',         name: 'Git Version Control', type: 'app', kind: 'Application', size: '64 MB', parent: 'applications', modified: 'Installed', tags: [], icon: 'app', appIcon: 'images/Icons/Dev Tools Icons/git.png' },
+    'app-androidstudio': { id: 'app-androidstudio', appId: 'androidstudio', name: 'Android Studio', type: 'app', kind: 'Application', size: '1.2 GB', parent: 'applications', modified: 'Installed', tags: [], icon: 'app', appIcon: 'images/Icons/Android_Studio.png' },
+    'app-arduino':     { id: 'app-arduino',     appId: 'arduino',     name: 'Arduino IDE',     type: 'app', kind: 'Application', size: '210 MB', parent: 'applications', modified: 'Installed', tags: [], icon: 'app', appIcon: 'images/Icons/Arduino_IDE.png' }
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -228,8 +387,8 @@ const state = {
     searchScope:   'current',         // 'current' | 'all'
     _tagFilter:    null,
     iconSize:      72,
-    airdropDiscover: 'Everyone',      // 'Everyone' | 'Contacts Only' | 'No One'
-    airdropSending:  null             // device id currently sending to
+    QuickDropDiscover: 'Everyone',      // 'Everyone' | 'Contacts Only' | 'No One'
+    QuickDropSending:  null             // device id currently sending to
 };
 
 const TAG_COLORS = {
@@ -242,7 +401,7 @@ const TAG_COLORS = {
     gray:   '#8e8e93'
 };
 
-const AIRDROP_DEVICES = [
+const QuickDrop_DEVICES = [
     { id: 'dev-iphone', name: "Ashley's iPhone", model: "iPhone 15 Pro", svg: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>', top: '24px', left: '32px' },
     { id: 'dev-ipad',   name: "Living Room iPad", model: "iPad Air (5th gen)", svg: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>', top: '24px', right: '32px' },
     { id: 'dev-macbook',name: "Tim's MacBook",   model: "MacBook Air M3", svg: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="20" x2="22" y2="20"></line></svg>', bottom: '28px', left: '36px' },
@@ -273,12 +432,12 @@ function getSortedChildren(folderId) {
     if (state.searchQuery) {
         const q = state.searchQuery.toLowerCase();
         if (state.searchScope === 'all') {
-            items = Object.values(FS).filter(f => f.name && f.name.toLowerCase().includes(q) && f.type !== 'volume' && f.type !== 'smart' && f.type !== 'airdrop');
+            items = Object.values(FS).filter(f => f.name && f.name.toLowerCase().includes(q) && f.type !== 'volume' && f.type !== 'smart' && f.type !== 'QuickDrop');
         } else {
             items = getChildren(folderId).filter(f => f.name && f.name.toLowerCase().includes(q));
         }
     } else if (state._tagFilter) {
-        items = Object.values(FS).filter(f => f.tags && f.tags.includes(state._tagFilter) && f.type !== 'volume' && f.type !== 'smart' && f.type !== 'airdrop');
+        items = Object.values(FS).filter(f => f.tags && f.tags.includes(state._tagFilter) && f.type !== 'volume' && f.type !== 'smart' && f.type !== 'QuickDrop');
     } else {
         items = getChildren(folderId);
     }
@@ -311,7 +470,7 @@ function fileIcon(item, size = 64) {
 
     // Applications with customized app icons
     if (item.type === 'app' && item.appIcon) {
-        return `<img src="${item.appIcon}" style="width:${size}px;height:${size}px;object-fit:contain;pointer-events:none;" draggable="false" onerror="this.src='images/Icons/Finder.png'">`;
+        return `<img src="${item.appIcon}" style="width:${size}px;height:${size}px;object-fit:contain;pointer-events:none;" draggable="false" onerror="this.src='fas fa-folder'">`;
     }
 
     // Folders
@@ -321,7 +480,7 @@ function fileIcon(item, size = 64) {
 
     // Volumes & Special
     if (item.type === 'volume' || item.id === 'root') {
-        return `<img src="images/Icons/Finder.png" style="width:${size}px;height:${size}px;object-fit:contain;pointer-events:none;" draggable="false">`;
+        return `<img src="images/Icons/Dev Tools Icons/folder.png" style="width:${size}px;height:${size}px;object-fit:contain;pointer-events:none;" draggable="false">`;
     }
 
     // Extension mappings
@@ -335,9 +494,9 @@ function fileIcon(item, size = 64) {
         'pptx':  'images/Icons/MsPP.png',
         'ppt':   'images/Icons/MsPP.png',
         'key':   'images/Icons/MsPP.png',
-        'dmg':   'images/Icons/Finder.png',
-        'pkg':   'images/Icons/Finder.png',
-        'zip':   'images/Icons/Finder.png',
+        'dmg':   'images/Icons/Dmg__Disk_image__Document.png',
+        'pkg':   'images/Icons/UninstallPKG.png',
+        'zip':   'images/Icons/Rar_Document.png',
         'txt':   'images/Icons/txt.png',
         'md':    'images/Icons/txt.png',
         'fig':   'images/Icons/Figma.png',
@@ -348,8 +507,8 @@ function fileIcon(item, size = 64) {
         'svg':   'images/Icons/code_docs.png',
         'mp3':   'images/Icons/Music.png',
         'flac':  'images/Icons/Music.png',
-        'mp4':   'images/Icons/Photos.png',
-        'mov':   'images/Icons/Photos.png',
+        'mp4':   'images/Icons/Movie_Document_VLC.png',
+        'mov':   'images/Icons/Movie_Document_VLC.png',
         'jpg':   'images/Icons/Photos.png',
         'png':   'images/Icons/Photos.png',
         'heic':  'images/Icons/Photos.png'
@@ -470,9 +629,9 @@ function renderContent() {
     const folder = currentFolder();
     if (!folder) return;
 
-    // Special Case: AirDrop View
-    if (folder.type === 'airdrop') {
-        renderAirDropView(el);
+    // Special Case: QuickDrop View
+    if (folder.type === 'QuickDrop') {
+        renderQuickDropView(el);
         return;
     }
 
@@ -483,76 +642,76 @@ function renderContent() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 1. AIRDROP VIEW (Authentic Radar Waves & Discovered Devices)
+// 1. QuickDrop VIEW (Authentic Radar Waves & Discovered Devices)
 // ─────────────────────────────────────────────────────────────────────────────
-function renderAirDropView(el) {
+function renderQuickDropView(el) {
     el.innerHTML = `
-        <div class="airdrop-container">
-            <div class="airdrop-radar">
-                <div class="airdrop-ring"></div>
-                <div class="airdrop-ring"></div>
-                <div class="airdrop-ring"></div>
+        <div class="QuickDrop-container">
+            <div class="QuickDrop-radar">
+                <div class="QuickDrop-ring"></div>
+                <div class="QuickDrop-ring"></div>
+                <div class="QuickDrop-ring"></div>
                 
-                <div class="airdrop-center-node" title="Your Mac (Ashley's MacBook Pro)">
+                <div class="QuickDrop-center-node" title="Your Mac (Ashley's MacBook Pro)">
                     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                 </div>
 
-                ${AIRDROP_DEVICES.map(dev => `
-                    <div class="airdrop-device" id="${dev.id}" style="${dev.top ? 'top:'+dev.top+';' : ''}${dev.bottom ? 'bottom:'+dev.bottom+';' : ''}${dev.left ? 'left:'+dev.left+';' : ''}${dev.right ? 'right:'+dev.right+';' : ''}" onclick="Finder.sendAirDrop('${dev.id}')" title="Click to share with ${dev.name}">
-                        <div class="airdrop-device-icon" id="${dev.id}-icon">
+                ${QuickDrop_DEVICES.map(dev => `
+                    <div class="QuickDrop-device" id="${dev.id}" style="${dev.top ? 'top:'+dev.top+';' : ''}${dev.bottom ? 'bottom:'+dev.bottom+';' : ''}${dev.left ? 'left:'+dev.left+';' : ''}${dev.right ? 'right:'+dev.right+';' : ''}" onclick="Finder.sendQuickDrop('${dev.id}')" title="Click to share with ${dev.name}">
+                        <div class="QuickDrop-device-icon" id="${dev.id}-icon">
                             ${dev.svg}
                         </div>
-                        <span class="airdrop-device-name">${dev.name}</span>
-                        <span class="airdrop-device-model">${dev.model}</span>
+                        <span class="QuickDrop-device-name">${dev.name}</span>
+                        <span class="QuickDrop-device-model">${dev.model}</span>
                     </div>
                 `).join('')}
             </div>
 
             <div style="text-align:center; z-index:2; margin-top:10px;">
-                <div style="font-size:15px; font-weight:600; color:#1d1d1f; margin-bottom:4px;">AirDrop</div>
+                <div style="font-size:15px; font-weight:600; color:#1d1d1f; margin-bottom:4px;">QuickDrop</div>
                 <div style="font-size:12px; color:#8e8e93; max-width:320px; line-height:1.4;">
                     Share instantly with people nearby. Tap a device or drag items onto it to share.
                 </div>
             </div>
 
-            <div style="display:flex; align-items:center; gap:8px; margin-top:24px; padding:6px 14px; background:rgba(0,0,0,0.05); border-radius:20px; font-size:11.5px; color:#1d1d1f; z-index:2; cursor:pointer;" onclick="Finder.toggleAirDropDiscovery(event)">
+            <div style="display:flex; align-items:center; gap:8px; margin-top:24px; padding:6px 14px; background:rgba(0,0,0,0.05); border-radius:20px; font-size:11.5px; color:#1d1d1f; z-index:2; cursor:pointer;" onclick="Finder.toggleQuickDropDiscovery(event)">
                 <span>Allow me to be discovered by:</span>
-                <span style="font-weight:600; color:#0a84ff;">${state.airdropDiscover} ▾</span>
+                <span style="font-weight:600; color:#0a84ff;">${state.QuickDropDiscover} ▾</span>
             </div>
         </div>
     `;
 
     // Bind drop target on devices
-    AIRDROP_DEVICES.forEach(dev => {
+    QuickDrop_DEVICES.forEach(dev => {
         const devEl = document.getElementById(dev.id);
         if (!devEl) return;
 
         devEl.addEventListener('dragover', (e) => {
             e.preventDefault();
             devEl.style.transform = 'scale(1.18)';
-            devEl.querySelector('.airdrop-device-icon').style.background = '#0a84ff';
-            devEl.querySelector('.airdrop-device-icon').style.color = '#ffffff';
+            devEl.querySelector('.QuickDrop-device-icon').style.background = '#0a84ff';
+            devEl.querySelector('.QuickDrop-device-icon').style.color = '#ffffff';
         });
 
         devEl.addEventListener('dragleave', () => {
             devEl.style.transform = '';
-            devEl.querySelector('.airdrop-device-icon').style.background = 'white';
-            devEl.querySelector('.airdrop-device-icon').style.color = '#0a84ff';
+            devEl.querySelector('.QuickDrop-device-icon').style.background = 'white';
+            devEl.querySelector('.QuickDrop-device-icon').style.color = '#0a84ff';
         });
 
         devEl.addEventListener('drop', (e) => {
             e.preventDefault();
             devEl.style.transform = '';
-            devEl.querySelector('.airdrop-device-icon').style.background = 'white';
-            devEl.querySelector('.airdrop-device-icon').style.color = '#0a84ff';
+            devEl.querySelector('.QuickDrop-device-icon').style.background = 'white';
+            devEl.querySelector('.QuickDrop-device-icon').style.color = '#0a84ff';
             const itemId = e.dataTransfer.getData('text/plain');
-            sendAirDrop(dev.id, itemId);
+            sendQuickDrop(dev.id, itemId);
         });
     });
 }
 
-function sendAirDrop(deviceId, customItemId = null) {
-    const dev = AIRDROP_DEVICES.find(d => d.id === deviceId);
+function sendQuickDrop(deviceId, customItemId = null) {
+    const dev = QuickDrop_DEVICES.find(d => d.id === deviceId);
     if (!dev) return;
 
     let targetFile = null;
@@ -572,26 +731,26 @@ function sendAirDrop(deviceId, customItemId = null) {
     showToast(`Sending "${targetFile.name}" to ${dev.name}…`);
 
         // Dynamic Island Dispatch
-    if (window.MacIsland && MacIsland.airdrop) {
+    if (window.MacIsland && MacIsland.QuickDrop) {
         let prog = 0;
-        MacIsland.airdrop(targetFile.name, prog);
+        MacIsland.QuickDrop(targetFile.name, prog);
         const intv = setInterval(() => {
             prog += 20;
             if (prog >= 100) {
                 prog = 100;
                 clearInterval(intv);
-                MacIsland.airdrop(targetFile.name, prog);
+                MacIsland.QuickDrop(targetFile.name, prog);
                 if (devIcon) devIcon.innerHTML = `<i class="fas fa-check" style="font-size:18px; color:#34c759;"></i>`;
                 setTimeout(() => MacIsland.success('Sent to ' + dev.name), 1000);
                 setTimeout(() => { if (devIcon) devIcon.innerHTML = dev.svg; }, 2000);
             } else {
-                MacIsland.airdrop(targetFile.name, prog);
+                MacIsland.QuickDrop(targetFile.name, prog);
             }
         }, 300);
     }
 }
 
-function toggleAirDropDiscovery(e) {
+function toggleQuickDropDiscovery(e) {
     e.stopPropagation();
     closeAllPopovers();
 
@@ -603,9 +762,9 @@ function toggleAirDropDiscovery(e) {
     pop.style.top = `${rect.bottom + 6}px`;
 
     pop.innerHTML = options.map(opt => `
-        <div class="finder-popover-item" onclick="Finder.setAirDropDiscovery('${opt}')">
+        <div class="finder-popover-item" onclick="Finder.setQuickDropDiscovery('${opt}')">
             <span>${opt}</span>
-            ${state.airdropDiscover === opt ? '<i class="fas fa-check" style="font-size:11px;"></i>' : ''}
+            ${state.QuickDropDiscover === opt ? '<i class="fas fa-check" style="font-size:11px;"></i>' : ''}
         </div>
     `).join('');
 
@@ -613,11 +772,11 @@ function toggleAirDropDiscovery(e) {
     setTimeout(() => document.addEventListener('click', closeAllPopovers, { once: true }), 0);
 }
 
-function setAirDropDiscovery(val) {
-    state.airdropDiscover = val;
+function setQuickDropDiscovery(val) {
+    state.QuickDropDiscover = val;
     closeAllPopovers();
     render();
-    showToast(`AirDrop discovery set to: ${val}`);
+    showToast(`QuickDrop discovery set to: ${val}`);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1140,8 +1299,8 @@ function toggleShareMenu(e) {
 
     pop.innerHTML = `
         <div class="finder-popover-title">Share "${item.name}"</div>
-        <div class="finder-popover-item" onclick="Finder.navigateTo('airdrop'); Finder.closeAllPopovers();">
-            <div style="display:flex; align-items:center; gap:8px;"><i class="fas fa-wifi" style="color:#0a84ff;"></i> <span>AirDrop</span></div>
+        <div class="finder-popover-item" onclick="Finder.navigateTo('QuickDrop'); Finder.closeAllPopovers();">
+            <div style="display:flex; align-items:center; gap:8px;"><i class="fas fa-wifi" style="color:#0a84ff;"></i> <span>QuickDrop</span></div>
         </div>
         <div class="finder-popover-item" onclick="Finder.showToast('Shared via Messages'); Finder.closeAllPopovers();">
             <div style="display:flex; align-items:center; gap:8px;"><i class="fas fa-comment-dots" style="color:#34c759;"></i> <span>Messages</span></div>
@@ -1236,7 +1395,7 @@ function showEmptyContextMenu(x, y) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// QUICK LOOK OVERLAY (Enhanced with live audio player, code viewer & PDF card)
+// QUICK LOOK OVERLAY (Enhanced with live audio player, code viewer & Document Reader)
 // ─────────────────────────────────────────────────────────────────────────────
 function openQuickLook(itemId) {
     const item = FS[itemId];
@@ -1245,12 +1404,58 @@ function openQuickLook(itemId) {
 
     const ql = document.createElement('div');
     ql.id = 'finder-quicklook';
-    ql.style.cssText = `position:fixed; inset:0; z-index:65000; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); backdrop-filter:blur(10px); animation:fadeIn 0.15s ease;`;
+    ql.style.cssText = `position:fixed; inset:0; z-index:65000; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.55); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); animation:fadeIn 0.15s ease;`;
 
     let previewContent = '';
-    if (item.ext === 'mp3' || item.ext === 'flac') {
+    let isLegalDocument = !!(item.sections || item.docTitle);
+
+    if (isLegalDocument) {
+        const sectionsHtml = (item.sections || []).map(sec => `
+            <div style="background:rgba(255,255,255,0.03); border:0.5px solid rgba(255,255,255,0.1); border-radius:10px; padding:16px 18px; margin-bottom:14px;">
+                <div style="font-size:13.5px; font-weight:700; color:#38bdf8; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                    <i class="fas fa-chevron-right" style="font-size:10px; opacity:0.7;"></i>
+                    <span>${sec.title}</span>
+                </div>
+                <div style="font-size:12.5px; line-height:1.65; color:rgba(255,255,255,0.85); white-space:pre-line; font-family:-apple-system, sans-serif;">${sec.text.replace(/\*\*(.*?)\*\*/g, '<strong style="color:#ffffff; font-weight:600;">$1</strong>')}</div>
+            </div>
+        `).join('');
+
         previewContent = `
-            <div style="display:flex; flex-direction:column; align-items:center; gap:20px;">
+            <div style="width:100%; height:460px; overflow-y:auto; padding:20px 24px; font-family:-apple-system, 'SF Pro Display', sans-serif; box-sizing:border-box;">
+                <div style="text-align:center; padding-bottom:18px; margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.12);">
+                    <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(56,189,248,0.15); border:0.5px solid rgba(56,189,248,0.35); padding:4px 12px; border-radius:20px; font-size:10.5px; font-weight:700; color:#38bdf8; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:12px;">
+                        <i class="fas fa-shield-alt"></i> ${item.docBadge || 'OFFICIAL COMPLIANCE DOCUMENT'}
+                    </div>
+                    <div style="font-size:19px; font-weight:800; color:#ffffff; letter-spacing:-0.4px; line-height:1.3;">
+                        ${item.docTitle || item.name}
+                    </div>
+                    <div style="font-size:11.5px; color:rgba(255,255,255,0.5); margin-top:6px; display:flex; align-items:center; justify-content:center; gap:16px;">
+                        <span><i class="far fa-calendar-alt"></i> Effective: 2026</span>
+                        <span>•</span>
+                        <span><i class="fas fa-lock"></i> Client-Side Sandbox</span>
+                        <span>•</span>
+                        <span><i class="fas fa-certificate"></i> Verified Educational License</span>
+                    </div>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:2px;">
+                    ${sectionsHtml}
+                </div>
+
+                <div style="margin-top:20px; padding:16px; background:linear-gradient(135deg, rgba(10,132,255,0.12), rgba(175,82,222,0.12)); border:0.5px solid rgba(255,255,255,0.18); border-radius:12px; display:flex; align-items:center; justify-content:space-between;">
+                    <div>
+                        <div style="font-size:12.5px; font-weight:700; color:#ffffff;">Authenticity & Compliance Verification</div>
+                        <div style="font-size:11px; color:rgba(255,255,255,0.6); margin-top:2px;">All trademarks belong to their respective holders. Designed with Apple HIG standards.</div>
+                    </div>
+                    <button onclick="Finder.copyDocText('${item.id}')" style="background:rgba(255,255,255,0.14); border:0.5px solid rgba(255,255,255,0.25); color:#ffffff; font-size:11.5px; font-weight:600; padding:6px 14px; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:6px;">
+                        <i class="far fa-copy"></i> Copy Text
+                    </button>
+                </div>
+            </div>
+        `;
+    } else if (item.ext === 'mp3' || item.ext === 'flac') {
+        previewContent = `
+            <div style="display:flex; flex-direction:column; align-items:center; gap:20px; padding:20px;">
                 ${fileIcon(item, 100)}
                 <div style="text-align:center;">
                     <div style="font-size:18px; font-weight:700; color:white;">${item.name}</div>
@@ -1267,7 +1472,7 @@ function openQuickLook(itemId) {
         `;
     } else if (['jpg', 'png', 'heic', 'svg'].includes(item.ext)) {
         previewContent = `
-            <div style="display:flex; flex-direction:column; align-items:center; gap:16px;">
+            <div style="display:flex; flex-direction:column; align-items:center; gap:16px; padding:20px;">
                 <div style="width:280px; height:200px; border-radius:12px; overflow:hidden; background:rgba(0,0,0,0.3); display:flex; align-items:center; justify-content:center;">
                     ${fileIcon(item, 120)}
                 </div>
@@ -1277,21 +1482,21 @@ function openQuickLook(itemId) {
         `;
     } else if (['js', 'html', 'css', 'swift', 'md', 'txt'].includes(item.ext)) {
         previewContent = `
-            <div style="width:100%; height:260px; background:rgba(0,0,0,0.4); border-radius:10px; padding:16px; font-family:ui-monospace,SFMono-Regular,monospace; font-size:12px; color:#34c759; overflow:auto; line-height:1.6;">
+            <div style="width:100%; height:280px; background:rgba(0,0,0,0.4); border-radius:10px; padding:16px; font-family:ui-monospace,SFMono-Regular,monospace; font-size:12px; color:#34c759; overflow:auto; line-height:1.6;">
                 <div style="color:rgba(255,255,255,0.4);">// Preview of ${item.name}</div>
                 <div>import Foundation</div>
                 <div>import SwiftUI</div>
                 <br>
                 <div style="color:#38bdf8;">struct ${item.name.replace(/\.[^.]+$/, '')}: View {</div>
                 <div style="padding-left:16px; color:#ff7b72;">var body: some View {</div>
-                <div style="padding-left:32px; color:#fff;">Text("macOS Sonoma Interface")</div>
+                <div style="padding-left:32px; color:#fff;">Text("Apple OS Sonoma Interface")</div>
                 <div style="padding-left:16px; color:#ff7b72;">}</div>
                 <div style="color:#38bdf8;">}</div>
             </div>
         `;
     } else {
         previewContent = `
-            <div style="display:flex; flex-direction:column; align-items:center; gap:16px;">
+            <div style="display:flex; flex-direction:column; align-items:center; gap:16px; padding:20px;">
                 ${fileIcon(item, 110)}
                 <div style="font-size:16px; font-weight:600; color:white;">${item.name}</div>
                 <div style="font-size:12px; color:rgba(255,255,255,0.6);">${item.kind} · ${item.size}</div>
@@ -1299,28 +1504,44 @@ function openQuickLook(itemId) {
         `;
     }
 
+    const modalWidth = isLegalDocument ? '680px' : '600px';
+
     ql.innerHTML = `
-        <div style="background:rgba(28,28,30,0.92); backdrop-filter:blur(30px); border-radius:16px; border:0.5px solid rgba(255,255,255,0.2); padding:20px; max-width:600px; width:90%; max-height:85vh; display:flex; flex-direction:column; gap:16px; box-shadow:0 24px 60px rgba(0,0,0,0.6);">
-            <div style="display:flex; align-items:center; justify-content:space-between;">
-                <div style="display:flex; align-items:center; gap:10px;">
-                    ${fileIcon(item, 28)}
+        <div style="background:rgba(28,28,30,0.94); backdrop-filter:blur(36px); -webkit-backdrop-filter:blur(36px); border-radius:16px; border:0.5px solid rgba(255,255,255,0.22); padding:20px; max-width:${modalWidth}; width:92%; max-height:88vh; display:flex; flex-direction:column; gap:14px; box-shadow:0 30px 80px rgba(0,0,0,0.75);">
+            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:0.5px solid rgba(255,255,255,0.08); padding-bottom:12px;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    ${fileIcon(item, 32)}
                     <div>
-                        <div style="color:white; font-size:13.5px; font-weight:600;">${item.name}</div>
-                        <div style="color:rgba(255,255,255,0.5); font-size:11px;">${item.kind} · ${item.size}</div>
+                        <div style="color:white; font-size:14px; font-weight:600;">${item.name}</div>
+                        <div style="color:rgba(255,255,255,0.5); font-size:11px;">${item.kind} · ${item.size} · Modified ${item.modified || 'Today'}</div>
                     </div>
                 </div>
-                <div onclick="Finder.closeQuickLook()" style="width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; cursor:pointer; color:white; font-size:14px;">✕</div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    ${isLegalDocument ? `
+                        <button onclick="Finder.copyDocText('${item.id}')" title="Copy text to clipboard" style="padding:5px 10px; border-radius:6px; border:0.5px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); color:white; font-size:11px; cursor:pointer;">
+                            <i class="far fa-copy"></i> Copy
+                        </button>
+                    ` : ''}
+                    <div onclick="Finder.closeQuickLook()" style="width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; cursor:pointer; color:white; font-size:13px;" title="Close QuickLook">✕</div>
+                </div>
             </div>
 
-            <div style="flex:1; background:rgba(255,255,255,0.04); border-radius:12px; min-height:220px; display:flex; align-items:center; justify-content:center; padding:16px;">
+            <div style="flex:1; background:rgba(255,255,255,0.03); border-radius:12px; border:0.5px solid rgba(255,255,255,0.06); min-height:220px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
                 ${previewContent}
             </div>
 
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div style="font-size:11px; color:rgba(255,255,255,0.5);">Modified: ${item.modified || 'Today'}</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding-top:4px;">
+                <div style="font-size:11px; color:rgba(255,255,255,0.45); display:flex; align-items:center; gap:6px;">
+                    <i class="fas fa-check-circle" style="color:#34c759;"></i>
+                    <span>Apple OS Compliance & Policy System</span>
+                </div>
                 <div style="display:flex; gap:8px;">
-                    <button onclick="Finder.closeQuickLook()" style="padding:6px 14px; border-radius:6px; border:1px solid rgba(255,255,255,0.2); background:transparent; color:white; font-size:12px; cursor:pointer;">Done</button>
-                    <button onclick="Finder.openItem('${item.id}')" style="padding:6px 14px; border-radius:6px; border:none; background:#0a84ff; color:white; font-size:12px; font-weight:600; cursor:pointer;">Open</button>
+                    ${isLegalDocument ? `
+                        <button onclick="Finder.acceptLegalTerms('${item.id}')" style="padding:6px 14px; border-radius:7px; border:none; background:#34c759; color:white; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px;">
+                            <i class="fas fa-check"></i> Accept & Acknowledge
+                        </button>
+                    ` : ''}
+                    <button onclick="Finder.closeQuickLook()" style="padding:6px 14px; border-radius:7px; border:1px solid rgba(255,255,255,0.2); background:transparent; color:white; font-size:12px; cursor:pointer;">Done</button>
                 </div>
             </div>
         </div>
@@ -1328,6 +1549,45 @@ function openQuickLook(itemId) {
 
     ql.addEventListener('click', (e) => { if (e.target === ql) closeQuickLook(); });
     document.body.appendChild(ql);
+}
+
+function copyDocText(itemId) {
+    const item = FS[itemId];
+    if (!item) return;
+
+    let textToCopy = `=== ${item.docTitle || item.name} ===\n\n`;
+    if (item.sections) {
+        item.sections.forEach(sec => {
+            textToCopy += `## ${sec.title}\n${sec.text}\n\n`;
+        });
+    } else {
+        textToCopy += `${item.name} (${item.kind})\nSize: ${item.size}`;
+    }
+
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        if (window.MacIsland && MacIsland.copy) {
+            MacIsland.copy();
+        } else {
+            showToast('Document copied to clipboard');
+        }
+    }).catch(() => {
+        showToast('Document copied');
+    });
+}
+
+function acceptLegalTerms(itemId) {
+    const item = FS[itemId];
+    try {
+        localStorage.setItem('Apple OS_policy_accepted_' + itemId, 'true');
+        localStorage.setItem('Apple OS_all_policies_accepted', 'true');
+    } catch (e) {}
+
+    if (window.MacIsland && MacIsland.showNotification) {
+        MacIsland.showNotification('Terms & Policies Acknowledged', (item ? item.name : 'Legal Agreement') + ' accepted successfully.');
+    } else {
+        showToast('✓ Acknowledged & Accepted');
+    }
+    closeQuickLook();
 }
 
 function closeQuickLook() {
@@ -1855,15 +2115,17 @@ return {
     closeGetInfo,
     openQuickLook,
     closeQuickLook,
+    copyDocText,
+    acceptLegalTerms,
     showTagPicker,
     toggleTag,
     toggleGroupMenu,
     toggleActionMenu,
     toggleShareMenu,
     toggleTagMenu,
-    toggleAirDropDiscovery,
-    setAirDropDiscovery,
-    sendAirDrop,
+    toggleQuickDropDiscovery,
+    setQuickDropDiscovery,
+    sendQuickDrop,
     closeAllPopovers,
     showToast,
     state,

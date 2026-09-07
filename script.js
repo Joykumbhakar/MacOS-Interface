@@ -1,15 +1,212 @@
-        // 1. Data & Definitions
-        const ICONS = {
-            folder: 'images/Icons/Dev Tools Icons/folder.png',
-            file: 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="25" y="15" width="50" height="70" rx="4" fill="#ffffff"/><path d="M75 35 L55 15 V35 Z" fill="#e2e8f0"/><rect x="35" y="45" width="30" height="4" rx="2" fill="#cbd5e1"/><rect x="35" y="55" width="30" height="4" rx="2" fill="#cbd5e1"/><rect x="35" y="65" width="20" height="4" rx="2" fill="#cbd5e1"/></svg>')
-        };
+// ==========================================================================
+// Universal Apple macOS Sequoia Modal Dialog & Sheet System
+// ==========================================================================
+(function initMacDialogSystem() {
+    function getDialogContainer() {
+        let el = document.getElementById('mac-dialog-layer');
+        if (!el) {
+            el = document.createElement('div');
+            el.id = 'mac-dialog-layer';
+            el.className = 'mac-dialog-backdrop';
+            el.style.cssText = `
+                position: fixed;
+                inset: 0;
+                z-index: 99999;
+                background: rgba(0, 0, 0, 0.45);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                display: none;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+            `;
+            document.body.appendChild(el);
+        }
+        return el;
+    }
+
+    window.showMacDialog = function(options = {}) {
+        return new Promise((resolve) => {
+            const container = getDialogContainer();
+            const {
+                title = 'macOS Interface',
+                message = '',
+                icon = 'images/Icons/Apple.png',
+                iconType = 'image',
+                badge = null,
+                input = null,
+                buttons = [
+                    { label: 'OK', primary: true, value: true }
+                ],
+                destructive = false,
+                onClose = null
+            } = options;
+
+            let iconHTML = '';
+            if (iconType === 'fontawesome' || (typeof icon === 'string' && icon.startsWith('fa'))) {
+                iconHTML = `<div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg, #0a84ff, #5856d6);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(10,132,255,0.3);margin-bottom:14px;"><i class="${icon}" style="color:#ffffff;font-size:24px;"></i></div>`;
+            } else if (icon) {
+                iconHTML = `<div style="position:relative;width:56px;height:56px;margin-bottom:14px;display:flex;align-items:center;justify-content:center;">
+                    <img src="${icon}" style="width:56px;height:56px;border-radius:13px;object-fit:cover;box-shadow:0 6px 18px rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.15);" onerror="this.src='images/Icons/Apple.png'">
+                    ${badge ? `<div style="position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-radius:50%;background:#34c759;border:2px solid #fff;display:flex;align-items:center;justify-content:center;"><i class="fas fa-check" style="color:white;font-size:9px;"></i></div>` : ''}
+                </div>`;
+            }
+
+            const inputHTML = input ? `
+                <div style="width:100%;margin-top:14px;">
+                    <input id="mac-dialog-input" type="${input.type || 'text'}" placeholder="${input.placeholder || ''}" value="${input.defaultValue || ''}" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);color:#ffffff;font-size:13px;outline:none;box-sizing:border-box;font-family:inherit;" />
+                </div>
+            ` : '';
+
+            const buttonsHTML = buttons.map((b, idx) => {
+                const isPrimary = b.primary !== false && idx === buttons.length - 1;
+                const isDestructive = b.destructive || (destructive && isPrimary);
+                let btnStyle = `
+                    flex: 1;
+                    padding: 8px 16px;
+                    border-radius: 9px;
+                    font-size: 13px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.15s ease;
+                    outline: none;
+                    text-align: center;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    user-select: none;
+                `;
+                if (isDestructive) {
+                    btnStyle += `background:#ff3b30;color:#ffffff;border:1px solid rgba(255,59,48,0.8);box-shadow:0 2px 8px rgba(255,59,48,0.35);`;
+                } else if (isPrimary) {
+                    btnStyle += `background:#007aff;color:#ffffff;border:1px solid rgba(0,122,255,0.9);box-shadow:0 2px 10px rgba(0,122,255,0.35);`;
+                } else {
+                    btnStyle += `background:rgba(255,255,255,0.12);color:#ffffff;border:1px solid rgba(255,255,255,0.22);`;
+                }
+                return `<button class="mac-dialog-btn" data-index="${idx}" style="${btnStyle}">${b.label}</button>`;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="mac-dialog-card" style="
+                    width: 320px;
+                    max-width: 90vw;
+                    background: rgba(36, 36, 38, 0.92);
+                    backdrop-filter: blur(40px) saturate(190%);
+                    -webkit-backdrop-filter: blur(40px) saturate(190%);
+                    border: 1px solid rgba(255, 255, 255, 0.16);
+                    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 28px 65px rgba(0, 0, 0, 0.55);
+                    border-radius: 20px;
+                    padding: 24px 22px 20px;
+                    color: #ffffff;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    text-align: center;
+                    transform: scale(0.92);
+                    opacity: 0;
+                    transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease;
+                    box-sizing: border-box;
+                    font-family: -apple-system, 'SF Pro Display', sans-serif;
+                ">
+                    ${iconHTML}
+                    <div style="font-size: 15px; font-weight: 700; color: #ffffff; letter-spacing: -0.2px; line-height: 1.25; margin-bottom: 6px;">${title}</div>
+                    <div style="font-size: 12.5px; font-weight: 400; color: rgba(255, 255, 255, 0.75); line-height: 1.45; word-break: break-word;">${message}</div>
+                    ${inputHTML}
+                    <div style="display: flex; gap: 10px; width: 100%; margin-top: 20px; justify-content: center;">
+                        ${buttonsHTML}
+                    </div>
+                </div>
+            `;
+
+            container.style.display = 'flex';
+            requestAnimationFrame(() => {
+                container.style.opacity = '1';
+                const card = container.querySelector('.mac-dialog-card');
+                if (card) {
+                    card.style.transform = 'scale(1)';
+                    card.style.opacity = '1';
+                }
+                const inp = document.getElementById('mac-dialog-input');
+                if (inp) inp.focus();
+            });
+
+            const close = (result) => {
+                container.style.opacity = '0';
+                const card = container.querySelector('.mac-dialog-card');
+                if (card) {
+                    card.style.transform = 'scale(0.94)';
+                    card.style.opacity = '0';
+                }
+                setTimeout(() => {
+                    container.style.display = 'none';
+                    container.innerHTML = '';
+                    if (onClose) onClose(result);
+                    resolve(result);
+                }, 220);
+            };
+
+            const btnElements = container.querySelectorAll('.mac-dialog-btn');
+            btnElements.forEach(btn => {
+                btn.onclick = () => {
+                    const idx = parseInt(btn.getAttribute('data-index'));
+                    const btnConfig = buttons[idx];
+                    const inp = document.getElementById('mac-dialog-input');
+                    const val = inp ? inp.value : (btnConfig.value !== undefined ? btnConfig.value : btnConfig.label);
+                    close(val);
+                };
+            });
+        });
+    };
+
+    // Override default browser alert, confirm, prompt with native Apple modals
+    window.alert = function(msg, title = 'macOS Interface') {
+        return window.showMacDialog({
+            title: title || 'Apple Music',
+            message: msg,
+            icon: 'fas fa-music',
+            buttons: [{ label: 'OK', primary: true, value: true }]
+        });
+    };
+
+    window.confirm = function(msg, title = 'macOS Confirmation') {
+        return window.showMacDialog({
+            title: title || 'Confirmation',
+            message: msg,
+            icon: 'images/Icons/Apple.png',
+            buttons: [
+                { label: 'Cancel', primary: false, value: false },
+                { label: 'Continue', primary: true, value: true }
+            ]
+        });
+    };
+
+    window.prompt = function(msg, defaultText = '', title = 'Input Required') {
+        return window.showMacDialog({
+            title: title || 'Input',
+            message: msg,
+            icon: 'fas fa-folder',
+            input: { defaultValue: defaultText, placeholder: 'Type here...' },
+            buttons: [
+                { label: 'Cancel', primary: false, value: null },
+                { label: 'OK', primary: true }
+            ]
+        });
+    };
+})();
+
+// 1. Data & Definitions
+const ICONS = {
+    folder: 'images/Icons/Dev Tools Icons/folder.png',
+    file: 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="25" y="15" width="50" height="70" rx="4" fill="#ffffff"/><path d="M75 35 L55 15 V35 Z" fill="#e2e8f0"/><rect x="35" y="45" width="30" height="4" rx="2" fill="#cbd5e1"/><rect x="35" y="55" width="30" height="4" rx="2" fill="#cbd5e1"/><rect x="35" y="65" width="20" height="4" rx="2" fill="#cbd5e1"/></svg>')
+};
 
         const APP_DATA = [
             { id: 'finder', name: 'Finder', icon: 'images/Icons/Finder.png', category: 'utility', isOpen: true },
             { id: 'launchpad', name: 'Launchpad', icon: 'images/Icons/LaunchPad.png', category: 'utility', isOpen: false },
             { id: 'settings', name: 'System Settings', icon: 'images/Icons/Settings.png', category: 'utility', isOpen: false },
             { id: 'appstore', name: 'App Store', icon: 'images/Icons/AppStore.png', category: 'utility', isOpen: false },
-            { id: 'safari', name: 'Safari', icon: 'images/Icons/safari.png', category: 'browser', isOpen: false },
+            { id: 'Browser', name: 'Browser', icon: 'images/Icons/safari.png', category: 'browser', isOpen: false },
             { id: 'chrome', name: 'Google Chrome', icon: 'images/Icons/Chrome.png', category: 'browser', isOpen: false },
             { id: 'brave', name: 'Brave', icon: 'images/Icons/Brave.png', category: 'browser', isOpen: false },
             { id: 'messages', name: 'Messages', icon: 'images/Icons/Messages.png', category: 'chat', isOpen: false },
@@ -89,7 +286,7 @@
             { id: 'machash', name: 'MacHash', icon: 'images/Icons/MacHash.png', category: 'utility', isOpen: false }
         ];
 
-        const DOCK_APP_IDS = ['finder', 'launchpad', 'safari', 'messages', 'mail', 'maps', 'photos', 'calendar', 'notes', 'music', 'vscode', 'github', 'terminal', 'settings', 'trash'];
+        const DOCK_APP_IDS = ['finder', 'launchpad', 'Browser', 'messages', 'mail', 'maps', 'photos', 'calendar', 'notes', 'music', 'vscode', 'github', 'terminal', 'settings', 'trash'];
         APP_DATA.forEach(app => { app.inDock = DOCK_APP_IDS.includes(app.id); });
 
         const SKELETON_TEMPLATES = {
@@ -247,8 +444,8 @@
                     <div style="display: flex; gap: 16px; align-items: center; flex: 1;">
                         <img src="${data.icon}" style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
                         <div style="display: flex; flex-direction: column; gap: 2px;">
-                            <div style="color: #fff; font-size: 16px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; letter-spacing: -0.3px;">${data.title}</div>
-                            <div style="color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 400; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">${data.artist}</div>
+                            <div style="color: #fff; font-size: 16px; font-weight: 600; font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; letter-spacing: -0.3px;">${data.title}</div>
+                            <div style="color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 400; font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">${data.artist}</div>
                         </div>
                     </div>
                     <div style="display: flex; gap: 20px; align-items: center; color: white;">
@@ -631,7 +828,7 @@
                 return; // Let dock handle its own menu
             } else if (e.target.closest('.mac-window')) {
                 type = 'window';
-            } else if (e.target.closest('.macos-desktop') || e.target.closest('.macos-body')) {
+            } else if (e.target.closest('.macOS-desktop') || e.target.closest('.macOS-body')) {
                 type = 'desktop';
             }
             
@@ -656,16 +853,239 @@
         };
 
         function focusWindow(win) {
-            document.querySelectorAll('.mac-window').forEach(w => {
-                if (w !== win) {
-                    w.classList.remove('is-focused');
-                    w.style.zIndex = 5000;
-                }
-            });
-            win.classList.add('is-focused');
-            win.style.zIndex = 5050;
-            
+            if (window.MacWindowManager) {
+                window.MacWindowManager.focus(win);
+            } else {
+                document.querySelectorAll('.mac-window').forEach(w => {
+                    if (w !== win) {
+                        w.classList.remove('is-focused');
+                        w.style.zIndex = 5000;
+                    }
+                });
+                win.classList.add('is-focused');
+                win.style.zIndex = 5050;
+            }
         }
+
+        const MacWindowManager = {
+            focus(win) {
+                if (!win) return;
+                document.querySelectorAll('.mac-window').forEach(w => {
+                    if (w !== win) {
+                        w.classList.remove('is-focused');
+                        w.style.zIndex = 5000;
+                    }
+                });
+                win.classList.add('is-focused');
+                win.style.zIndex = 5050;
+
+                const appId = win.id.replace('-window', '').replace('window-', '').toLowerCase();
+                if (window.MenuSystem && typeof window.MenuSystem.setActiveApp === 'function') {
+                    window.MenuSystem.setActiveApp(appId);
+                }
+            },
+
+            open(appId, sourceElement = null) {
+                let win = document.getElementById(appId + '-window');
+                if (!win) {
+                    if (typeof appState.openApp === 'function') {
+                        appState.openApp(appId, sourceElement);
+                        win = document.getElementById(appId + '-window');
+                    } else {
+                        const appObj = APP_DATA.find(a => a.id === appId);
+                        if (appObj && typeof appState.createSkeletonWindow === 'function') {
+                            appState.createSkeletonWindow(appObj);
+                            win = document.getElementById(appId + '-window');
+                        }
+                    }
+                }
+                if (!win) return;
+
+                if (win.classList.contains('is-minimized')) {
+                    this.restore(win, sourceElement);
+                    return;
+                }
+
+                let iconEl = sourceElement || document.getElementById('dock-' + appId);
+                if (iconEl) {
+                    win._sourceIcon = iconEl;
+                    const iconRect = iconEl.getBoundingClientRect();
+                    const iconCenterX = iconRect.left + iconRect.width / 2;
+                    const iconCenterY = iconRect.top + iconRect.height / 2;
+                    const tx = iconCenterX - win.offsetLeft - win.offsetWidth / 2;
+                    const ty = iconCenterY - win.offsetTop - win.offsetHeight / 2;
+                    const scale = iconRect.width / (win.offsetWidth || 600);
+
+                    win.style.setProperty('--icon-tx', `${tx}px`);
+                    win.style.setProperty('--icon-ty', `${ty}px`);
+                    win.style.setProperty('--icon-scale', Math.max(scale, 0.05));
+                }
+
+                win.classList.remove('is-minimized');
+                void win.offsetWidth;
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        win.classList.add('active');
+                        this.focus(win);
+                    });
+                });
+
+                this.updateDockDot(appId, true);
+            },
+
+            close(winOrId) {
+                const win = typeof winOrId === 'string' ? (document.getElementById(winOrId + '-window') || document.getElementById(winOrId)) : winOrId;
+                if (!win) return;
+                const appId = win.id.replace('-window', '').replace('window-', '').toLowerCase();
+
+                if (window.MacAudio) MacAudio.play('close');
+
+                if (win._sourceIcon) {
+                    const iconRect = win._sourceIcon.getBoundingClientRect();
+                    const iconCenterX = iconRect.left + iconRect.width / 2;
+                    const iconCenterY = iconRect.top + iconRect.height / 2;
+                    const tx = iconCenterX - win.offsetLeft - win.offsetWidth / 2;
+                    const ty = iconCenterY - win.offsetTop - win.offsetHeight / 2;
+                    const scale = iconRect.width / (win.offsetWidth || 600);
+
+                    win.style.setProperty('--icon-tx', `${tx}px`);
+                    win.style.setProperty('--icon-ty', `${ty}px`);
+                    win.style.setProperty('--icon-scale', Math.max(scale, 0.05));
+                }
+
+                win.classList.remove('active', 'maximized', 'is-minimized', 'is-focused');
+                win.style.zIndex = 5000;
+
+                this.focusTopmostRemaining();
+                if (appId !== 'finder') {
+                    this.updateDockDot(appId, false);
+                }
+            },
+
+            minimize(winOrId) {
+                const win = typeof winOrId === 'string' ? (document.getElementById(winOrId + '-window') || document.getElementById(winOrId)) : winOrId;
+                if (!win) return;
+                const appId = win.id.replace('-window', '').replace('window-', '').toLowerCase();
+
+                if (window.MacAudio) MacAudio.play('minimize');
+
+                const dockIcon = document.getElementById('dock-' + appId) || document.getElementById('dockPanel') || document.body;
+                const iconRect = dockIcon.getBoundingClientRect();
+                const winRect = win.getBoundingClientRect();
+
+                const iconCenterX = iconRect.left + iconRect.width / 2;
+                const iconCenterY = iconRect.top + iconRect.height / 2;
+                const winCenterX = winRect.left + winRect.width / 2;
+                const winCenterY = winRect.top + winRect.height / 2;
+
+                const tx = iconCenterX - winCenterX;
+                const ty = iconCenterY - winCenterY;
+                const scale = Math.max(0.04, iconRect.width / (win.offsetWidth || 600));
+
+                win.style.setProperty('--dock-tx', `${tx}px`);
+                win.style.setProperty('--dock-ty', `${ty}px`);
+                win.style.setProperty('--dock-scale', scale);
+
+                win.classList.add('is-minimized');
+                win.classList.remove('is-focused');
+
+                this.updateDockDot(appId, true);
+                this.focusTopmostRemaining();
+
+                if (window.MacIsland && MacIsland.dispatch) {
+                    const title = win.querySelector('.tb-title, .window-header span, #headerTitle')?.textContent || appId;
+                    MacIsland.dispatch({ type: 'notification', mode: 'compact', data: { title: 'Minimized', subtitle: title, icon: 'fas fa-arrow-down' }, duration: 1600 });
+                }
+            },
+
+            restore(winOrId, sourceElement = null) {
+                const win = typeof winOrId === 'string' ? (document.getElementById(winOrId + '-window') || document.getElementById(winOrId)) : winOrId;
+                if (!win) return;
+                const appId = win.id.replace('-window', '').replace('window-', '').toLowerCase();
+
+                if (window.MacAudio) MacAudio.play('maximize');
+
+                const iconEl = sourceElement || document.getElementById('dock-' + appId) || document.getElementById('dockPanel');
+                if (iconEl) {
+                    const iconRect = iconEl.getBoundingClientRect();
+                    const winRect = win.getBoundingClientRect();
+                    const iconCenterX = iconRect.left + iconRect.width / 2;
+                    const iconCenterY = iconRect.top + iconRect.height / 2;
+                    const tx = iconCenterX - (win.offsetLeft || winRect.left) - (win.offsetWidth || winRect.width) / 2;
+                    const ty = iconCenterY - (win.offsetTop || winRect.top) - (win.offsetHeight || winRect.height) / 2;
+                    const scale = iconRect.width / (win.offsetWidth || 600);
+
+                    win.style.setProperty('--dock-tx', `${tx}px`);
+                    win.style.setProperty('--dock-ty', `${ty}px`);
+                    win.style.setProperty('--dock-scale', Math.max(scale, 0.05));
+                }
+
+                win.classList.remove('is-minimized');
+                win.classList.add('active');
+                this.focus(win);
+                this.updateDockDot(appId, true);
+            },
+
+            maximize(winOrId) {
+                const win = typeof winOrId === 'string' ? (document.getElementById(winOrId + '-window') || document.getElementById(winOrId)) : winOrId;
+                if (!win) return;
+
+                if (window.MacAudio) MacAudio.play('maximize');
+
+                if (win.classList.contains('maximized')) {
+                    win.classList.remove('maximized');
+                    if (win._savedBounds) {
+                        win.style.left = win._savedBounds.left || '';
+                        win.style.top = win._savedBounds.top || '';
+                        win.style.width = win._savedBounds.width || '';
+                        win.style.height = win._savedBounds.height || '';
+                        win.style.margin = win._savedBounds.margin || '';
+                    }
+                } else {
+                    win._savedBounds = {
+                        left: win.style.left,
+                        top: win.style.top,
+                        width: win.style.width,
+                        height: win.style.height,
+                        margin: win.style.margin
+                    };
+                    win.classList.add('maximized');
+                }
+
+                this.focus(win);
+            },
+
+            focusTopmostRemaining() {
+                const openWindows = Array.from(document.querySelectorAll('.mac-window.active:not(.is-minimized)'));
+                if (openWindows.length > 0) {
+                    const nextWin = openWindows[openWindows.length - 1];
+                    this.focus(nextWin);
+                } else {
+                    if (window.MenuSystem && typeof window.MenuSystem.setActiveApp === 'function') {
+                        window.MenuSystem.setActiveApp('finder');
+                    }
+                }
+            },
+
+            updateDockDot(appId, isOpen) {
+                const dockItem = document.getElementById('dock-' + appId);
+                if (!dockItem) return;
+                let dot = dockItem.querySelector('.app-dot');
+                if (isOpen) {
+                    if (!dot) {
+                        dot = document.createElement('div');
+                        dot.className = 'app-dot';
+                        dockItem.appendChild(dot);
+                    }
+                } else {
+                    if (dot && appId !== 'finder') {
+                        dot.remove();
+                    }
+                }
+            }
+        };
+
+        window.MacWindowManager = MacWindowManager;
 
         function makeDraggable(element) {
             const headers = element.querySelectorAll('.window-header, .mac-toolbar, .settings-sidebar .window-header, .mac-window > div:first-child');
@@ -720,10 +1140,7 @@
             winContainer.appendChild(win); 
             
             makeDraggable(win); 
-            win.addEventListener('mousedown', () => focusWindow(win));
-            win.querySelector('.tl-close').addEventListener('click', (e) => { e.stopPropagation(); this.closeApp(app.id); });
-            win.querySelector('.tl-min').addEventListener('click', (e) => { e.stopPropagation(); this.closeApp(app.id); });
-            win.querySelector('.tl-max').addEventListener('click', (e) => { e.stopPropagation(); win.classList.toggle('maximized'); });
+            win.addEventListener('mousedown', () => MacWindowManager.focus(win));
         };
 
         window.showFaceIdAuth = function(title = 'Face ID') {
@@ -789,7 +1206,7 @@
             const appObj = APP_DATA.find(a => a.id === appId);
             if (appObj && appObj.category === 'folder') return;
             
-            if (appObj && appId !== 'finder' && appId !== 'safari' && appId !== 'terminal' && appId !== 'settings') {
+            if (appObj && appId !== 'finder' && appId !== 'Browser' && appId !== 'terminal' && appId !== 'settings') {
                                 if (appId === 'calculator') {
                     if (!document.getElementById('calculator-window')) {
                         const winContainer = document.getElementById('windows-container');
@@ -800,12 +1217,13 @@
                         win.style.height = '330px';
                         win.style.marginTop = `${Math.floor(Math.random() * 40 - 20)}px`;
                         win.style.marginLeft = `${Math.floor(Math.random() * 40 - 20)}px`;
-                        win.innerHTML = `<div class="traffic-lights window-header" style="position: absolute; top:0; left:0; z-index: 10;"><div class="tl-btn tl-close"></div><div class="tl-btn tl-min"></div><div class="tl-btn tl-max" style="opacity: 0.5; pointer-events: none;"></div></div><div id="calculator-react-root" style="width:100%;height:100%;border-radius:inherit;overflow:hidden;"></div>`;
+                        win.innerHTML = `<div class="traffic-lights window-header" style="position: absolute; top:0; left:0; z-index: 10;"><div class="tl-btn tl-close"></div><div class="tl-btn tl-min"></div><div class="tl-btn tl-max"></div></div><div id="calculator-react-root" style="width:100%;height:100%;border-radius:inherit;overflow:hidden;"></div>`;
                         winContainer.appendChild(win);
                         makeDraggable(win);
                         win.addEventListener('mousedown', () => focusWindow(win));
                         win.querySelector('.tl-close').addEventListener('click', (e) => { e.stopPropagation(); this.closeApp('calculator'); });
-                        win.querySelector('.tl-min').addEventListener('click', (e) => { e.stopPropagation(); this.closeApp('calculator'); });
+                        win.querySelector('.tl-min').addEventListener('click', (e) => { e.stopPropagation(); this.minimize('calculator'); });
+                        win.querySelector('.tl-max').addEventListener('click', (e) => { e.stopPropagation(); this.maximize(win); });
                         
                         if (window.renderCalculatorApp) {
                             window.renderCalculatorApp();
@@ -828,12 +1246,64 @@
                         makeDraggable(win);
                         win.addEventListener('mousedown', () => focusWindow(win));
                         win.querySelector('.tl-close').addEventListener('click', (e) => { e.stopPropagation(); this.closeApp('music'); });
-                        win.querySelector('.tl-min').addEventListener('click', (e) => { e.stopPropagation(); this.closeApp('music'); });
-                        win.querySelector('.tl-max').addEventListener('click', (e) => { e.stopPropagation(); win.classList.toggle('maximized'); });
+                        win.querySelector('.tl-min').addEventListener('click', (e) => { e.stopPropagation(); this.minimize('music'); });
+                        win.querySelector('.tl-max').addEventListener('click', (e) => { e.stopPropagation(); this.maximize(win); });
                         
                         // Render React App
                         if (window.renderAppleMusicApp) {
                             window.renderAppleMusicApp();
+                        }
+                    }
+                } else if (appId === 'vscode') {
+                    if (!document.getElementById('vscode-window')) {
+                        const winContainer = document.getElementById('windows-container');
+                        const win = document.createElement('div');
+                        win.id = 'vscode-window';
+                        win.className = 'mac-window';
+                        win.style.width = '1040px';
+                        win.style.maxWidth = '92vw';
+                        win.style.height = '680px';
+                        win.style.maxHeight = '88vh';
+                        win.style.marginTop = `${Math.floor(Math.random() * 40 - 20)}px`;
+                        win.style.marginLeft = `${Math.floor(Math.random() * 40 - 20)}px`;
+                        win.style.background = '#1e1e1e';
+                        win.innerHTML = `
+                            <div class="traffic-lights window-header" style="position: absolute; top:12px; left:16px; z-index: 50;">
+                                <div class="tl-btn tl-close"></div>
+                                <div class="tl-btn tl-min"></div>
+                                <div class="tl-btn tl-max"></div>
+                            </div>
+                            <iframe id="vscode-iframe" src="apps/VSCode/index.html" style="width:100%;height:100%;border:none;border-radius:inherit;overflow:hidden;background:#1e1e1e;"></iframe>
+                        `;
+                        winContainer.appendChild(win);
+                        makeDraggable(win);
+                        win.addEventListener('mousedown', () => focusWindow(win));
+                        win.querySelector('.tl-close').addEventListener('click', (e) => { e.stopPropagation(); this.closeApp('vscode'); });
+                        win.querySelector('.tl-min').addEventListener('click', (e) => { e.stopPropagation(); this.minimize('vscode'); });
+                        win.querySelector('.tl-max').addEventListener('click', (e) => { e.stopPropagation(); this.maximize(win); });
+                    }
+                } else if (appId === 'messages') {
+                    if (!document.getElementById('messages-window')) {
+                        const winContainer = document.getElementById('windows-container');
+                        const win = document.createElement('div');
+                        win.id = 'messages-window';
+                        win.className = 'mac-window';
+                        win.style.width = '840px';
+                        win.style.maxWidth = '92vw';
+                        win.style.height = '520px';
+                        win.style.maxHeight = 'calc(100vh - 120px)';
+                        win.style.marginTop = '0px';
+                        win.style.marginLeft = '0px';
+                        win.innerHTML = `<div class="traffic-lights window-header" style="position: absolute; top:0; left:0; z-index: 30; height: 50px; display:flex; align-items:center; padding: 0 16px;"><div class="tl-btn tl-close"></div><div class="tl-btn tl-min"></div><div class="tl-btn tl-max"></div></div><div id="messages-react-root" style="width:100%;height:100%;border-radius:inherit;overflow:hidden;"></div>`;
+                        winContainer.appendChild(win);
+                        makeDraggable(win);
+                        win.addEventListener('mousedown', () => focusWindow(win));
+                        win.querySelector('.tl-close').addEventListener('click', (e) => { e.stopPropagation(); this.closeApp('messages'); });
+                        win.querySelector('.tl-min').addEventListener('click', (e) => { e.stopPropagation(); this.minimize('messages'); });
+                        win.querySelector('.tl-max').addEventListener('click', (e) => { e.stopPropagation(); this.maximize(win); });
+                        
+                        if (window.renderMessagesApp) {
+                            window.renderMessagesApp();
                         }
                     }
                 } else {
@@ -1205,7 +1675,7 @@ const SETTINGS_VIEWS = {
             ${setRow('Contacts', toggleHTML('t-icloud-contacts', true))}
             ${setRow('Calendars', toggleHTML('t-icloud-cal', true))}
             ${setRow('Reminders', toggleHTML('t-icloud-rem', true))}
-            ${setRow('Safari', toggleHTML('t-icloud-safari', true))}
+            ${setRow('Browser', toggleHTML('t-icloud-Browser', true))}
             ${setRow('Notes', toggleHTML('t-icloud-notes', true))}
             ${setRow('Passwords & Keychain', toggleHTML('t-icloud-keys', true))}
         `)}
@@ -1266,7 +1736,7 @@ const SETTINGS_VIEWS = {
             ${setRow('Group notifications', setSelect('Automatic'))}
         `)}
         ${setSection('Application Notifications', `
-            ${['App Store','Calendar','FaceTime','Mail','Messages','Reminders','Safari','System Preferences'].map((a,i) =>
+            ${['App Store','Calendar','Video Call','Mail','Messages','Reminders','Browser','System Preferences'].map((a,i) =>
                 `<div style="height:0.5px;background:#e5e5ea;margin:0 16px;display:${i===0?'none':'block'};"></div>${setRow(a, toggleHTML('t-notif-'+i, i < 6))}`
             ).join('')}
         `)}`,
@@ -1445,24 +1915,24 @@ const SETTINGS_VIEWS = {
     // --- Control Center Settings ---
     'control-center-settings': () => `
         ${setSection('Control Center Modules', `
-            ${[['Wi-Fi','always on'],['Bluetooth','always on'],['AirDrop','show when active'],['Focus','always show'],['Stage Manager','show when active'],['Screen Mirroring','show when active'],['Display','show when active'],['Sound','always show'],['Now Playing','show when active']].map(([name,hint],i)=>`${i?'':''}${setRow(name, setSelect(hint))}`).join('')}
+            ${[['Wi-Fi','always on'],['Bluetooth','always on'],['QuickDrop','show when active'],['Focus','always show'],['Stage Manager','show when active'],['Screen Mirroring','show when active'],['Display','show when active'],['Sound','always show'],['Now Playing','show when active']].map(([name,hint],i)=>`${i?'':''}${setRow(name, setSelect(hint))}`).join('')}
         `)}
         ${setSection('Menu Bar Only', `
-            ${[['Clock','show'],['Spotlight','show'],['Siri','show'],['Time Machine','show when active']].map(([name,hint],i)=>`${i?'':''}${setRow(name, setSelect(hint))}`).join('')}
+            ${[['Clock','show'],['Spotlight','show'],['Assistant','show'],['Time Machine','show when active']].map(([name,hint],i)=>`${i?'':''}${setRow(name, setSelect(hint))}`).join('')}
         `)}`,
 
-    // --- Siri & Spotlight ---
-    'siri-spotlight': () => `
-        ${setSection('Siri', `
-            ${setRow('Ask Siri', toggleHTML('t-siri', true))}
+    // --- Assistant & Spotlight ---
+    'Assistant-spotlight': () => `
+        ${setSection('Assistant', `
+            ${setRow('Ask Assistant', toggleHTML('t-Assistant', true))}
             
-            ${setRow('Listen for', setSelect('"Hey Siri"'))}
+            ${setRow('Listen for', setSelect('"Hey Assistant"'))}
             
             ${setRow('Language', setSelect('English (United States)'))}
             
-            ${setRow('Siri Voice', setSelect('American (Voice 4)'))}
+            ${setRow('Assistant Voice', setSelect('American (Voice 4)'))}
             
-            ${setRow('Siri Responses', setSelect('Automatic'))}
+            ${setRow('Assistant Responses', setSelect('Automatic'))}
         `)}
         ${setSection('Spotlight', `
             ${setRow('Spotlight Privacy', '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>')}
@@ -2062,7 +2532,7 @@ const SETTINGS_VIEWS = {
                 'appearance': 'Appearance',
                 'accessibility': 'Accessibility',
                 'control-center-settings': 'Control Center',
-                'siri-spotlight': 'Apple Intelligence & Siri',
+                'Assistant-spotlight': 'Apple Intelligence & Assistant',
                 'desktop-dock': 'Desktop & Dock',
                 'displays': 'Displays',
                 'wallpaper': 'Wallpaper',
@@ -2310,8 +2780,8 @@ const SETTINGS_VIEWS = {
                 if(appState.selectedItemIds.size > 0) { 
                     appState.files = appState.files.filter(f => !appState.selectedItemIds.has(f.id)); 
                     appState.selectedItemIds.clear(); renderFiles(); 
-                    const trashImg = document.querySelector('.dock-item img[alt="Bin"]');
-                    if (trashImg) trashImg.src = 'https://s3-new.macosicons.com/macosicons/parse/Bin_Full_KtswXfzQ5b_lowResPng-87fdbf02da.png';
+                    const trashImg = document.querySelector('.dock-item img[alt="Bin"]') || document.querySelector('.dock-item i.fa-trash');
+                    if (trashImg) trashImg.src = 'https://s3-new.macOSicons.com/macOSicons/parse/Bin_Full_KtswXfzQ5b_lowResPng-87fdbf02da.png';
                 }
             });
             document.getElementById('menu-open').addEventListener('click', () => { if(appState.selectedItemIds.size === 1) { const f = appState.files.find(f => f.id === Array.from(appState.selectedItemIds)[0]); if(f && f.type === 'folder') appState.navigateTo(f.id); }});
@@ -2368,18 +2838,49 @@ const SETTINGS_VIEWS = {
                 updateBatteryUI(1, false);
             }
 
-            // Hardcoded Window Controls
+            // Setup initial windows with dragging and window manager
             document.querySelectorAll('.mac-window').forEach(win => {
-                const appId = win.id.replace('-window', '');
-                const closeBtn = win.querySelector('.tl-close');
-                const minBtn = win.querySelector('.tl-min');
-                const maxBtn = win.querySelector('.tl-max');
-                if (closeBtn) closeBtn.addEventListener('click', (e) => { e.stopPropagation(); appState.closeApp(appId); });
-                if (minBtn) minBtn.addEventListener('click', (e) => { e.stopPropagation(); appState.closeApp(appId); });
-                if (maxBtn) maxBtn.addEventListener('click', (e) => { e.stopPropagation(); win.classList.toggle('maximized'); });
                 if (win.id !== 'custom-prompt') {
                     makeDraggable(win);
-                    win.addEventListener('mousedown', () => { focusWindow(win); });
+                    win.addEventListener('mousedown', () => { MacWindowManager.focus(win); });
+                }
+            });
+
+            // Global Unified Traffic Light Click Interception
+            document.addEventListener('click', (e) => {
+                const closeBtn = e.target.closest('.tl-close');
+                if (closeBtn) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    const win = closeBtn.closest('.mac-window');
+                    if (win) MacWindowManager.close(win);
+                    return;
+                }
+                const minBtn = e.target.closest('.tl-min');
+                if (minBtn) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    const win = minBtn.closest('.mac-window');
+                    if (win) MacWindowManager.minimize(win);
+                    return;
+                }
+                const maxBtn = e.target.closest('.tl-max');
+                if (maxBtn) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    const win = maxBtn.closest('.mac-window');
+                    if (win) MacWindowManager.maximize(win);
+                    return;
+                }
+            }, true);
+
+            // Double-click window header to toggle zoom / maximize (macOS standard)
+            document.addEventListener('dblclick', (e) => {
+                if (e.target.closest('.tl-btn') || e.target.closest('button') || e.target.closest('input') || e.target.closest('.view-toggles') || e.target.closest('.tb-action-btn') || e.target.closest('.segmented-control')) return;
+                const header = e.target.closest('.window-header, .mac-toolbar, .settings-sidebar .window-header');
+                if (header) {
+                    const win = header.closest('.mac-window');
+                    if (win) MacWindowManager.maximize(win);
                 }
             });
 
@@ -2434,32 +2935,51 @@ const SETTINGS_VIEWS = {
                 currentIslandState = 'active'; window.updateIslandState(currentIslandState, activePersistentTask); 
                 
                 let mode = 'notification', data = { title: app.name, subtitle: 'Application opened', icon: app.icon };
-                if (app.id === 'music' || app.id === 'spotify') { mode = 'nook'; data = { icon: app.icon, title: 'West End Blues', artist: 'Louis Armstrong and...' }; } 
+                if (app.id === 'music' || app.id === 'spotify') { mode = 'notification'; data = { icon: app.icon, title: app.name, subtitle: 'Music Library' }; } 
                 else if (app.id === 'youtube' || app.id === 'netflix') { mode = 'media'; data = { icon: app.icon, title: 'Midnight City', artist: 'M83' }; } 
                 else if (app.id === 'finder' || app.id === 'trash') { mode = 'tray'; } 
                 else if (app.id === 'calculator' || app.id === 'terminal') { mode = 'timer'; }
                 else if (app.category === 'chat') { data = { title: app.name, subtitle: 'New message received', icon: app.icon }; }
-                else if (app.id === 'safari' || app.id === 'chrome') { data = { title: 'Download Complete', subtitle: 'macOS_Sequoia.dmg', icon: app.icon }; } 
+                else if (app.id === 'Browser' || app.id === 'chrome') { data = { title: 'Download Complete', subtitle: 'macOS_Sequoia.dmg', icon: app.icon }; } 
                 else if (app.category === 'dev' || app.category === 'design') { data = { title: app.name, subtitle: 'Environment Ready', icon: app.icon }; } 
                 else if (app.id === 'settings') { mode = 'auth'; }
                 
+                const dockIconEl = document.getElementById('dock-' + app.id);
+
                 if (app.id === 'settings') {
                     openIsland(mode, data);
                     // Do not open app yet. Wait for auth to complete.
                     setTimeout(() => {
                         const targetWindow = document.getElementById(app.id + '-window');
                         if (targetWindow) { 
-                            if (!targetWindow.classList.contains('active')) appState.openApp(app.id); 
-                        } 
-                        else { appState.openApp(app.id); }
+                            if (targetWindow.classList.contains('is-minimized')) {
+                                MacWindowManager.restore(targetWindow, dockIconEl);
+                            } else if (targetWindow.classList.contains('active')) {
+                                MacWindowManager.focus(targetWindow);
+                            } else {
+                                MacWindowManager.open(app.id, dockIconEl);
+                            }
+                        } else {
+                            appState.openApp(app.id, dockIconEl);
+                        }
                     }, 2000);
                 } else {
                     const targetWindow = document.getElementById(app.id + '-window');
                     if (targetWindow) { 
-                        if (targetWindow.classList.contains('active')) appState.closeApp(app.id); 
-                        else appState.openApp(app.id); 
-                    } 
-                    else { appState.openApp(app.id); }
+                        if (targetWindow.classList.contains('is-minimized')) {
+                            MacWindowManager.restore(targetWindow, dockIconEl);
+                        } else if (targetWindow.classList.contains('active')) {
+                            if (targetWindow.classList.contains('is-focused')) {
+                                MacWindowManager.minimize(targetWindow);
+                            } else {
+                                MacWindowManager.focus(targetWindow);
+                            }
+                        } else {
+                            MacWindowManager.open(app.id, dockIconEl);
+                        }
+                    } else {
+                        appState.openApp(app.id, dockIconEl);
+                    }
                     openIsland(mode, data);
                 }
             }
@@ -2482,7 +3002,7 @@ const SETTINGS_VIEWS = {
                 // Add some dummy recent items for visual effect
                 if (app.id === 'launchpad') {
                     itemsContainer.innerHTML += `<div class="dock-menu-item">Show Launchpad</div><div class="dock-menu-divider"></div><div class="dock-menu-item">Remove from Dock</div>`;
-                } else if (app.id === 'safari') {
+                } else if (app.id === 'Browser') {
                     itemsContainer.innerHTML += `<div class="dock-menu-item">New Window</div><div class="dock-menu-item">New Private Window</div><div class="dock-menu-divider"></div><div class="dock-menu-item">Options</div><div class="dock-menu-item">Show All Windows</div><div class="dock-menu-divider"></div><div class="dock-menu-item">Hide</div><div class="dock-menu-item">Quit</div>`;
                 } else {
                     itemsContainer.innerHTML += `<div class="dock-menu-item">Options</div><div class="dock-menu-item">Show All Windows</div><div class="dock-menu-divider"></div><div class="dock-menu-item">Hide</div><div class="dock-menu-item">Quit</div>`;
@@ -2506,8 +3026,19 @@ const SETTINGS_VIEWS = {
                 dockApps.forEach((app, index) => {
                     const item = document.createElement('div'); item.className = 'dock-item'; item.id = 'dock-' + app.id;
                     const tooltip = document.createElement('div'); tooltip.className = 'dock-tooltip'; tooltip.textContent = app.name;
-                    const img = document.createElement('img'); img.src = app.icon; img.alt = app.name; img.draggable = false;
-                if (app.needsPadding) img.classList.add('needs-padding');
+                    let img; 
+                    const isFaDock = typeof app.icon === 'string' && (app.icon.startsWith('fa') || app.icon.startsWith('fas ') || app.icon.startsWith('fab ')) && !app.icon.includes('/') && !app.icon.includes('.');
+                    if (isFaDock) { 
+                        img = document.createElement('i'); 
+                        img.className = app.icon; 
+                        img.style.cssText = 'font-size: 40px; color: white; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; text-shadow: 0 4px 10px rgba(0,0,0,0.3);'; 
+                    } else { 
+                        img = document.createElement('img'); 
+                        img.src = app.icon; 
+                        img.alt = app.name; 
+                        img.draggable = false; 
+                    }
+                    if (app.needsPadding) img.classList.add('needs-padding');
                     item.appendChild(tooltip); item.appendChild(img);
                     if (app.isOpen) { const dot = document.createElement('div'); dot.className = 'app-dot'; item.appendChild(dot); }
                     item.addEventListener('click', (e) => {
@@ -2557,7 +3088,10 @@ const SETTINGS_VIEWS = {
                 launchpadGrid.innerHTML = ''; const query = searchQuery.toLowerCase();
                 APP_DATA.filter(app => app.id !== 'finder' && app.id !== 'trash').forEach(app => {
                     if (query && !app.name.toLowerCase().includes(query)) return;
-                    const item = document.createElement('div'); item.className = 'launchpad-item'; item.innerHTML = `<img src="${app.icon}" alt="${app.name}" ${app.needsPadding ? 'class="needs-padding"' : ''}><span>${app.name}</span>`;
+                    const isFa = typeof app.icon === 'string' && (app.icon.startsWith('fa') || app.icon.startsWith('fas ') || app.icon.startsWith('fab ')) && !app.icon.includes('/') && !app.icon.includes('.');
+                    const item = document.createElement('div'); 
+                    item.className = 'launchpad-item'; 
+                    item.innerHTML = isFa ? `<i class="${app.icon}" style="font-size: 32px; color: white; margin-bottom: 10px;"></i><span>${app.name}</span>` : `<img src="${app.icon}" alt="${app.name}" ${app.needsPadding ? 'class="needs-padding"' : ''}><span>${app.name}</span>`;
                     item.onclick = () => {
                         app.isOpen = true; const dockItem = document.getElementById('dock-' + app.id);
                         if (dockItem && !dockItem.querySelector('.app-dot')) { const dot = document.createElement('div'); dot.className = 'app-dot'; dockItem.appendChild(dot); }
@@ -2785,7 +3319,7 @@ document.addEventListener('keydown', (e) => {
 
 // --- macOS Moveable Desktop Icons & Selection Engine ---
 const DesktopIcons = {
-    storageKey: 'macos_desktop_icon_positions_v1',
+    storageKey: 'macOS_desktop_icon_positions_v1',
     isDragging: false,
     dragThreshold: 3,
 
@@ -2925,7 +3459,7 @@ const DesktopIcons = {
         this._eventsBound = true;
         
         const container = document.getElementById('desktop-icons-container');
-        const desktop = document.getElementById('macos-container') || document.body;
+        const desktop = document.getElementById('macOS-container') || document.body;
         const selBox = document.getElementById('selection-box');
         if (!container || !desktop) return;
 
@@ -3064,20 +3598,33 @@ const DesktopIcons = {
             }
         });
 
-        // Double click to open folder in Finder
+        // Double click to open folder in Finder or preview document
         container.addEventListener('dblclick', (e) => {
             const item = e.target.closest('.desktop-item');
             if (!item) return;
             if (item._draggedTime && (Date.now() - item._draggedTime < 450)) return;
 
-            const target = item.getAttribute('data-target') || 'root';
+            const target = item.getAttribute('data-target');
+            const id = item.getAttribute('data-id');
+            const type = item.getAttribute('data-type');
+
+            if (type === 'file' || (id && id.startsWith('file-')) || (window.FS && window.FS[id] && window.FS[id].type === 'file')) {
+                if (window.Finder && typeof Finder.openQuickLook === 'function') {
+                    Finder.openQuickLook(id);
+                } else if (typeof window.openQuickLook === 'function') {
+                    window.openQuickLook(id);
+                }
+                return;
+            }
+
+            const navTarget = target || 'root';
             if (window.appState && appState.openApp) {
                 appState.openApp('finder', item);
                 setTimeout(() => {
                     if (window.Finder && Finder.navigateTo) {
-                        Finder.navigateTo(target);
+                        Finder.navigateTo(navTarget);
                     } else if (appState.navigateTo) {
-                        appState.navigateTo(target);
+                        appState.navigateTo(navTarget);
                     }
                 }, 40);
             }
@@ -3089,7 +3636,7 @@ const DesktopIcons = {
             let startX = 0, startY = 0;
 
             desktop.addEventListener('pointerdown', (e) => {
-                if (e.target.closest('.desktop-item') || e.target.closest('.mac-window') || e.target.closest('.dock-wrapper') || e.target.closest('.macos-topbar') || e.target.closest('.mac-widget') || e.target.closest('.mac-control-center') || e.target.closest('#lock-screen') || e.target.closest('.context-menu')) {
+                if (e.target.closest('.desktop-item') || e.target.closest('.mac-window') || e.target.closest('.dock-wrapper') || e.target.closest('.macOS-topbar') || e.target.closest('.mac-widget') || e.target.closest('.mac-control-center') || e.target.closest('#lock-screen') || e.target.closest('.context-menu')) {
                     return;
                 }
                 if (e.button !== 0) return;
@@ -3300,7 +3847,7 @@ const MenuData = {
                 { label: "Downloads", shortcut: "⌥⌘L", action: "noop" },
                 { label: "Home", shortcut: "⇧⌘H", action: "noop" },
                 { label: "Computer", shortcut: "⇧⌘C", action: "noop" },
-                { label: "AirDrop", shortcut: "⇧⌘R", action: "noop" },
+                { label: "QuickDrop", shortcut: "⇧⌘R", action: "noop" },
                 { label: "Network", shortcut: "⇧⌘K", action: "noop" },
                 { divider: true },
                 { label: "Applications", shortcut: "⇧⌘A", action: "noop" },
@@ -3376,6 +3923,125 @@ const MenuData = {
             { divider: true },
             { label: "Quit System Settings", shortcut: "⌘Q", action: "closeWindow" }
         ]
+    },
+    vscode: {
+        appName: "Code",
+        menus: {
+            "File": [
+                { label: "New Text File", shortcut: "⌘N", action: "noop" },
+                { label: "New Window", shortcut: "⇧⌘N", action: "noop" },
+                { divider: true },
+                { label: "Open File...", shortcut: "⌘O", action: "noop" },
+                { label: "Open Folder...", shortcut: "⌘K ⌘O", action: "noop" },
+                { divider: true },
+                { label: "Save", shortcut: "⌘S", action: "noop" },
+                { label: "Save As...", shortcut: "⇧⌘S", action: "noop" },
+                { divider: true },
+                { label: "Close Window", shortcut: "⌘W", action: "closeWindow" }
+            ],
+            "Edit": [
+                { label: "Undo", shortcut: "⌘Z", action: "noop" },
+                { label: "Redo", shortcut: "⇧⌘Z", action: "noop" },
+                { divider: true },
+                { label: "Cut", shortcut: "⌘X", action: "noop" },
+                { label: "Copy", shortcut: "⌘C", action: "noop" },
+                { label: "Paste", shortcut: "⌘V", action: "noop" },
+                { divider: true },
+                { label: "Find", shortcut: "⌘F", action: "noop" },
+                { label: "Replace", shortcut: "⌥⌘F", action: "noop" }
+            ],
+            "Selection": [
+                { label: "Select All", shortcut: "⌘A", action: "noop" },
+                { label: "Expand Selection", shortcut: "⌃⇧⌘→", action: "noop" },
+                { label: "Shrink Selection", shortcut: "⌃⇧⌘←", action: "noop" }
+            ],
+            "View": [
+                { label: "Command Palette...", shortcut: "⇧⌘P", action: "noop" },
+                { label: "Open View...", action: "noop" },
+                { divider: true },
+                { label: "Appearance", action: "noop" },
+                { label: "Toggle Terminal", shortcut: "⌃`", action: "noop" }
+            ],
+            "Go": [
+                { label: "Back", shortcut: "⌃-", action: "noop" },
+                { label: "Forward", shortcut: "⌃⇧-", action: "noop" },
+                { divider: true },
+                { label: "Go to File...", shortcut: "⌘P", action: "noop" }
+            ],
+            "Run": [
+                { label: "Start Debugging", shortcut: "F5", action: "noop" },
+                { label: "Run Without Debugging", shortcut: "⌃F5", action: "noop" }
+            ],
+            "Terminal": [
+                { label: "New Terminal", shortcut: "⌃⇧`", action: "noop" },
+                { label: "Run Task...", action: "noop" }
+            ],
+            "Window": [
+                { label: "Minimize", shortcut: "⌘M", action: "noop" },
+                { label: "Zoom", action: "noop" }
+            ],
+            "Help": [
+                { label: "Welcome", action: "noop" },
+                { label: "Documentation", action: "noop" },
+                { label: "Keyboard Shortcuts Reference", shortcut: "⌘K ⌘S", action: "noop" }
+            ]
+        },
+        appMenuExt: [
+            { label: "About Visual Studio Code", action: "noop" },
+            { divider: true },
+            { label: "Preferences...", shortcut: "⌘,", action: "noop" },
+            { divider: true },
+            { label: "Services", action: "noop" },
+            { divider: true },
+            { label: "Hide Code", shortcut: "⌘H", action: "noop" },
+            { label: "Hide Others", shortcut: "⌥⌘H", action: "noop" },
+            { label: "Show All", action: "noop" },
+            { divider: true },
+            { label: "Quit Code", shortcut: "⌘Q", action: "closeWindow" }
+        ]
+    },
+    music: {
+        appName: "Music",
+        menus: {
+            "File": [
+                { label: "New Playlist", shortcut: "⌘N", action: "noop" },
+                { label: "Close Window", shortcut: "⌘W", action: "closeWindow" }
+            ],
+            "Edit": [
+                { label: "Undo", shortcut: "⌘Z", action: "noop" },
+                { label: "Redo", shortcut: "⇧⌘Z", action: "noop" }
+            ],
+            "Song": [
+                { label: "Play", shortcut: "Space", action: "noop" },
+                { label: "Next", shortcut: "⌘→", action: "noop" },
+                { label: "Previous", shortcut: "⌘←", action: "noop" }
+            ],
+            "View": [
+                { label: "Show Mini Player", shortcut: "⇧⌘M", action: "noop" }
+            ],
+            "Controls": [
+                { label: "Shuffle", action: "noop" },
+                { label: "Repeat", action: "noop" }
+            ],
+            "Window": [
+                { label: "Minimize", shortcut: "⌘M", action: "noop" },
+                { label: "Zoom", action: "noop" }
+            ],
+            "Help": [
+                { label: "Music Help", action: "noop" }
+            ]
+        },
+        appMenuExt: [
+            { label: "About Apple Music", action: "noop" },
+            { divider: true },
+            { label: "Settings...", shortcut: "⌘,", action: "noop" },
+            { divider: true },
+            { label: "Hide Music", shortcut: "⌘H", action: "noop" },
+            { label: "Hide Others", shortcut: "⌥⌘H", action: "noop" },
+            { label: "Show All", action: "noop" },
+            { divider: true },
+            { label: "Quit Music", shortcut: "⌘Q", action: "closeWindow" }
+        ]
     }
 };
 
@@ -3397,8 +4063,14 @@ const MenuSystem = {
             const win = e.target.closest('.mac-window');
             if (win) {
                 if (win.id === 'finder-window') this.setActiveApp('finder');
-                if (win.id === 'settings-window') this.setActiveApp('settings');
-            } else if (e.target.closest('.desktop-icons') || e.target.closest('.macos-body')) {
+                else if (win.id === 'settings-window') this.setActiveApp('settings');
+                else if (win.id.includes('vscode')) this.setActiveApp('vscode');
+                else if (win.id.includes('music')) this.setActiveApp('music');
+                else {
+                    const appId = win.id.replace('-window', '').replace('window-', '').toLowerCase();
+                    if (MenuData[appId]) this.setActiveApp(appId);
+                }
+            } else if (e.target.closest('.desktop-icons') || (e.target.classList && e.target.classList.contains('macOS-body'))) {
                 this.setActiveApp('finder');
             }
         });

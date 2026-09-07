@@ -6,7 +6,7 @@
     background: rgba(36, 36, 36, 0.7);
     backdrop-filter: blur(50px);
     -webkit-backdrop-filter: blur(50px);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+    font-family: -apple-system, "Helvetica Neue", sans-serif;
     color: white;
     user-select: none;
 }

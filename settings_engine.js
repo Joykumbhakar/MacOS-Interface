@@ -134,7 +134,7 @@ const MacSettings = {
     // ── Desktop Wallpaper ──────────────────────────────────────────────────
     applyWallpaper(url) {
         this.state.wallpaper = url;
-        const desktop = document.querySelector('.macos-body') || document.getElementById('macos-container') || document.body;
+        const desktop = document.querySelector('.Apple OS-body') || document.getElementById('Apple OS-container') || document.body;
         if (desktop) {
             desktop.style.backgroundImage = `url('${url}')`;
             desktop.style.backgroundSize = 'cover';

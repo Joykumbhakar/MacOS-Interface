@@ -1,5 +1,5 @@
 {
-  "name": "macos-interface",
+  "name": "macOS-interface",
   "version": "1.0.0",
   "description": "A pixel-perfect macOS desktop experience built for the web. Full Finder, Settings, Apple Music, Dynamic Island, and more - running entirely in the browser.",
   "private": true,
@@ -12,7 +12,7 @@
     "build": "electron-builder --win"
   },
   "keywords": [
-    "macos",
+    "macOS",
     "web",
     "simulation",
     "apple",
@@ -25,11 +25,11 @@
     "node": ">=18"
   },
   "build": {
-    "appId": "com.macos.interface",
-    "productName": "MacOS-Interface Fan Made",
+    "appId": "com.macOS.interface",
+    "productName": "macOS Interface",
     "win": {
       "target": "nsis",
-      "icon": "images/Icons/MacOS.png"
+      "icon": "images/Icons/macOS.png"
     },
     "directories": {
       "output": "dist-electron"
@@ -37,7 +37,7 @@
     "publish": {
       "provider": "github",
       "owner": "Joykumbhakar",
-      "repo": "MacOS-Interface"
+      "repo": "macOS-Interface"
     },
     "files": [
       "**/*",
