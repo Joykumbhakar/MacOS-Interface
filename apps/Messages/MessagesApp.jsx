@@ -81,15 +81,19 @@ const MessagesApp = () => {
     const [isComposingNew, setIsComposingNew] = useState(false);
     const [newRecipient, setNewRecipient] = useState('');
 
-    const threadEndRef = useRef(null);
+    const threadContainerRef = useRef(null);
     const inputRef = useRef(null);
 
     const activeConv = conversations.find(c => c.id === activeConvId) || conversations[0];
 
     // Scroll to bottom of message thread
     const scrollToBottom = (smooth = true) => {
-        if (threadEndRef.current) {
-            threadEndRef.current.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto' });
+        if (threadContainerRef.current) {
+            if (smooth) {
+                threadContainerRef.current.scrollTo({ top: threadContainerRef.current.scrollHeight, behavior: 'smooth' });
+            } else {
+                threadContainerRef.current.scrollTop = threadContainerRef.current.scrollHeight;
+            }
         }
     };
 
@@ -369,7 +373,7 @@ const MessagesApp = () => {
                 </div>
 
                 {/* Messages Thread */}
-                <div className="msg-thread">
+                <div className="msg-thread" ref={threadContainerRef}>
                     <div className="msg-date-pill">iMessage with {activeConv.name}</div>
 
                     {activeConv.messages.map(msg => {
@@ -398,7 +402,7 @@ const MessagesApp = () => {
                                     {msg.audio && (
                                         <div className="msg-audio-box">
                                             <button className="msg-audio-play-btn" onClick={() => setPlayingAudioId(playingAudioId === msg.id ? null : msg.id)}>
-                                                {playingAudioId === msg.id ? 'â¸' : 'â–¶'}
+                                                {playingAudioId === msg.id ? '❚❚' : '▶'}
                                             </button>
                                             <div className="msg-audio-waves">
                                                 {msg.audio.waves.map((w, idx) => (
@@ -457,7 +461,7 @@ const MessagesApp = () => {
                         </div>
                     )}
 
-                    <div ref={threadEndRef} />
+                    
                 </div>
 
                 {/* Bottom Input Box */}
