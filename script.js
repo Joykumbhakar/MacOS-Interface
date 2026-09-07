@@ -730,8 +730,20 @@ const ICONS = {
         window.openWallpaperSettings = function() {
             const cm = document.getElementById('context-menu');
             if (cm) { cm.classList.remove('active'); cm.style.display = 'none'; }
-            if (window.appState) {
+            if (window.appState && typeof window.appState.setSettingsView === 'function') {
                 window.appState.setSettingsView('wallpaper');
+            }
+            const win = document.getElementById('settings-window');
+            if (win) {
+                win.classList.remove('is-minimized');
+                win.classList.add('active');
+                if (window.MacWindowManager) {
+                    MacWindowManager.focus(win);
+                    if (typeof MacWindowManager.updateDockDot === 'function') {
+                        MacWindowManager.updateDockDot('settings', true);
+                    }
+                }
+            } else if (window.appState && typeof window.appState.openApp === 'function') {
                 window.appState.openApp('settings');
             }
         };
