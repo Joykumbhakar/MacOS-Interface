@@ -54,11 +54,11 @@ function playMsgSound(type = 'send') {
     }
 }
 
-const TAPBACK_EMOJIS = ['â¤ï¸', 'ðŸ‘', 'ðŸ‘Ž', 'ðŸ˜‚', 'â€¼ï¸', 'â“'];
+const TAPBACK_EMOJIS = ['❤️', '👍', '👎', '😂', '‼️', '❓'];
 
 const renderAvatar = (c, size = 16) => {
     if (!c) return '';
-    if (c.avatarIcon === 'apple' || c.avatarInitials === 'ï£¿' || c.name === 'Apple Support') {
+    if (c.avatarIcon === 'apple' || c.avatarInitials === '' || c.name === 'Apple Support') {
         return <i className="fab fa-apple" style={{ fontSize: `${Math.max(Math.round(size * 0.55), 14)}px` }}></i>;
     }
     return c.avatarInitials;
