@@ -4,9 +4,7 @@
     display: flex;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(40px) saturate(190%);
-    -webkit-backdrop-filter: blur(40px) saturate(190%);
+    background: transparent;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: #1d1d1f;
     user-select: none;
@@ -14,13 +12,15 @@
     position: relative;
 }
 
-/* Sidebar Column */
+/* Sidebar Column (Authentic macOS Frosted Glass Blurred Sidebar) */
 .msg-sidebar {
     width: 320px;
     min-width: 260px;
     max-width: 400px;
     height: 100%;
-    background: rgba(246, 246, 246, 0.75);
+    background: rgba(240, 240, 245, 0.45);
+    backdrop-filter: blur(50px) saturate(220%);
+    -webkit-backdrop-filter: blur(50px) saturate(220%);
     border-right: 0.5px solid rgba(0, 0, 0, 0.12);
     display: flex;
     flex-direction: column;
