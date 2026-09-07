@@ -54,11 +54,11 @@ function playMsgSound(type = 'send') {
     }
 }
 
-const TAPBACK_EMOJIS = ['❤️', '👍', '👎', '😂', '‼️', '❓'];
+const TAPBACK_EMOJIS = ['â¤ï¸', 'ðŸ‘', 'ðŸ‘Ž', 'ðŸ˜‚', 'â€¼ï¸', 'â“'];
 
 const renderAvatar = (c, size = 16) => {
     if (!c) return '';
-    if (c.avatarIcon === 'apple' || c.avatarInitials === '' || c.name === 'Apple Support') {
+    if (c.avatarIcon === 'apple' || c.avatarInitials === 'ï£¿' || c.name === 'Apple Support') {
         return <i className="fab fa-apple" style={{ fontSize: `${Math.max(Math.round(size * 0.55), 14)}px` }}></i>;
     }
     return c.avatarInitials;
@@ -146,7 +146,7 @@ const MessagesApp = () => {
             const replies = activeConv.autoReplies || [
                 "Sounds great! Thanks for reaching out.",
                 "Got it! Let's follow up on this.",
-                "Looks awesome! 🚀"
+                "Looks awesome! ðŸš€"
             ];
             const randomReply = replies[Math.floor(Math.random() * replies.length)];
 
@@ -277,7 +277,7 @@ const MessagesApp = () => {
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                         {searchQuery && (
-                            <span className="msg-search-clear" onClick={() => setSearchQuery('')}>✕</span>
+                            <span className="msg-search-clear" onClick={() => setSearchQuery('')}>âœ•</span>
                         )}
                     </div>
                 </div>
@@ -323,7 +323,7 @@ const MessagesApp = () => {
                                         <span className="msg-conv-time">{lastMsg ? lastMsg.time : ''}</span>
                                     </div>
                                     <div className="msg-conv-preview">
-                                        {lastMsg ? (lastMsg.text || (lastMsg.image ? '📷 Photo' : '🎵 Voice Memo')) : 'No messages'}
+                                        {lastMsg ? (lastMsg.text || (lastMsg.image ? 'ðŸ“· Photo' : 'ðŸŽµ Voice Memo')) : 'No messages'}
                                     </div>
                                 </div>
                             </div>
@@ -398,7 +398,7 @@ const MessagesApp = () => {
                                     {msg.audio && (
                                         <div className="msg-audio-box">
                                             <button className="msg-audio-play-btn" onClick={() => setPlayingAudioId(playingAudioId === msg.id ? null : msg.id)}>
-                                                {playingAudioId === msg.id ? '⏸' : '▶'}
+                                                {playingAudioId === msg.id ? 'â¸' : 'â–¶'}
                                             </button>
                                             <div className="msg-audio-waves">
                                                 {msg.audio.waves.map((w, idx) => (

@@ -1,4 +1,4 @@
-﻿const { useState, useEffect, useReducer } = React;
+const { useState, useEffect, useReducer } = React;
 
 const ACTIONS = {
     ADD_DIGIT: 'add-digit',

@@ -137,7 +137,7 @@ const allSongs = [
         cover: createGradientCover('All The Stars', 'Kendrick & SZA', null, null, 0),
         bannerGrad: 'linear-gradient(135deg, #180210 0%, #4d0a2f 35%, #b81545 70%, #ff4b4b 100%)',
         youtubeId: 'GfCqMv--ncA',
-        format: 'Lossless • Dolby Atmos',
+        format: 'Lossless â€¢ Dolby Atmos',
         lyrics: [
             { time: 0, text: "Love, let's talk about love" },
             { time: 6, text: "Is it anything and everything you hoped for?" },
@@ -166,7 +166,7 @@ const allSongs = [
         cover: createGradientCover('Sunflower', 'Post Malone & Swae Lee', null, null, 6),
         bannerGrad: 'linear-gradient(135deg, #1a0f00 0%, #542d00 35%, #b86400 70%, #ffbb00 100%)',
         youtubeId: 'ApXoWvfEYVU',
-        format: 'Hi-Res Lossless • Apple Digital Master',
+        format: 'Hi-Res Lossless â€¢ Apple Digital Master',
         lyrics: [
             { time: 0, text: "Ayy, ayy, ayy, ayy (ooh)" },
             { time: 4, text: "Ooh, ooh, ooh, ooh (ooh)" },
@@ -198,7 +198,7 @@ const allSongs = [
         cover: 'images/Music_Alums/album2.png',
         bannerGrad: 'linear-gradient(135deg, #140003 0%, #45030d 35%, #940a1c 70%, #fa243c 100%)',
         youtubeId: '4NRXx6U8ABQ',
-        format: 'Hi-Res Lossless • Dolby Atmos',
+        format: 'Hi-Res Lossless â€¢ Dolby Atmos',
         lyrics: [
             { time: 0, text: "Yeah..." },
             { time: 8, text: "I've been tryin' to call" },
@@ -230,7 +230,7 @@ const allSongs = [
         cover: createGradientCover('LET THE WORLD BURN', 'Chris Grey', null, null, 4),
         bannerGrad: 'linear-gradient(135deg, #180400 0%, #4a0f00 35%, #9e2800 70%, #ff5722 100%)',
         youtubeId: 'tKkS6H4gPso',
-        format: 'Lossless • Spatial Audio',
+        format: 'Lossless â€¢ Spatial Audio',
         lyrics: [
             { time: 0, text: "I would let the world burn for you" },
             { time: 8, text: "Watch it turn to ash in front of us" },
@@ -255,7 +255,7 @@ const allSongs = [
         cover: createGradientCover('Boom Shaka', 'KR$NA & Dhanda', null, null, 2),
         bannerGrad: 'linear-gradient(135deg, #02140d 0%, #083b27 35%, #10754e 70%, #00e676 100%)',
         youtubeId: '47pL5-QZ4pI',
-        format: 'Lossless • Apple Digital Master',
+        format: 'Lossless â€¢ Apple Digital Master',
         lyrics: [
             { time: 0, text: "Boom Shaka laka, drop the bass now" },
             { time: 8, text: "KR$NA in the booth, hold the crown down" },
@@ -278,7 +278,7 @@ const allSongs = [
         cover: createGradientCover('LOSER', 'Tame Impala', null, null, 5),
         bannerGrad: 'linear-gradient(135deg, #0a0118 0%, #29074d 35%, #6917b8 70%, #b82bf2 100%)',
         youtubeId: 'b7k00pQZkpo',
-        format: 'Lossless • Dolby Atmos',
+        format: 'Lossless â€¢ Dolby Atmos',
         lyrics: [
             { time: 0, text: "(Psychedelic synth intro)" },
             { time: 12, text: "Feeling like I'm drifting away again" },
@@ -301,7 +301,7 @@ const allSongs = [
         cover: createGradientCover('Timeless', 'Spider-Verse', null, null, 1),
         bannerGrad: 'linear-gradient(135deg, #02091c 0%, #072352 35%, #0f4fba 70%, #00d2ff 100%)',
         youtubeId: 'Z9p8N-qB7oI',
-        format: 'Lossless • Spatial Audio',
+        format: 'Lossless â€¢ Spatial Audio',
         lyrics: [
             { time: 0, text: "Across dimensions, across the time" },
             { time: 10, text: "We carry on the rhythm and the rhyme" },
@@ -450,7 +450,7 @@ const allSongs = [
         cover: createGradientCover('Khat', 'Navjot Ahuja', null, null, 6),
         bannerGrad: 'linear-gradient(135deg, #170a00 0%, #4d2300 35%, #ab4e00 70%, #ff8c00 100%)',
         youtubeId: 'khat0ff1c1al',
-        format: 'Lossless • Apple Digital Master',
+        format: 'Lossless â€¢ Apple Digital Master',
         lyrics: [
             { time: 0, text: "Khat tera aaya si jadon..." },
             { time: 14, text: "Yaadan vich kho gaye si sab pal" },
@@ -460,7 +460,7 @@ const allSongs = [
     },
     {
         id: 'track-15',
-        title: 'Базовый минимум',
+        title: 'Ð‘Ð°Ð·Ð¾Ð²Ñ‹Ð¹ Ð¼Ð¸Ð½Ð¸Ð¼ÑƒÐ¼',
         artist: 'Sabi & MIA BOYKA',
         album: 'Bare Minimum EP',
         duration: '2:45',
@@ -469,14 +469,14 @@ const allSongs = [
         year: 2024,
         plays: '18,440,000',
         url: 'Tracks/Sabi, MIA BOYKA - %D0%91%D0%B0%D0%B7%D0%BE%D0%B2%D1%8B%D0%B9%20%D0%BC%D0%B8%D0%BD%D0%B8%D0%BC%D1%83%D0%BC%20(Bare%20minimum).mp3',
-        cover: createGradientCover('Базовый минимум', 'Sabi & MIA BOYKA', null, null, 7),
+        cover: createGradientCover('Ð‘Ð°Ð·Ð¾Ð²Ñ‹Ð¹ Ð¼Ð¸Ð½Ð¸Ð¼ÑƒÐ¼', 'Sabi & MIA BOYKA', null, null, 7),
         bannerGrad: 'linear-gradient(135deg, #010c1c 0%, #062f6b 35%, #0f63d6 70%, #00bfff 100%)',
         youtubeId: 'm14B0yk4S4b1',
-        format: 'Lossless • Dolby Atmos',
+        format: 'Lossless â€¢ Dolby Atmos',
         lyrics: [
-            { time: 0, text: "Базовый минимум для счастья..." },
-            { time: 12, text: "Танцы под звёздами до утра" },
-            { time: 24, text: "Музыка в сердце звучит всегда" }
+            { time: 0, text: "Ð‘Ð°Ð·Ð¾Ð²Ñ‹Ð¹ Ð¼Ð¸Ð½Ð¸Ð¼ÑƒÐ¼ Ð´Ð»Ñ ÑÑ‡Ð°ÑÑ‚ÑŒÑ..." },
+            { time: 12, text: "Ð¢Ð°Ð½Ñ†Ñ‹ Ð¿Ð¾Ð´ Ð·Ð²Ñ‘Ð·Ð´Ð°Ð¼Ð¸ Ð´Ð¾ ÑƒÑ‚Ñ€Ð°" },
+            { time: 24, text: "ÐœÑƒÐ·Ñ‹ÐºÐ° Ð² ÑÐµÑ€Ð´Ñ†Ðµ Ð·Ð²ÑƒÑ‡Ð¸Ñ‚ Ð²ÑÐµÐ³Ð´Ð°" }
         ]
     }
 ];
@@ -573,7 +573,7 @@ const artists = [
         id: 'artist-tameimpala',
         name: 'Tame Impala',
         monthlyListeners: '32.1M',
-        bio: 'Kevin Parker’s multi-instrumentalist psychedelic synth project crafting ethereal soundscapes and retro-futuristic beats.',
+        bio: 'Kevin Parkerâ€™s multi-instrumentalist psychedelic synth project crafting ethereal soundscapes and retro-futuristic beats.',
         image: createGradientCover('Tame Impala', 'Artist Spotlight', null, null, 5),
         topSongIds: ['track-6']
     },
@@ -594,7 +594,7 @@ const radioStations = [
         name: 'Apple Music 1',
         host: 'Zane Lowe, Ebro Darden & Rebecca Judd',
         frequency: 'Live 24/7 Global Broadcast',
-        description: 'The world’s flagship live radio station with exclusive artist interviews, world premieres, and cultural conversation.',
+        description: 'The worldâ€™s flagship live radio station with exclusive artist interviews, world premieres, and cultural conversation.',
         color: 'linear-gradient(135deg, #e50914 0%, #fa243c 45%, #764ba2 100%)',
         badge: 'LIVE ON AIR',
         sampleTrackId: 'track-1'

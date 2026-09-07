@@ -16,10 +16,10 @@ const INITIAL_CONVERSATIONS = [
             {
                 id: 'm1-1',
                 sender: 'them',
-                text: 'Good morning! Welcome to the new macOS web experience. ',
+                text: 'Good morning! Welcome to the new macOS web experience. ï£¿',
                 time: '9:20 AM',
                 timestamp: Date.now() - 1000 * 60 * 45,
-                reactions: [{ emoji: '❤️', from: 'me' }]
+                reactions: [{ emoji: 'â¤ï¸', from: 'me' }]
             },
             {
                 id: 'm1-2',
@@ -32,10 +32,10 @@ const INITIAL_CONVERSATIONS = [
             {
                 id: 'm1-3',
                 sender: 'them',
-                text: 'Phenomenal work by the team. Let’s do a quick design review later today. One more thing... make sure the dynamic island responds smoothly! 🚀',
+                text: 'Phenomenal work by the team. Letâ€™s do a quick design review later today. One more thing... make sure the dynamic island responds smoothly! ðŸš€',
                 time: '9:30 AM',
                 timestamp: Date.now() - 1000 * 60 * 35,
-                reactions: [{ emoji: '👍', from: 'me' }]
+                reactions: [{ emoji: 'ðŸ‘', from: 'me' }]
             },
             {
                 id: 'm1-4',
@@ -47,7 +47,7 @@ const INITIAL_CONVERSATIONS = [
             }
         ],
         autoReplies: [
-            "We think you're going to love it. It's the best update yet! ",
+            "We think you're going to love it. It's the best update yet! ï£¿",
             "Innovation is in our DNA. Truly magical performance.",
             "Can't wait to share this with our developers worldwide.",
             "That sounds like a great idea. Let me connect with Craig and the software engineering team."
@@ -68,10 +68,10 @@ const INITIAL_CONVERSATIONS = [
             {
                 id: 'm2-1',
                 sender: 'them',
-                text: 'Hair Force One checking in! 🎸 Ready to drop some sweet Swift features.',
+                text: 'Hair Force One checking in! ðŸŽ¸ Ready to drop some sweet Swift features.',
                 time: 'Yesterday',
                 timestamp: Date.now() - 1000 * 60 * 60 * 24,
-                reactions: [{ emoji: '😂', from: 'me' }]
+                reactions: [{ emoji: 'ðŸ˜‚', from: 'me' }]
             },
             {
                 id: 'm2-2',
@@ -84,17 +84,17 @@ const INITIAL_CONVERSATIONS = [
             {
                 id: 'm2-3',
                 sender: 'them',
-                text: 'That 60fps gesture curve is pure satisfaction. Check this out: 🔥',
+                text: 'That 60fps gesture curve is pure satisfaction. Check this out: ðŸ”¥',
                 time: 'Yesterday',
                 timestamp: Date.now() - 1000 * 60 * 60 * 22,
                 image: 'images/Wallpapers/27-Golden-Gate.jpg'
             }
         ],
         autoReplies: [
-            "Boom! That's what I'm talking about! 🤘",
+            "Boom! That's what I'm talking about! ðŸ¤˜",
             "Silky 120Hz ProMotion smoothness! Let's ship it!",
             "I'm currently tuning the Metal shaders, but looks super fast!",
-            "High five! Let's get some espresso and celebrate ☕️"
+            "High five! Let's get some espresso and celebrate â˜•ï¸"
         ]
     },
     {
@@ -133,7 +133,7 @@ const INITIAL_CONVERSATIONS = [
             }
         ],
         autoReplies: [
-            "Awesome! Glad you like the blur and shadow adjustments! 🎨",
+            "Awesome! Glad you like the blur and shadow adjustments! ðŸŽ¨",
             "I'll update the typography tokens in the design library right away.",
             "Can you check if the dark mode contrast passes WCAG AAA? Thanks!",
             "Super clean! Let's sync on tomorrow's standup."
@@ -144,7 +144,7 @@ const INITIAL_CONVERSATIONS = [
         name: 'Apple Developer Team',
         avatarBg: 'linear-gradient(135deg, #30D158 0%, #007AFF 100%)',
         avatarInitials: 'DT',
-        status: 'iMessage • 4 People',
+        status: 'iMessage â€¢ 4 People',
         phone: 'Group Chat',
         isPinned: true,
         unread: 0,
@@ -154,10 +154,10 @@ const INITIAL_CONVERSATIONS = [
                 id: 'm4-1',
                 sender: 'them',
                 senderName: 'Alex',
-                text: 'All build tests passed on GitHub Actions! Zero errors. 🟢',
+                text: 'All build tests passed on GitHub Actions! Zero errors. ðŸŸ¢',
                 time: '8:05 AM',
                 timestamp: Date.now() - 1000 * 60 * 180,
-                reactions: [{ emoji: '👍', from: 'me' }]
+                reactions: [{ emoji: 'ðŸ‘', from: 'me' }]
             },
             {
                 id: 'm4-2',
@@ -178,7 +178,7 @@ const INITIAL_CONVERSATIONS = [
         ],
         autoReplies: [
             "Merged into main branch! Ready for next release.",
-            "CI/CD pipeline running smoothly 🚀",
+            "CI/CD pipeline running smoothly ðŸš€",
             "Great catch on that CSS selector specificity!",
             "Everything looks rock solid on WebKit and Chromium engines."
         ]
@@ -196,10 +196,10 @@ const INITIAL_CONVERSATIONS = [
             {
                 id: 'm5-1',
                 sender: 'them',
-                text: 'Details matter. It’s worth waiting to get it right. Make every pixel count.',
+                text: 'Details matter. Itâ€™s worth waiting to get it right. Make every pixel count.',
                 time: 'Sep 4',
                 timestamp: Date.now() - 1000 * 60 * 60 * 48,
-                reactions: [{ emoji: '❤️', from: 'me' }]
+                reactions: [{ emoji: 'â¤ï¸', from: 'me' }]
             },
             {
                 id: 'm5-2',
@@ -230,7 +230,7 @@ const INITIAL_CONVERSATIONS = [
             {
                 id: 'm6-1',
                 sender: 'them',
-                text: 'Your Apple ID was used to sign in to macOS on Joy’s MacBook Pro.',
+                text: 'Your Apple ID was used to sign in to macOS on Joyâ€™s MacBook Pro.',
                 time: 'Tuesday',
                 timestamp: Date.now() - 1000 * 60 * 60 * 72
             },
@@ -268,14 +268,14 @@ const INITIAL_CONVERSATIONS = [
             {
                 id: 'm7-2',
                 sender: 'me',
-                text: 'Definitely! I’ll bring the M3 Max MacBook. See you at Blue Bottle.',
+                text: 'Definitely! Iâ€™ll bring the M3 Max MacBook. See you at Blue Bottle.',
                 time: 'Monday',
                 timestamp: Date.now() - 1000 * 60 * 60 * 95,
                 status: 'Sent as Text Message'
             }
         ],
         autoReplies: [
-            "Sounds great! Looking forward to it ☕️",
+            "Sounds great! Looking forward to it â˜•ï¸",
             "See you soon!",
             "I'm bringing some fresh design ideas for the dark mode theme!"
         ]
