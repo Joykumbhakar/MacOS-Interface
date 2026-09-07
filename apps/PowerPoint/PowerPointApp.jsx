@@ -1,4 +1,4 @@
-﻿const { useState, useEffect, useRef } = React;
+const { useState, useEffect, useRef } = React;
 
 const PP_THEMES = [
     { id: 'white', name: 'Standard Light', class: 'pp-theme-white', color: '#ffffff' },
@@ -106,7 +106,7 @@ const PowerPointApp = () => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isPresenting, slides.length]);
 
-    const activeThemeClass = PP_THEMES.find(t => t.id === activeSlide.theme)?.class || 'pp-theme-white';
+    const activeThemeClass = (PP_THEMES.find(t => t.id === activeSlide.theme) || {}).class || 'pp-theme-white';
 
     return (
         <div className="pp-app-container">
@@ -165,7 +165,7 @@ const PowerPointApp = () => {
                     </div>
                     <div className="pp-slides-list">
                         {slides.map((slide, idx) => {
-                            const themeCls = PP_THEMES.find(t => t.id === slide.theme)?.class || 'pp-theme-white';
+                            const themeCls = (PP_THEMES.find(t => t.id === slide.theme) || {}).class || 'pp-theme-white';
                             return (
                                 <div 
                                     key={slide.id} 
@@ -216,10 +216,10 @@ const PowerPointApp = () => {
                                 {activeSlide.bullets && activeSlide.bullets.length > 0 ? (
                                     activeSlide.bullets.map((b, i) => <li key={i}>{b}</li>)
                                 ) : (
-                                    <>
+                                    <React.Fragment>
                                         <li>High-performance vector rendering</li>
                                         <li>Apple SF Pro typography hierarchy</li>
-                                    </>
+                                    </React.Fragment>
                                 )}
                             </ul>
                         )}
@@ -310,7 +310,7 @@ const PowerPointApp = () => {
                 <div className="pp-presenter-overlay" onClick={() => setPresenterIndex(prev => Math.min(prev + 1, slides.length - 1))}>
                     {(() => {
                         const currentSlide = slides[presenterIndex] || slides[0];
-                        const themeCls = PP_THEMES.find(t => t.id === currentSlide.theme)?.class || 'pp-theme-white';
+                        const themeCls = (PP_THEMES.find(t => t.id === currentSlide.theme) || {}).class || 'pp-theme-white';
                         return (
                             <div className={"pp-presenter-slide " + themeCls}>
                                 <div style={{ fontSize: '56px', fontWeight: '800', lineHeight: '1.1', marginBottom: '24px' }}>

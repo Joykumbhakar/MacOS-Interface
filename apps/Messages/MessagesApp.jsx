@@ -99,6 +99,32 @@ const renderAvatar = (c, size = 16) => {
     );
 };
 
+const VerifiedBadge = ({ size = 14, colorStart = "#3B82F6", colorEnd = "#1D4ED8" }) => {
+    const id = Math.random().toString(36).substr(2, 9);
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style={{ width: size, height: size, display: 'inline-block', verticalAlign: 'middle', marginLeft: '4px' }}>
+            <defs>
+                <linearGradient id={`bd-bg-${id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor={colorStart} />
+                    <stop offset="100%" stopColor={colorEnd} />
+                </linearGradient>
+                <linearGradient id={`bd-border-${id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="rgba(255,255,255,0.7)" />
+                    <stop offset="50%" stopColor="rgba(255,255,255,0.1)" />
+                    <stop offset="100%" stopColor="rgba(0,0,0,0.4)" />
+                </linearGradient>
+            </defs>
+            <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.918-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.337 2.25c-.416-.165-.866-.25-1.336-.25-2.21 0-3.918 1.79-3.918 4 0 .495.084.965.238 1.4-1.273.65-2.148 2.02-2.148 3.6 0 1.46.74 2.746 1.865 3.45-.06.31-.09.63-.09.95 0 2.21 1.71 4 3.918 4 .47 0 .92-.085 1.336-.25.52 1.335 1.826 2.25 3.337 2.25s2.816-.915 3.337-2.25c.416.165.866.25 1.336.25 2.21 0 3.918-1.79 3.918-4 0-.32-.03-.64-.09-.95 1.125-.705 1.865-1.99 1.865-3.45z" 
+                  fill={`url(#bd-bg-${id})`} 
+                  stroke={`url(#bd-border-${id})`} 
+                  strokeWidth="0.6" 
+                  strokeLinejoin="round" />
+            <path d="M 9.5 16.5 l -3.5 -3.5 l 1.25 -1.25 l 2.25 2.25 l 6.75 -6.75 l 1.25 1.25 z" 
+                  fill="#FFFFFF" />
+        </svg>
+    );
+};
+
 const MessagesApp = () => {
     const [conversations, setConversations] = useState(() => {
         if (window.MacMessagesData && window.MacMessagesData.getConversations) {
@@ -336,7 +362,10 @@ const MessagesApp = () => {
                                     </div>
                                     {c.unread > 0 && <div className="msg-pinned-badge">{c.unread}</div>}
                                 </div>
-                                <span className="msg-pinned-name">{c.name.split(' ')[0]}</span>
+                                <span className="msg-pinned-name">
+                                    {c.name.split(' ')[0]}
+                                    {c.status === 'Verified Business' && <VerifiedBadge size={12} />}
+                                </span>
                             </div>
                         ))}
                     </div>
@@ -358,7 +387,10 @@ const MessagesApp = () => {
                                 </div>
                                 <div className="msg-conv-details">
                                     <div className="msg-conv-row-top">
-                                        <span className="msg-conv-name">{c.name}</span>
+                                        <span className="msg-conv-name">
+                                            {c.name}
+                                            {c.status === 'Verified Business' && <VerifiedBadge size={13} />}
+                                        </span>
                                         <span className="msg-conv-time">{lastMsg ? lastMsg.time : ''}</span>
                                     </div>
                                     <div className="msg-conv-preview">
@@ -380,7 +412,10 @@ const MessagesApp = () => {
                             {renderAvatar(activeConv, 34)}
                         </div>
                         <div className="msg-header-meta">
-                            <span className="msg-header-name">{activeConv.name}</span>
+                            <span className="msg-header-name">
+                                {activeConv.name}
+                                {activeConv.status === 'Verified Business' && <VerifiedBadge size={16} />}
+                            </span>
                             <span className="msg-header-sub">{activeConv.status}</span>
                         </div>
                     </div>

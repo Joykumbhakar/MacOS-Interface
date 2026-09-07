@@ -3,64 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>macOS Professional Avatars</title>
+    <title>Digital Identity Assets Bundle</title>
     
-    <!-- Using Tailwind CSS for modern, responsive flat styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     
-    <!-- Custom CSS for specific subtle font smoothing -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #0A0C10; /* Deeper, richer background */
+            background-color: #050505;
             color: #F8FAFC;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+        }
+
+        /* Custom scrollbar for horizontal table scrolling on mobile */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #111318; 
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 4px;
+        }
+
+        /* Smooth tab transition */
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
         }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-10">
+<body class="p-4 md:p-8 lg:p-12">
 
-    <div class="max-w-6xl mx-auto">
-        <header class="text-center mb-12 mt-6">
-            <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-3 text-white">
-                Professional Avatars
+    <div class="max-w-7xl mx-auto">
+        <header class="text-center mb-10 mt-4 relative">
+            <div class="inline-flex items-center justify-center p-2 bg-white/5 rounded-full mb-4 ring-1 ring-white/10">
+                <svg class="w-5 h-5 text-blue-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                </svg>
+                <span class="text-sm font-medium text-gray-300 pr-2">Premium Asset Bundle</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-white">
+                Digital Identity Collection
             </h1>
             <p class="text-gray-400 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
-                A pristine collection of macOS-style default profile avatars featuring modern color palettes. Presented in a clean, flat data table.
+                40 meticulously crafted vector assets. Features flawless geometric avatars and highly detailed verification seals, presented in strict Apple HIG styling.
             </p>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="downloadCompleteBundle()" id="download-all-btn" class="px-7 py-3 bg-white text-black rounded-lg font-semibold text-sm flex items-center gap-2.5 cursor-pointer" aria-label="Download all 40 assets in a structured ZIP file">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Download Complete Bundle (.zip)
+                </button>
+            </div>
         </header>
 
-        <!-- Enhanced table container: subtle rounding, softer borders, elegant flat presentation -->
-        <div class="overflow-x-auto rounded-xl border border-gray-800 bg-[#111318]">
-            <table class="w-full border-collapse text-left">
-                <tbody id="avatar-table-body" class="divide-y divide-gray-800">
-                    <!-- JavaScript will populate this flat table -->
+        <div class="flex justify-center mb-8">
+            <div class="bg-[#111318] p-1.5 rounded-xl border border-gray-800/60 inline-flex">
+                <button onclick="switchTab('avatars')" id="tab-avatars" class="px-6 py-2.5 rounded-lg text-sm font-semibold bg-[#1A1D24] text-white ring-1 ring-white/5">
+                    macOS Avatars
+                </button>
+                <button onclick="switchTab('badges')" id="tab-badges" class="px-6 py-2.5 rounded-lg text-sm font-semibold text-gray-400">
+                    Verified Badges
+                </button>
+            </div>
+        </div>
+
+        <div id="content-avatars" class="tab-content active custom-scrollbar overflow-x-auto rounded-xl border border-gray-800 bg-[#0D0F14]">
+            <table class="w-full border-collapse text-left min-w-[600px]">
+                <tbody id="avatar-table-body" class="divide-y divide-gray-800/80">
+                    <!-- Dynamic Avatar Rows -->
                 </tbody>
             </table>
         </div>
 
-        <footer class="text-center mt-16 text-gray-500 text-sm font-medium pb-8">
-            <p>Perfect geometric proportions matching Apple Human Interface Guidelines.</p>
+        <div id="content-badges" class="tab-content custom-scrollbar overflow-x-auto rounded-xl border border-gray-800 bg-[#0D0F14]">
+            <table class="w-full border-collapse text-left min-w-[600px]">
+                <tbody id="badge-table-body" class="divide-y divide-gray-800/80">
+                    <!-- Dynamic Badge Rows -->
+                </tbody>
+            </table>
+        </div>
+
+        <footer class="text-center mt-16 text-gray-600 text-sm font-medium pb-8 flex items-center justify-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+            Pure SVG geometry. No external dependencies.
         </footer>
     </div>
 
     <script>
-        // Array of 20 highly professional, modern gradient pairs
-        const palettes = [
+        // 20 Professional Palettes for macOS Avatars
+        const avatarPalettes = [
             { name: "Classic Mac", start: "#E2E5E9", end: "#9BA2AE" },
             { name: "Space Gray", start: "#7B7B81", end: "#505054" },
             { name: "Midnight", start: "#242D3D", end: "#11161F" },
             { name: "Corporate Navy", start: "#1E3A8A", end: "#172554" },
             { name: "Slate Blue", start: "#475569", end: "#1E293B" },
             { name: "Executive Forest", start: "#166534", end: "#14532D" },
-            { name: "Burgundy Boardroom", start: "#7F1D1D", end: "#450A0A" },
+            { name: "Burgundy Board", start: "#7F1D1D", end: "#450A0A" },
             { name: "Deep Purple", start: "#581C87", end: "#3B0764" },
-            { name: "Teal Professional", start: "#0F766E", end: "#042F2E" },
+            { name: "Teal Pro", start: "#0F766E", end: "#042F2E" },
             { name: "Charcoal", start: "#3F3F46", end: "#18181B" },
-            { name: "Bronze Executive", start: "#9A3412", end: "#431407" },
+            { name: "Bronze Exec", start: "#9A3412", end: "#431407" },
             { name: "Steel Grey", start: "#64748B", end: "#334155" },
             { name: "Royal Blue", start: "#2563EB", end: "#1E3A8A" },
             { name: "Emerald Focus", start: "#059669", end: "#064E3B" },
@@ -72,100 +129,143 @@
             { name: "Gold Standard", start: "#B45309", end: "#78350F" }
         ];
 
-        const tbody = document.getElementById('avatar-table-body');
-        let tableHTML = '';
+        // 20 Professional Palettes for Verified Badges
+        const badgePalettes = [
+            { name: "Standard Blue", start: "#3B82F6", end: "#1D4ED8" },
+            { name: "Gold Premium", start: "#FBBF24", end: "#B45309" },
+            { name: "Silver Exec", start: "#9CA3AF", end: "#4B5563" },
+            { name: "Bronze Pioneer", start: "#D97706", end: "#78350F" },
+            { name: "Emerald Official", start: "#10B981", end: "#047857" },
+            { name: "Ruby Elite", start: "#F43F5E", end: "#9F1239" },
+            { name: "Amethyst Trust", start: "#A855F7", end: "#6B21A8" },
+            { name: "Midnight Core", start: "#334155", end: "#0F172A" },
+            { name: "Space Gray Auth", start: "#64748B", end: "#334155" },
+            { name: "Navy Seal", start: "#1E3A8A", end: "#172554" },
+            { name: "Teal Authentic", start: "#14B8A6", end: "#0F766E" },
+            { name: "Crimson Crown", start: "#E11D48", end: "#881337" },
+            { name: "Slate Authority", start: "#475569", end: "#1E293B" },
+            { name: "Deep Purple VIP", start: "#7E22CE", end: "#4C1D95" },
+            { name: "Ocean Sentinel", start: "#0EA5E9", end: "#0369A1" },
+            { name: "Forest Secure", start: "#22C55E", end: "#15803D" },
+            { name: "Corporate Cyan", start: "#06B6D4", end: "#0E7490" },
+            { name: "Charcoal Stealth", start: "#3F3F46", end: "#18181B" },
+            { name: "Rose Gold", start: "#FDA4AF", end: "#BE123C" },
+            { name: "Sapphire Auth", start: "#4F46E5", end: "#312E81" }
+        ];
 
-        // Loop through palettes to create a 2-column table (2x10)
-        for (let i = 0; i < palettes.length; i += 2) {
-            // Added subtle flat hover effect on the row for better UX, without 3D pop
-            tableHTML += `<tr class="hover:bg-[#161920] transition-colors duration-150">`;
-            
-            // First column
-            tableHTML += createTableCell(palettes[i], i);
-            
-            // Second column (if it exists)
-            if (palettes[i+1]) {
-                tableHTML += createTableCell(palettes[i+1], i+1);
-            } else {
-                tableHTML += `<td class="p-5 md:p-6 w-1/2"></td>`;
-            }
-            
-            tableHTML += `</tr>`;
-        }
 
-        // Append generated rows to table body
-        tbody.innerHTML = tableHTML;
-
-        function createTableCell(palette, index) {
-            const id = index + 1;
-            const svgId = `avatar-svg-${id}`;
-            const filename = `avatar-${palette.name.toLowerCase().replace(/\\s+/g, '-')}.svg`;
-
-            // SVG markup completely flat and strict, no shadow filters
-            const svgMarkup = `
-                <svg id="${svgId}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-16 h-16 md:w-20 md:h-20 block">
+        // Generates the perfectly geometric macOS Avatar SVG string
+        function getAvatarSVG(palette, id) {
+            return `
+                <svg id="avatar-svg-${id}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-16 h-16 md:w-[72px] md:h-[72px] block">
                     <defs>
-                        <!-- Dynamic Background Gradient -->
-                        <linearGradient id="bgGradient-${id}" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <linearGradient id="av-bg-${id}" x1="0%" y1="0%" x2="0%" y2="100%">
                             <stop offset="0%" stop-color="${palette.start}" />
                             <stop offset="100%" stop-color="${palette.end}" />
                         </linearGradient>
-
-                        <!-- Standard Silhouette Gradient -->
-                        <linearGradient id="silGradient-${id}" x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse">
+                        <linearGradient id="av-sil-${id}" x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse">
                             <stop offset="10%" stop-color="#FFFFFF" />
                             <stop offset="90%" stop-color="#D5D9E0" />
                         </linearGradient>
-
-                        <!-- Glassy Inner Border Gradient -->
-                        <linearGradient id="borderGradient-${id}" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" stop-color="rgba(255,255,255,0.6)" />
-                            <stop offset="100%" stop-color="rgba(0,0,0,0.3)" />
+                        <linearGradient id="av-border-${id}" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="rgba(255,255,255,0.7)" />
+                            <stop offset="100%" stop-color="rgba(0,0,0,0.2)" />
                         </linearGradient>
-
-                        <!-- Circular Clip Path for the shoulders -->
-                        <clipPath id="circleClip-${id}">
+                        <clipPath id="av-clip-${id}">
                             <circle cx="256" cy="256" r="256" />
                         </clipPath>
                     </defs>
-
-                    <!-- Base Circle Background -->
-                    <circle cx="256" cy="256" r="256" fill="url(#bgGradient-${id})" />
-                    
-                    <!-- Inner Bevel/Stroke Overlay -->
-                    <circle cx="256" cy="256" r="254.5" fill="none" stroke="url(#borderGradient-${id})" stroke-width="3" />
-
-                    <!-- Clipped Silhouette Group (No DropShadow filter applied) -->
-                    <g clip-path="url(#circleClip-${id})">
-                        <!-- Head: Perfect geometric circle -->
-                        <circle cx="256" cy="165" r="95" fill="url(#silGradient-${id})" />
-                        <!-- Body: Perfect geometric circle to avoid oval distortion -->
-                        <circle cx="256" cy="530" r="250" fill="url(#silGradient-${id})" />
+                    <circle cx="256" cy="256" r="256" fill="url(#av-bg-${id})" />
+                    <circle cx="256" cy="256" r="254.5" fill="none" stroke="url(#av-border-${id})" stroke-width="3" />
+                    <g clip-path="url(#av-clip-${id})">
+                        <g>
+                            <!-- Perfect geometric circle for head -->
+                            <circle cx="256" cy="165" r="95" fill="url(#av-sil-${id})" />
+                            <!-- Perfect geometric circle for body (prevents oval distortion) -->
+                            <circle cx="256" cy="530" r="250" fill="url(#av-sil-${id})" />
+                        </g>
                     </g>
                 </svg>
             `;
+        }
 
-            // Refined spacing, typography weights, and a sleeker button with slight rounding
+        // Generates the highly detailed Verified Badge SVG string with slim checkmark
+        function getBadgeSVG(palette, id) {
             return `
-                <td class="p-5 md:p-6 border-r border-gray-800 last:border-r-0 align-middle w-1/2">
-                    <div class="flex items-center gap-5">
-                        <div class="shrink-0 ring-1 ring-white/10 rounded-full">
+                <svg id="badge-svg-${id}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-16 h-16 md:w-[72px] md:h-[72px] block">
+                    <defs>
+                        <linearGradient id="bd-bg-${id}" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="${palette.start}" />
+                            <stop offset="100%" stop-color="${palette.end}" />
+                        </linearGradient>
+                        <linearGradient id="bd-border-${id}" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="rgba(255,255,255,0.7)" />
+                            <stop offset="50%" stop-color="rgba(255,255,255,0.1)" />
+                            <stop offset="100%" stop-color="rgba(0,0,0,0.4)" />
+                        </linearGradient>
+                    </defs>
+                    <!-- Precision geometric seal path -->
+                    <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.918-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.337 2.25c-.416-.165-.866-.25-1.336-.25-2.21 0-3.918 1.79-3.918 4 0 .495.084.965.238 1.4-1.273.65-2.148 2.02-2.148 3.6 0 1.46.74 2.746 1.865 3.45-.06.31-.09.63-.09.95 0 2.21 1.71 4 3.918 4 .47 0 .92-.085 1.336-.25.52 1.335 1.826 2.25 3.337 2.25s2.816-.915 3.337-2.25c.416.165.866.25 1.336.25 2.21 0 3.918-1.79 3.918-4 0-.32-.03-.64-.09-.95 1.125-.705 1.865-1.99 1.865-3.45z" 
+                          fill="url(#bd-bg-${id})" 
+                          stroke="url(#bd-border-${id})" 
+                          stroke-width="0.6" 
+                          stroke-linejoin="round" />
+                    <!-- Slimmer, perfectly aligned 45-degree checkmark based on reference -->
+                    <path d="M 9.5 16.5 l -3.5 -3.5 l 1.25 -1.25 l 2.25 2.25 l 6.75 -6.75 l 1.25 1.25 z" 
+                          fill="#FFFFFF" />
+                </svg>
+            `;
+        }
+
+        function renderTable(palettes, tbodyId, svgGenerator, prefix) {
+            const tbody = document.getElementById(tbodyId);
+            let tableHTML = '';
+
+            // Generate 2 columns per row
+            for (let i = 0; i < palettes.length; i += 2) {
+                tableHTML += `<tr>`;
+                
+                // Column 1
+                tableHTML += buildTableCell(palettes[i], i, svgGenerator, prefix);
+                
+                // Column 2
+                if (palettes[i+1]) {
+                    tableHTML += buildTableCell(palettes[i+1], i+1, svgGenerator, prefix);
+                } else {
+                    tableHTML += `<td class="p-4 md:p-5 w-1/2"></td>`;
+                }
+                
+                tableHTML += `</tr>`;
+            }
+            tbody.innerHTML = tableHTML;
+        }
+
+        function buildTableCell(palette, index, svgGenerator, prefix) {
+            const id = index + 1;
+            const svgId = `${prefix}-svg-${id}`;
+            const filename = `${prefix}-${palette.name.toLowerCase().replace(/\s+/g, '-')}.svg`;
+            const svgMarkup = svgGenerator(palette, id);
+
+            return `
+                <td class="p-4 md:p-5 border-r border-gray-800/80 last:border-r-0 align-middle w-1/2">
+                    <div class="flex items-center gap-4 md:gap-5">
+                        <div class="shrink-0 ${prefix === 'avatar' ? 'ring-1 ring-white/10 rounded-full' : ''}">
                             ${svgMarkup}
                         </div>
-                        <div class="flex flex-col gap-2">
-                            <h2 class="text-[15px] font-semibold text-gray-100 m-0 tracking-wide">
+                        <div class="flex flex-col gap-1.5">
+                            <h2 class="text-[14px] md:text-[15px] font-semibold text-gray-100 m-0 tracking-wide">
                                 ${palette.name}
                             </h2>
                             <button 
                                 onclick="downloadSVG('${svgId}', '${filename}')" 
-                                class="px-3.5 py-1.5 bg-[#0071E3] hover:bg-[#005cba] text-white rounded-md font-medium text-[13px] flex items-center gap-1.5 max-w-max transition-colors cursor-pointer"
+                                class="px-3.5 py-1.5 bg-[#0071E3] text-white rounded font-medium text-[12px] md:text-[13px] flex items-center gap-1.5 max-w-max cursor-pointer"
                                 aria-label="Download ${palette.name} SVG">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                     <polyline points="7 10 12 15 17 10"></polyline>
                                     <line x1="12" y1="15" x2="12" y2="3"></line>
                                 </svg>
-                                Download
+                                SVG
                             </button>
                         </div>
                     </div>
@@ -173,33 +273,101 @@
             `;
         }
 
-        function downloadSVG(targetSvgId, targetFilename) {
-            // Get the specific SVG element from the DOM
-            const svgElement = document.getElementById(targetSvgId);
+        // Initialize DOM
+        renderTable(avatarPalettes, 'avatar-table-body', getAvatarSVG, 'avatar');
+        renderTable(badgePalettes, 'badge-table-body', getBadgeSVG, 'badge');
+
+
+        function switchTab(tabId) {
+            // Update buttons
+            document.getElementById('tab-avatars').className = `px-6 py-2.5 rounded-lg text-sm font-semibold ${tabId === 'avatars' ? 'bg-[#1A1D24] text-white ring-1 ring-white/5' : 'text-gray-400'}`;
+            document.getElementById('tab-badges').className = `px-6 py-2.5 rounded-lg text-sm font-semibold ${tabId === 'badges' ? 'bg-[#1A1D24] text-white ring-1 ring-white/5' : 'text-gray-400'}`;
             
-            // Serialize the SVG to a string
+            // Update content visibility
+            document.getElementById('content-avatars').classList.remove('active');
+            document.getElementById('content-badges').classList.remove('active');
+            document.getElementById(`content-${tabId}`).classList.add('active');
+        }
+
+        // Single SVG Download Function
+        function downloadSVG(targetSvgId, targetFilename) {
+            const svgElement = document.getElementById(targetSvgId);
             const serializer = new XMLSerializer();
             let svgString = serializer.serializeToString(svgElement);
             
-            // Add XML declaration so the SVG works flawlessly as a standalone file
-            svgString = '<?xml version="1.0" standalone="no"?>\\r\\n' + svgString;
+            // Add XML declaration
+            svgString = '<?xml version="1.0" standalone="no"?>\r\n' + svgString;
             
-            // Create a Blob from the SVG string
             const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             
-            // Create a temporary link element to trigger the download
             const link = document.createElement('a');
             link.href = url;
             link.download = targetFilename;
             
-            // Append to body, trigger click, and clean up safely
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             
-            // Release the object URL from memory
             setTimeout(() => URL.revokeObjectURL(url), 100);
+        }
+
+        // ZIP Complete Bundle Generation
+        async function downloadCompleteBundle() {
+            const zip = new JSZip();
+            const btn = document.getElementById('download-all-btn');
+            const originalContent = btn.innerHTML;
+            
+            // Show loading state
+            btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-black inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Packaging Bundle...`;
+            btn.disabled = true;
+
+            // Create folders
+            const avatarsFolder = zip.folder("macOS_Avatars");
+            const badgesFolder = zip.folder("Verified_Badges");
+
+            // Process Avatars
+            avatarPalettes.forEach((palette, index) => {
+                const id = index + 1;
+                const filename = `avatar-${palette.name.toLowerCase().replace(/\s+/g, '-')}.svg`;
+                const svgString = '<?xml version="1.0" standalone="no"?>\r\n' + getAvatarSVG(palette, id);
+                avatarsFolder.file(filename, svgString);
+            });
+
+            // Process Badges
+            badgePalettes.forEach((palette, index) => {
+                const id = index + 1;
+                const filename = `verified-${palette.name.toLowerCase().replace(/\s+/g, '-')}.svg`;
+                const svgString = '<?xml version="1.0" standalone="no"?>\r\n' + getBadgeSVG(palette, id);
+                badgesFolder.file(filename, svgString);
+            });
+            
+            try {
+                // Generate and trigger download
+                const content = await zip.generateAsync({ type: "blob" });
+                const url = URL.createObjectURL(content);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = "digital-identity-assets-bundle.zip";
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                setTimeout(() => URL.revokeObjectURL(url), 100);
+            } catch (error) {
+                console.error("Failed to generate complete bundle:", error);
+                // We fallback gracefully without native alerts
+                const errorMsg = document.createElement('div');
+                errorMsg.className = "text-red-500 text-sm mt-2";
+                errorMsg.innerText = "Error generating ZIP file. Please try downloading assets individually.";
+                btn.parentNode.appendChild(errorMsg);
+            } finally {
+                // Restore button
+                btn.innerHTML = originalContent;
+                btn.disabled = false;
+            }
         }
     </script>
 </body>
