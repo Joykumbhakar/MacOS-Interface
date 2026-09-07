@@ -68,10 +68,11 @@
         .launchpad-grid ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.4); }
 
         .macOS-body {
+            position: fixed; inset: 0;
             width: 100vw; height: 100vh; overflow: hidden;
             background: #0f172a url('images/Wallpapers/26-Tahoe-Light-6K.jpg') no-repeat center center / cover;
             display: flex; align-items: flex-end; justify-content: center;
-            padding-bottom: 0px; user-select: none; -webkit-user-select: none; position: relative;
+            padding-bottom: 0px; user-select: none; -webkit-user-select: none;
         }
 
         .macOS-topbar {

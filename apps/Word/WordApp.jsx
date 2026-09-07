@@ -23,15 +23,9 @@ const WordApp = () => {
     const [content, setContent] = useState('');
     const canvasRef = useRef(null);
 
-    useEffect(() => {
-        if (canvasRef.current) {
-            canvasRef.current.focus();
-        }
-    }, []);
-
     const execCommand = (cmd) => {
         document.execCommand(cmd, false, null);
-        if (canvasRef.current) canvasRef.current.focus();
+        if (canvasRef.current) canvasRef.current.focus({ preventScroll: true });
     };
 
     return (

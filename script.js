@@ -1,3 +1,12 @@
+// Prevent desktop viewport from ever scrolling off-screen
+window.addEventListener('scroll', () => {
+    if (window.scrollY !== 0 || window.scrollX !== 0) window.scrollTo(0, 0);
+    if (document.body.scrollTop !== 0) document.body.scrollTop = 0;
+    if (document.documentElement.scrollTop !== 0) document.documentElement.scrollTop = 0;
+    const mc = document.getElementById('macOS-container');
+    if (mc && mc.scrollTop !== 0) mc.scrollTop = 0;
+}, { passive: false });
+
 // ==========================================================================
 // Universal Apple macOS Sequoia Modal Dialog & Sheet System
 // ==========================================================================
