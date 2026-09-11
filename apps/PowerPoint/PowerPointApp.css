@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Apple-Inspired PowerPoint / Keynote Suite Design System (macOS Sequoia)
+   Apple Keynote & Microsoft 365 macOS Sequoia Professional Design System
    ========================================================================== */
 
 .pp-app-container {
@@ -8,7 +8,7 @@
     height: 100%;
     width: 100%;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
-    background: #fbfbfd;
+    background: #f5f5f7;
     color: #1d1d1f;
     user-select: none;
     -webkit-user-select: none;
@@ -16,17 +16,17 @@
     position: relative;
 }
 
-/* ── Unified macOS Header & Ribbon Tabs ──────────────────────────────────── */
+/* ── Unified macOS Titlebar & Header ──────────────────────────────────────── */
 .pp-header {
-    height: 48px;
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(40px) saturate(180%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    height: 50px;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(40px) saturate(190%);
+    -webkit-backdrop-filter: blur(40px) saturate(190%);
     border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 16px 0 80px; /* Space for macOS window controls */
+    padding: 0 16px 0 78px; /* Leave space for macOS traffic lights */
     position: relative;
     z-index: 30;
     flex-shrink: 0;
@@ -47,25 +47,27 @@
     color: #1d1d1f;
     display: flex;
     align-items: center;
-    gap: 5px;
-    cursor: pointer;
-    padding: 2px 6px;
-    border-radius: 4px;
-    transition: background 0.15s ease;
+    gap: 4px;
+    cursor: text;
+    padding: 3px 8px;
+    border-radius: 5px;
+    outline: none;
+    transition: background 0.15s ease, box-shadow 0.15s ease;
 }
 
-.pp-doc-title:hover {
-    background: rgba(0, 0, 0, 0.05);
+.pp-doc-title:focus {
+    background: rgba(0, 113, 227, 0.08);
+    box-shadow: 0 0 0 1.5px #0071e3;
 }
 
 .pp-doc-badge {
-    font-size: 10px;
+    font-size: 10.5px;
     font-weight: 600;
     padding: 2px 7px;
-    border-radius: 10px;
-    background: rgba(0, 122, 255, 0.12);
-    color: #007aff;
-    letter-spacing: 0.2px;
+    border-radius: 12px;
+    background: rgba(0, 113, 227, 0.1);
+    color: #0071e3;
+    letter-spacing: 0.1px;
 }
 
 .pp-toolbar-actions {
@@ -74,25 +76,32 @@
     gap: 6px;
 }
 
-/* ── Ribbon Tab Selector Bar ─────────────────────────────────────────────── */
+/* ── macOS Sequoia Segmented Ribbon Tabs ──────────────────────────────────── */
 .pp-ribbon-tabs-bar {
-    height: 32px;
-    background: rgba(246, 246, 248, 0.85);
+    height: 36px;
+    background: rgba(246, 246, 248, 0.9);
     border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
     display: flex;
     align-items: center;
     padding: 0 16px;
-    gap: 2px;
     flex-shrink: 0;
     z-index: 25;
 }
 
+.pp-segmented-capsule {
+    display: inline-flex;
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 7px;
+    padding: 2.5px;
+    gap: 2px;
+}
+
 .pp-ribbon-tab {
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-size: 12px;
+    padding: 3px 12px;
+    border-radius: 5px;
+    font-size: 11.5px;
     font-weight: 500;
-    color: #555558;
+    color: #636366;
     background: transparent;
     border: none;
     cursor: pointer;
@@ -101,24 +110,24 @@
 
 .pp-ribbon-tab:hover {
     color: #1d1d1f;
-    background: rgba(0, 0, 0, 0.05);
 }
 
 .pp-ribbon-tab.active {
-    color: #007aff;
-    background: rgba(0, 122, 255, 0.12);
+    color: #1d1d1f;
+    background: #ffffff;
     font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 0.5px 1px rgba(0, 0, 0, 0.05);
 }
 
-/* ── Ribbon Toolbar Controls Bar ─────────────────────────────────────────── */
+/* ── macOS Action Ribbon Toolbar ─────────────────────────────────────────── */
 .pp-ribbon-toolbar {
-    min-height: 40px;
-    background: rgba(255, 255, 255, 0.95);
-    border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+    min-height: 42px;
+    background: #ffffff;
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.09);
     display: flex;
     align-items: center;
     padding: 0 16px;
-    gap: 12px;
+    gap: 10px;
     flex-shrink: 0;
     z-index: 20;
     overflow-x: auto;
@@ -136,48 +145,63 @@
 
 .pp-ribbon-divider {
     width: 1px;
-    height: 20px;
+    height: 18px;
     background: rgba(0, 0, 0, 0.1);
-    margin: 0 4px;
+    margin: 0 3px;
 }
 
-/* macOS Buttons & Icons */
-.pp-pill-btn {
+/* ── Authentic macOS Native Buttons ──────────────────────────────────────── */
+.pp-btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
     height: 26px;
     padding: 0 10px;
-    background: rgba(0, 0, 0, 0.04);
-    border: 0.5px solid rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    border: 0.5px solid rgba(0, 0, 0, 0.15);
     border-radius: 6px;
     font-size: 11.5px;
     font-weight: 500;
     color: #1d1d1f;
     cursor: pointer;
-    transition: all 0.15s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    transition: all 0.12s ease;
     white-space: nowrap;
 }
 
-.pp-pill-btn:hover {
-    background: rgba(0, 0, 0, 0.08);
-    border-color: rgba(0, 0, 0, 0.15);
+.pp-btn:hover {
+    background: #f9f9fb;
+    border-color: rgba(0, 0, 0, 0.22);
 }
 
-.pp-pill-btn:active {
-    background: rgba(0, 0, 0, 0.12);
+.pp-btn:active {
+    background: #ebebee;
     transform: scale(0.98);
 }
 
-.pp-pill-btn.primary {
-    background: linear-gradient(180deg, #47A1FF 0%, #0071E3 100%);
+.pp-btn.primary {
+    background: linear-gradient(180deg, #3aa0ff 0%, #0071e3 100%);
     color: #ffffff;
-    border: 0.5px solid #0058b0;
-    box-shadow: 0 1px 3px rgba(0, 113, 227, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    border: 0.5px solid #005bb5;
+    box-shadow: 0 1px 3px rgba(0, 113, 227, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    font-weight: 600;
 }
 
-.pp-pill-btn.primary:hover {
-    background: linear-gradient(180deg, #5AB0FF 0%, #007DF5 100%);
+.pp-btn.primary:hover {
+    background: linear-gradient(180deg, #4da8ff 0%, #007dfa 100%);
+}
+
+.pp-btn.primary:active {
+    background: #0060c2;
+    transform: scale(0.98);
+}
+
+.pp-btn.active {
+    background: rgba(0, 113, 227, 0.12);
+    border-color: rgba(0, 113, 227, 0.3);
+    color: #0071e3;
+    font-weight: 600;
 }
 
 .pp-icon-btn {
@@ -191,49 +215,51 @@
     border: none;
     color: #48484a;
     cursor: pointer;
-    transition: background 0.15s ease, color 0.15s ease;
+    transition: background 0.12s ease, color 0.12s ease;
 }
 
 .pp-icon-btn:hover {
-    background: rgba(0, 0, 0, 0.06);
+    background: rgba(0, 0, 0, 0.05);
     color: #1d1d1f;
 }
 
 .pp-icon-btn.active {
-    background: rgba(0, 122, 255, 0.12);
-    color: #007aff;
+    background: rgba(0, 113, 227, 0.12);
+    color: #0071e3;
 }
 
 .pp-select {
     height: 26px;
-    background: rgba(0, 0, 0, 0.04);
-    border: 0.5px solid rgba(0, 0, 0, 0.12);
-    border-radius: 5px;
+    background: #ffffff;
+    border: 0.5px solid rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
     font-size: 11.5px;
     font-weight: 500;
     color: #1d1d1f;
     padding: 0 6px;
     outline: none;
     cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .pp-select:focus {
-    border-color: #007aff;
+    border-color: #0071e3;
+    box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.2);
 }
 
-/* ── Main Multi-Pane Workspace ───────────────────────────────────────────── */
+/* ── Workspace 3-Pane Layout ─────────────────────────────────────────────── */
 .pp-workspace {
     display: flex;
     flex: 1;
-    height: calc(100% - 148px);
+    height: calc(100% - 156px);
     overflow: hidden;
     position: relative;
 }
 
 /* ── Left Sidebar: Slide Navigator ───────────────────────────────────────── */
 .pp-navigator {
-    width: 196px;
-    background: rgba(246, 246, 248, 0.7);
+    width: 200px;
+    background: rgba(245, 245, 247, 0.75);
     backdrop-filter: blur(40px) saturate(180%);
     -webkit-backdrop-filter: blur(40px) saturate(180%);
     border-right: 0.5px solid rgba(0, 0, 0, 0.1);
@@ -243,15 +269,15 @@
 }
 
 .pp-nav-header {
-    padding: 8px 12px 6px;
+    padding: 10px 14px 6px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 600;
     text-transform: uppercase;
     color: #86868b;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.4px;
 }
 
 .pp-slides-list {
@@ -260,16 +286,16 @@
     padding: 6px 12px 16px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
 }
 
 .pp-slides-list::-webkit-scrollbar {
-    width: 5px;
+    width: 4px;
 }
 
 .pp-slides-list::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, 0.15);
-    border-radius: 3px;
+    border-radius: 2px;
 }
 
 .pp-slide-card {
@@ -278,7 +304,7 @@
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    transition: transform 0.15s ease;
+    transition: transform 0.12s ease;
 }
 
 .pp-slide-card:active {
@@ -304,7 +330,7 @@
     padding: 8px;
     position: relative;
     overflow: hidden;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -313,24 +339,24 @@
 }
 
 .pp-slide-card:hover .pp-slide-thumb {
-    border-color: rgba(0, 122, 255, 0.4);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-color: rgba(0, 113, 227, 0.35);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
 }
 
 .pp-slide-card.active .pp-slide-thumb {
-    border-color: #007aff;
-    box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.4), 0 3px 10px rgba(0, 0, 0, 0.12);
+    border-color: #0071e3;
+    box-shadow: 0 0 0 2px #0071e3, 0 4px 12px rgba(0, 113, 227, 0.2);
 }
 
 .pp-slide-card.active .pp-slide-num {
-    color: #007aff;
+    color: #0071e3;
 }
 
 .pp-thumb-title {
     font-size: 8px;
     font-weight: 700;
     color: #1d1d1f;
-    line-height: 1.1;
+    line-height: 1.15;
     margin-bottom: 2px;
     white-space: nowrap;
     overflow: hidden;
@@ -347,14 +373,14 @@
     width: 100%;
 }
 
-/* ── Center Stage: Main Canvas ───────────────────────────────────────────── */
+/* ── Center Stage & Canvas ───────────────────────────────────────────────── */
 .pp-stage {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #f0f1f4 0%, #e2e4e8 100%);
+    background: #e8eaed;
     overflow: auto;
     padding: 24px;
     position: relative;
@@ -365,7 +391,7 @@
     max-width: 94%;
     aspect-ratio: 16 / 9;
     border-radius: 10px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14), 0 0 0 1px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.08);
     position: relative;
     padding: 44px;
     display: flex;
@@ -376,14 +402,14 @@
     overflow: hidden;
 }
 
-/* Editable text blocks */
+/* Typography & Layouts */
 .pp-editable-title {
-    font-size: 34px;
-    font-weight: 800;
-    line-height: 1.15;
-    letter-spacing: -0.6px;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.18;
+    letter-spacing: -0.02em;
     outline: none;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     cursor: text;
     border-radius: 4px;
     padding: 2px 4px;
@@ -391,17 +417,17 @@
 }
 
 .pp-editable-title:focus {
-    background: rgba(0, 122, 255, 0.08);
-    box-shadow: 0 0 0 1.5px rgba(0, 122, 255, 0.4);
+    background: rgba(0, 113, 227, 0.08);
+    box-shadow: 0 0 0 1.5px rgba(0, 113, 227, 0.4);
 }
 
 .pp-editable-subtitle {
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 400;
-    line-height: 1.4;
-    opacity: 0.85;
+    line-height: 1.45;
+    opacity: 0.88;
     outline: none;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     cursor: text;
     border-radius: 4px;
     padding: 2px 4px;
@@ -409,8 +435,8 @@
 }
 
 .pp-editable-subtitle:focus {
-    background: rgba(0, 122, 255, 0.08);
-    box-shadow: 0 0 0 1.5px rgba(0, 122, 255, 0.4);
+    background: rgba(0, 113, 227, 0.08);
+    box-shadow: 0 0 0 1.5px rgba(0, 113, 227, 0.4);
 }
 
 .pp-bullet-list {
@@ -425,16 +451,16 @@
 }
 
 .pp-bullet-list:focus {
-    background: rgba(0, 122, 255, 0.08);
-    box-shadow: 0 0 0 1.5px rgba(0, 122, 255, 0.4);
+    background: rgba(0, 113, 227, 0.08);
+    box-shadow: 0 0 0 1.5px rgba(0, 113, 227, 0.4);
 }
 
-/* ── Split Layout ────────────────────────────────────────────────────────── */
+/* Split layout */
 .pp-split-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-top: 14px;
+    gap: 20px;
+    margin-top: 10px;
     flex: 1;
 }
 
@@ -445,20 +471,20 @@
     border-radius: 8px;
     padding: 16px;
     outline: none;
-    font-size: 14px;
+    font-size: 13.5px;
     line-height: 1.6;
 }
 
 .pp-split-col:focus {
-    box-shadow: 0 0 0 1.5px rgba(0, 122, 255, 0.4);
+    box-shadow: 0 0 0 1.5px rgba(0, 113, 227, 0.4);
 }
 
-/* ── Stats Grid Layout ───────────────────────────────────────────────────── */
+/* Stats grid */
 .pp-stats-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
-    margin-top: 20px;
+    margin-top: 18px;
 }
 
 .pp-stat-card {
@@ -474,19 +500,19 @@
 .pp-stat-value {
     font-size: 28px;
     font-weight: 800;
-    color: #007aff;
+    color: #0071e3;
     letter-spacing: -0.5px;
     margin-bottom: 4px;
 }
 
 .pp-stat-label {
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 600;
     text-transform: uppercase;
     opacity: 0.8;
 }
 
-/* ── Code Showcase Layout ────────────────────────────────────────────────── */
+/* Code block */
 .pp-code-block {
     background: #1e1e24;
     color: #38ef7d;
@@ -502,31 +528,21 @@
     white-space: pre;
 }
 
-/* ── Custom Inserted Objects (Shapes, Tables, Images) ────────────────────── */
-.pp-element-container {
-    position: absolute;
-    cursor: move;
-    border: 1.5px solid transparent;
-    transition: border-color 0.15s ease;
-}
-
-.pp-element-container.selected {
-    border-color: #007aff;
-    box-shadow: 0 0 0 1px #ffffff;
-}
-
+/* Shapes & Tables */
 .pp-shape-rect {
     width: 120px;
     height: 80px;
-    background: #007aff;
-    border-radius: 6px;
+    background: linear-gradient(135deg, #0071e3 0%, #0058b0 100%);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
 }
 
 .pp-shape-circle {
     width: 90px;
     height: 90px;
-    background: #ff9500;
+    background: linear-gradient(135deg, #ff9500 0%, #ff5e3a 100%);
     border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(255, 149, 0, 0.3);
 }
 
 .pp-shape-star {
@@ -535,13 +551,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    filter: drop-shadow(0 4px 10px rgba(255, 214, 10, 0.4));
 }
 
 .pp-table-grid {
     border-collapse: collapse;
     width: 100%;
     margin-top: 14px;
-    background: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.65);
     border-radius: 6px;
     overflow: hidden;
 }
@@ -554,16 +571,16 @@
 }
 
 .pp-table-grid th {
-    background: rgba(0, 122, 255, 0.12);
-    color: #007aff;
+    background: rgba(0, 113, 227, 0.1);
+    color: #0071e3;
     font-weight: 600;
 }
 
 /* ── Speaker Notes Drawer ────────────────────────────────────────────────── */
 .pp-notes-drawer {
     width: 100%;
-    height: 110px;
-    background: rgba(255, 255, 255, 0.85);
+    height: 105px;
+    background: rgba(255, 255, 255, 0.88);
     backdrop-filter: blur(25px);
     border-top: 0.5px solid rgba(0, 0, 0, 0.12);
     padding: 10px 16px;
@@ -575,7 +592,7 @@
 }
 
 .pp-notes-header {
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 600;
     text-transform: uppercase;
     color: #86868b;
@@ -600,7 +617,7 @@
 /* ── Right Inspector Panel ───────────────────────────────────────────────── */
 .pp-inspector {
     width: 250px;
-    background: rgba(246, 246, 248, 0.7);
+    background: rgba(245, 245, 247, 0.85);
     backdrop-filter: blur(40px) saturate(180%);
     -webkit-backdrop-filter: blur(40px) saturate(180%);
     border-left: 0.5px solid rgba(0, 0, 0, 0.1);
@@ -609,50 +626,58 @@
     flex-shrink: 0;
 }
 
-.pp-inspector-tabs {
-    display: flex;
+.pp-inspector-tabs-wrap {
+    padding: 8px 12px;
     border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
-    background: rgba(0, 0, 0, 0.02);
-}
-
-.pp-tab-btn {
-    flex: 1;
-    padding: 9px 0;
-    font-size: 11.5px;
-    font-weight: 500;
-    color: #86868b;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all 0.15s ease;
-}
-
-.pp-tab-btn:hover {
-    color: #1d1d1f;
-}
-
-.pp-tab-btn.active {
-    color: #007aff;
-    border-bottom-color: #007aff;
-    font-weight: 600;
 }
 
 .pp-inspector-body {
-    padding: 16px;
+    padding: 14px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 16px;
 }
 
 .pp-section-title {
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 600;
     text-transform: uppercase;
     color: #86868b;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.4px;
     margin-bottom: 8px;
+}
+
+.pp-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.pp-layout-card {
+    padding: 8px 6px;
+    background: #ffffff;
+    border: 0.5px solid rgba(0, 0, 0, 0.12);
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #1d1d1f;
+    cursor: pointer;
+    text-align: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    transition: all 0.12s ease;
+}
+
+.pp-layout-card:hover {
+    border-color: rgba(0, 113, 227, 0.4);
+    background: #fbfbfd;
+}
+
+.pp-layout-card.active {
+    background: rgba(0, 113, 227, 0.1);
+    border-color: #0071e3;
+    color: #0071e3;
+    font-weight: 600;
 }
 
 .pp-theme-grid {
@@ -663,52 +688,24 @@
 
 .pp-theme-swatch {
     aspect-ratio: 16 / 10;
-    border-radius: 5px;
+    border-radius: 6px;
     border: 1px solid rgba(0, 0, 0, 0.15);
     cursor: pointer;
-    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
 }
 
 .pp-theme-swatch:hover {
-    transform: scale(1.05);
+    transform: scale(1.06);
 }
 
 .pp-theme-swatch.active {
-    border-color: #007aff;
-    box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.4);
-}
-
-.pp-layout-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-    padding: 7px 10px;
-    border-radius: 6px;
-    background: rgba(0, 0, 0, 0.04);
-    border: 0.5px solid rgba(0, 0, 0, 0.08);
-    font-size: 12px;
-    font-weight: 500;
-    color: #1d1d1f;
-    cursor: pointer;
-    margin-bottom: 6px;
-    transition: all 0.15s ease;
-}
-
-.pp-layout-btn:hover {
-    background: rgba(0, 0, 0, 0.08);
-}
-
-.pp-layout-btn.active {
-    background: rgba(0, 122, 255, 0.12);
-    border-color: rgba(0, 122, 255, 0.3);
-    color: #007aff;
-    font-weight: 600;
+    border-color: #0071e3;
+    box-shadow: 0 0 0 2px #0071e3;
 }
 
 /* ── 8 Curated Luxury Themes ─────────────────────────────────────────────── */
 .pp-theme-gradient {
-    background: linear-gradient(135deg, #0a84ff 0%, #0058b0 50%, #002c66 100%);
+    background: linear-gradient(135deg, #0071e3 0%, #004ea8 50%, #002d66 100%);
     color: #ffffff;
 }
 .pp-theme-gradient .pp-thumb-title, .pp-theme-gradient .pp-thumb-sub { color: #ffffff; }
@@ -755,7 +752,7 @@
 }
 .pp-theme-nordic .pp-thumb-title, .pp-theme-nordic .pp-thumb-sub { color: #ffffff; }
 
-/* ── Fullscreen Presenter Mode 2.0 ───────────────────────────────────────── */
+/* ── Fullscreen Presenter Mode ───────────────────────────────────────────── */
 .pp-presenter-overlay {
     position: fixed;
     inset: 0;
@@ -784,7 +781,6 @@
     overflow: hidden;
 }
 
-/* Presenter Transitions */
 .pp-trans-dissolve { animation: ppFade 0.4s ease-in-out; }
 .pp-trans-slide { animation: ppSlideLeft 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
 .pp-trans-push { animation: ppPushUp 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -797,7 +793,6 @@
 @keyframes ppZoom { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
 @keyframes ppFlip { from { opacity: 0; transform: perspective(800px) rotateY(15deg); } to { opacity: 1; transform: perspective(800px) rotateY(0deg); } }
 
-/* Presenter HUD Bar */
 .pp-presenter-controls {
     position: absolute;
     bottom: 24px;
@@ -830,20 +825,10 @@
     transition: transform 0.04s ease-out;
 }
 
-.pp-pen-canvas {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: auto;
-    z-index: 500;
-    cursor: crosshair;
-}
-
 /* Bottom App Status Bar */
 .pp-status-bar {
     height: 28px;
-    background: rgba(246, 246, 248, 0.9);
+    background: rgba(245, 245, 247, 0.95);
     border-top: 0.5px solid rgba(0, 0, 0, 0.08);
     display: flex;
     align-items: center;

@@ -1,7 +1,7 @@
 const { useState, useEffect, useRef } = React;
 
 const PP_THEMES = [
-    { id: 'gradient', name: 'Sequoia Blue', class: 'pp-theme-gradient', color: '#0a84ff' },
+    { id: 'gradient', name: 'Sequoia Blue', class: 'pp-theme-gradient', color: '#0071e3' },
     { id: 'white', name: 'Cupertino White', class: 'pp-theme-white', color: '#ffffff' },
     { id: 'minimal', name: 'Midnight Dark', class: 'pp-theme-minimal', color: '#141416' },
     { id: 'warm', name: 'Sunset Amber', class: 'pp-theme-warm', color: '#ff9500' },
@@ -33,7 +33,7 @@ const INITIAL_SLIDES = [
             { value: '100%', label: 'Vector SVG Precision' },
             { value: '0 Latency', label: 'Instant Responsive UI' }
         ],
-        code: '// macOS Sequoia Spatial Material\nconst material = new AppleGlassMaterial({\n  blur: 40,\n  saturation: 180,\n  vibrancy: "mediumLight"\n});',
+        code: '// macOS Sequoia Spatial Material\nconst material = new AppleGlassMaterial({\n  blur: 40,\n  saturation: 190,\n  vibrancy: "mediumLight"\n});',
         tableData: [
             ['Component', 'Spec', 'Performance'],
             ['Dynamic Island', 'Hardware Top-Layer', '60 FPS'],
@@ -52,7 +52,7 @@ const INITIAL_SLIDES = [
         bullets: [
             'Interactive multi-tab ribbon toolbar (Home, Insert, Design, Transitions, Slide Show, Export)',
             'Live slide navigator with pixel-perfect thumbnail rendering',
-            'Full-screen presenter mode with interactive laser pointer & live pen annotations',
+            'Full-screen presenter mode with interactive laser pointer & slide transitions',
             'Collapsible speaker notes drawer and multi-level Undo/Redo history'
         ],
         leftCol: '',
@@ -106,7 +106,7 @@ const INITIAL_SLIDES = [
 const PowerPointApp = () => {
     const [slides, setSlides] = useState(() => {
         try {
-            const saved = localStorage.getItem('mac_powerpoint_presentation_v3');
+            const saved = localStorage.getItem('mac_powerpoint_presentation_v4');
             return saved ? JSON.parse(saved) : INITIAL_SLIDES;
         } catch (e) {
             return INITIAL_SLIDES;
@@ -134,12 +134,12 @@ const PowerPointApp = () => {
     const [history, setHistory] = useState([slides]);
     const [historyIdx, setHistoryIdx] = useState(0);
 
-    const activeSlide = slides.find(s => s.id === activeSlideId) || slides[0] || INITIAL_SLIDES[0];
+    const activeSlide = (slides && slides.find(s => s.id === activeSlideId)) || (slides && slides[0]) || INITIAL_SLIDES[0];
 
     // Autosave presentation
     useEffect(() => {
         try {
-            localStorage.setItem('mac_powerpoint_presentation_v3', JSON.stringify(slides));
+            localStorage.setItem('mac_powerpoint_presentation_v4', JSON.stringify(slides));
         } catch (e) {}
     }, [slides]);
 
@@ -287,11 +287,11 @@ const PowerPointApp = () => {
 
     return (
         <div className="pp-app-container">
-            {/* Unified macOS Header */}
+            {/* Unified macOS Titlebar / Header */}
             <div className="pp-header">
                 <div className="pp-toolbar-actions">
-                    <button className="pp-pill-btn primary" onClick={() => addSlide('bullets')} title="Add New Slide">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <button className="pp-btn primary" onClick={() => addSlide('bullets')} title="Add New Slide">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                         New Slide
                     </button>
                     <div className="pp-ribbon-divider"></div>
@@ -318,8 +318,8 @@ const PowerPointApp = () => {
 
                 {/* Right Action Buttons */}
                 <div className="pp-toolbar-actions">
-                    <button className="pp-pill-btn primary" onClick={() => startPresentation(false)} title="Play Slideshow">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    <button className="pp-btn primary" onClick={() => startPresentation(false)} title="Play Slideshow">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                         Play
                     </button>
                     <button 
@@ -339,17 +339,19 @@ const PowerPointApp = () => {
                 </div>
             </div>
 
-            {/* Ribbon Tabs Bar */}
+            {/* Segmented Ribbon Tabs Bar */}
             <div className="pp-ribbon-tabs-bar">
-                {['home', 'insert', 'design', 'transitions', 'slideshow', 'export'].map(tab => (
-                    <button 
-                        key={tab} 
-                        className={"pp-ribbon-tab " + (activeRibbonTab === tab ? 'active' : '')}
-                        onClick={() => setActiveRibbonTab(tab)}
-                    >
-                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                    </button>
-                ))}
+                <div className="pp-segmented-capsule">
+                    {['home', 'insert', 'design', 'transitions', 'slideshow', 'export'].map(tab => (
+                        <button 
+                            key={tab} 
+                            className={"pp-ribbon-tab " + (activeRibbonTab === tab ? 'active' : '')}
+                            onClick={() => setActiveRibbonTab(tab)}
+                        >
+                            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                        </button>
+                    ))}
+                </div>
             </div>
 
             {/* Contextual Ribbon Controls Toolbar */}
@@ -369,7 +371,7 @@ const PowerPointApp = () => {
                             </select>
                             <select 
                                 className="pp-select" 
-                                style={{width: '60px'}}
+                                style={{width: '62px'}}
                                 onChange={(e) => document.execCommand('fontSize', false, e.target.value)}
                             >
                                 <option value="3">14pt</option>
@@ -414,28 +416,28 @@ const PowerPointApp = () => {
 
                 {activeRibbonTab === 'insert' && (
                     <div className="pp-ribbon-group">
-                        <button className="pp-pill-btn" onClick={() => insertShape('rect')}>
+                        <button className="pp-btn" onClick={() => insertShape('rect')}>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect></svg>
                             Rectangle
                         </button>
-                        <button className="pp-pill-btn" onClick={() => insertShape('circle')}>
+                        <button className="pp-btn" onClick={() => insertShape('circle')}>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle></svg>
                             Circle
                         </button>
-                        <button className="pp-pill-btn" onClick={() => insertShape('star')}>
+                        <button className="pp-btn" onClick={() => insertShape('star')}>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                             Star
                         </button>
                         <div className="pp-ribbon-divider"></div>
-                        <button className="pp-pill-btn" onClick={() => updateActiveSlide({ layout: 'stats' })}>
+                        <button className="pp-btn" onClick={() => updateActiveSlide({ layout: 'stats' })}>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
                             Metric Grid
                         </button>
-                        <button className="pp-pill-btn" onClick={() => updateActiveSlide({ layout: 'code' })}>
+                        <button className="pp-btn" onClick={() => updateActiveSlide({ layout: 'code' })}>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
                             Code Snippet
                         </button>
-                        <button className="pp-pill-btn" onClick={() => updateActiveSlide({ layout: 'table' })}>
+                        <button className="pp-btn" onClick={() => updateActiveSlide({ layout: 'table' })}>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"></path></svg>
                             Table
                         </button>
@@ -443,15 +445,15 @@ const PowerPointApp = () => {
                 )}
 
                 {activeRibbonTab === 'design' && (
-                    <div className="pp-ribbon-group" style={{gap: '8px'}}>
-                        <span style={{fontSize: '11.5px', color: '#86868b', fontWeight: 600}}>THEMES:</span>
+                    <div className="pp-ribbon-group" style={{gap: '6px'}}>
+                        <span style={{fontSize: '11px', color: '#86868b', fontWeight: 600}}>THEMES:</span>
                         {PP_THEMES.map(theme => (
                             <button
                                 key={theme.id}
-                                className={"pp-pill-btn " + (activeSlide.theme === theme.id ? 'active' : '')}
+                                className={"pp-btn " + (activeSlide.theme === theme.id ? 'active' : '')}
                                 onClick={() => updateActiveSlide({ theme: theme.id })}
                             >
-                                <span style={{width: '10px', height: '10px', borderRadius: '50%', background: theme.color, display: 'inline-block'}}></span>
+                                <span style={{width: '9px', height: '9px', borderRadius: '50%', background: theme.color, display: 'inline-block'}}></span>
                                 {theme.name}
                             </button>
                         ))}
@@ -459,12 +461,12 @@ const PowerPointApp = () => {
                 )}
 
                 {activeRibbonTab === 'transitions' && (
-                    <div className="pp-ribbon-group" style={{gap: '8px'}}>
-                        <span style={{fontSize: '11.5px', color: '#86868b', fontWeight: 600}}>TRANSITION:</span>
+                    <div className="pp-ribbon-group" style={{gap: '6px'}}>
+                        <span style={{fontSize: '11px', color: '#86868b', fontWeight: 600}}>TRANSITION:</span>
                         {PP_TRANSITIONS.map(trans => (
                             <button
                                 key={trans.id}
-                                className={"pp-pill-btn " + (activeSlide.transition === trans.id ? 'active' : '')}
+                                className={"pp-btn " + (activeSlide.transition === trans.id ? 'active' : '')}
                                 onClick={() => updateActiveSlide({ transition: trans.id })}
                             >
                                 {trans.name}
@@ -475,12 +477,12 @@ const PowerPointApp = () => {
 
                 {activeRibbonTab === 'slideshow' && (
                     <div className="pp-ribbon-group">
-                        <button className="pp-pill-btn primary" onClick={() => startPresentation(true)}>
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        <button className="pp-btn primary" onClick={() => startPresentation(true)}>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                             From Beginning
                         </button>
-                        <button className="pp-pill-btn" onClick={() => startPresentation(false)}>
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        <button className="pp-btn" onClick={() => startPresentation(false)}>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                             From Current Slide
                         </button>
                     </div>
@@ -489,7 +491,7 @@ const PowerPointApp = () => {
                 {activeRibbonTab === 'export' && (
                     <div className="pp-ribbon-group">
                         <button 
-                            className="pp-pill-btn" 
+                            className="pp-btn" 
                             onClick={() => {
                                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(slides, null, 2));
                                 const downloadAnchor = document.createElement('a');
@@ -503,7 +505,7 @@ const PowerPointApp = () => {
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                             Export JSON
                         </button>
-                        <button className="pp-pill-btn" onClick={() => window.print()}>
+                        <button className="pp-btn" onClick={() => window.print()}>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
                             Print / PDF
                         </button>
@@ -517,9 +519,14 @@ const PowerPointApp = () => {
                 <div className="pp-navigator">
                     <div className="pp-nav-header">
                         <span>Slides ({slides.length})</span>
-                        <div style={{display: 'flex', gap: '4px'}}>
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{cursor: 'pointer'}} title="Add Slide" onClick={() => addSlide('bullets')}><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                        </div>
+                        <button 
+                            className="pp-icon-btn" 
+                            title="Add Slide" 
+                            onClick={() => addSlide('bullets')}
+                            style={{width: '20px', height: '20px'}}
+                        >
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        </button>
                     </div>
                     <div className="pp-slides-list">
                         {slides.map((slide, idx) => {
@@ -712,50 +719,46 @@ const PowerPointApp = () => {
                 {/* Right Apple Inspector Panel */}
                 {showInspector && (
                     <div className="pp-inspector">
-                        <div className="pp-inspector-tabs">
-                            <button 
-                                className={"pp-tab-btn " + (inspectorTab === 'format' ? 'active' : '')} 
-                                onClick={() => setInspectorTab('format')}
-                            >
-                                Format
-                            </button>
-                            <button 
-                                className={"pp-tab-btn " + (inspectorTab === 'animate' ? 'active' : '')} 
-                                onClick={() => setInspectorTab('animate')}
-                            >
-                                Animate
-                            </button>
-                            <button 
-                                className={"pp-tab-btn " + (inspectorTab === 'document' ? 'active' : '')} 
-                                onClick={() => setInspectorTab('document')}
-                            >
-                                Document
-                            </button>
+                        <div className="pp-inspector-tabs-wrap">
+                            <div className="pp-segmented-capsule" style={{width: '100%'}}>
+                                {['format', 'animate', 'document'].map(tab => (
+                                    <button 
+                                        key={tab}
+                                        className={"pp-ribbon-tab " + (inspectorTab === tab ? 'active' : '')}
+                                        style={{flex: 1, textAlign: 'center'}}
+                                        onClick={() => setInspectorTab(tab)}
+                                    >
+                                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
 
                         <div className="pp-inspector-body">
                             {inspectorTab === 'format' && (
                                 <React.Fragment>
-                                    {/* Slide Layouts */}
+                                    {/* Slide Layout Grid */}
                                     <div>
                                         <div className="pp-section-title">Slide Layout</div>
-                                        {[
-                                            { id: 'title', label: 'Title Slide' },
-                                            { id: 'bullets', label: 'Title & Bullets' },
-                                            { id: 'split', label: 'Two Column Split' },
-                                            { id: 'stats', label: 'Metric Grid' },
-                                            { id: 'code', label: 'Code Showcase' },
-                                            { id: 'quote', label: 'Big Statement' },
-                                            { id: 'table', label: 'Data Table' }
-                                        ].map(l => (
-                                            <button 
-                                                key={l.id} 
-                                                className={"pp-layout-btn " + (activeSlide.layout === l.id ? 'active' : '')}
-                                                onClick={() => updateActiveSlide({ layout: l.id })}
-                                            >
-                                                {l.label}
-                                            </button>
-                                        ))}
+                                        <div className="pp-layout-grid">
+                                            {[
+                                                { id: 'title', label: 'Title' },
+                                                { id: 'bullets', label: 'Bullets' },
+                                                { id: 'split', label: '2-Column' },
+                                                { id: 'stats', label: 'Metric Grid' },
+                                                { id: 'code', label: 'Code' },
+                                                { id: 'quote', label: 'Quote' },
+                                                { id: 'table', label: 'Table' }
+                                            ].map(l => (
+                                                <div 
+                                                    key={l.id} 
+                                                    className={"pp-layout-card " + (activeSlide.layout === l.id ? 'active' : '')}
+                                                    onClick={() => updateActiveSlide({ layout: l.id })}
+                                                >
+                                                    {l.label}
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
 
                                     {/* Slide Theme Swatches */}
@@ -776,17 +779,17 @@ const PowerPointApp = () => {
                                     {/* Slide Management */}
                                     <div>
                                         <div className="pp-section-title">Slide Actions</div>
-                                        <button className="pp-layout-btn" onClick={() => duplicateSlide(activeSlide)}>
-                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                        <button className="pp-btn" style={{width: '100%', marginBottom: '6px'}} onClick={() => duplicateSlide(activeSlide)}>
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                                             Duplicate Slide
                                         </button>
                                         <button 
-                                            className="pp-layout-btn" 
-                                            style={{color: '#ff3b30'}} 
+                                            className="pp-btn" 
+                                            style={{width: '100%', color: '#ff3b30', borderColor: 'rgba(255, 59, 48, 0.25)'}} 
                                             onClick={() => deleteSlide(activeSlide.id)}
                                             disabled={slides.length <= 1}
                                         >
-                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                             Delete Slide
                                         </button>
                                     </div>
@@ -796,22 +799,24 @@ const PowerPointApp = () => {
                             {inspectorTab === 'animate' && (
                                 <div>
                                     <div className="pp-section-title">Transition Effect</div>
-                                    {PP_TRANSITIONS.map(trans => (
-                                        <button 
-                                            key={trans.id} 
-                                            className={"pp-layout-btn " + (activeSlide.transition === trans.id ? 'active' : '')}
-                                            onClick={() => updateActiveSlide({ transition: trans.id })}
-                                        >
-                                            {trans.name}
-                                        </button>
-                                    ))}
+                                    <div className="pp-layout-grid">
+                                        {PP_TRANSITIONS.map(trans => (
+                                            <div 
+                                                key={trans.id} 
+                                                className={"pp-layout-card " + (activeSlide.transition === trans.id ? 'active' : '')}
+                                                onClick={() => updateActiveSlide({ transition: trans.id })}
+                                            >
+                                                {trans.name}
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
 
                             {inspectorTab === 'document' && (
                                 <div>
                                     <div className="pp-section-title">Presentation Info</div>
-                                    <div style={{fontSize: '12px', color: '#86868b', lineHeight: '1.8'}}>
+                                    <div style={{fontSize: '11.5px', color: '#86868b', lineHeight: '1.8'}}>
                                         <div><strong>Total Slides:</strong> {slides.length}</div>
                                         <div><strong>Format:</strong> 16:9 Widescreen</div>
                                         <div><strong>Engine:</strong> React Spatial Canvas</div>
@@ -834,13 +839,13 @@ const PowerPointApp = () => {
                         max="140" 
                         value={zoomLevel} 
                         onChange={(e) => setZoomLevel(Number(e.target.value))}
-                        style={{width: '90px', accentColor: '#007aff'}}
+                        style={{width: '90px', accentColor: '#0071e3'}}
                     />
                     <span>{zoomLevel}%</span>
                 </div>
             </div>
 
-            {/* Interactive Fullscreen Presenter Mode 2.0 */}
+            {/* Interactive Fullscreen Presenter Mode */}
             {isPresenting && (
                 <div 
                     className="pp-presenter-overlay"
@@ -867,31 +872,31 @@ const PowerPointApp = () => {
                         const transCls = `pp-trans-${currentSlide.transition || 'dissolve'}`;
                         return (
                             <div key={presenterIndex} className={`pp-presenter-slide ${themeCls} ${transCls}`}>
-                                <div style={{ fontSize: '52px', fontWeight: '800', lineHeight: '1.1', marginBottom: '20px' }}>
+                                <div style={{ fontSize: '50px', fontWeight: '800', lineHeight: '1.15', marginBottom: '18px' }}>
                                     {currentSlide.title}
                                 </div>
                                 {currentSlide.layout !== 'quote' && (
-                                    <div style={{ fontSize: '26px', opacity: 0.85, lineHeight: '1.4', marginBottom: '24px' }}>
+                                    <div style={{ fontSize: '24px', opacity: 0.88, lineHeight: '1.45', marginBottom: '24px' }}>
                                         {currentSlide.subtitle}
                                     </div>
                                 )}
                                 {currentSlide.layout === 'bullets' && currentSlide.bullets && (
-                                    <ul style={{ paddingLeft: '36px', fontSize: '24px', lineHeight: '1.8' }}>
+                                    <ul style={{ paddingLeft: '34px', fontSize: '22px', lineHeight: '1.8' }}>
                                         {currentSlide.bullets.map((b, i) => <li key={i}>{b}</li>)}
                                     </ul>
                                 )}
                                 {currentSlide.layout === 'stats' && currentSlide.stats && (
-                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', marginTop: '30px' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', marginTop: '26px' }}>
                                         {currentSlide.stats.map((s, i) => (
                                             <div key={i} style={{ background: 'rgba(255,255,255,0.2)', padding: '24px', borderRadius: '12px', textAlign: 'center' }}>
-                                                <div style={{ fontSize: '42px', fontWeight: '800', color: '#38ef7d' }}>{s.value}</div>
-                                                <div style={{ fontSize: '18px', fontWeight: '600', opacity: 0.9 }}>{s.label}</div>
+                                                <div style={{ fontSize: '40px', fontWeight: '800', color: '#38ef7d' }}>{s.value}</div>
+                                                <div style={{ fontSize: '17px', fontWeight: '600', opacity: 0.9 }}>{s.label}</div>
                                             </div>
                                         ))}
                                     </div>
                                 )}
                                 {currentSlide.layout === 'code' && currentSlide.code && (
-                                    <pre style={{ background: '#1e1e24', color: '#38ef7d', padding: '24px', borderRadius: '12px', fontSize: '20px', fontFamily: 'monospace' }}>
+                                    <pre style={{ background: '#1e1e24', color: '#38ef7d', padding: '24px', borderRadius: '12px', fontSize: '19px', fontFamily: 'monospace' }}>
                                         {currentSlide.code}
                                     </pre>
                                 )}
@@ -913,7 +918,7 @@ const PowerPointApp = () => {
                             🔴
                         </button>
                         <button 
-                            className="pp-pill-btn" 
+                            className="pp-btn" 
                             style={{background: 'rgba(255,255,255,0.15)', color: 'white', border: 'none'}}
                             onClick={() => setPresenterIndex(prev => Math.max(prev - 1, 0))}
                             disabled={presenterIndex === 0}
@@ -921,7 +926,7 @@ const PowerPointApp = () => {
                             ◀ Prev
                         </button>
                         <button 
-                            className="pp-pill-btn" 
+                            className="pp-btn" 
                             style={{background: 'rgba(255,255,255,0.15)', color: 'white', border: 'none'}}
                             onClick={() => setPresenterIndex(prev => Math.min(prev + 1, slides.length - 1))}
                             disabled={presenterIndex >= slides.length - 1}
@@ -929,7 +934,7 @@ const PowerPointApp = () => {
                             Next ▶
                         </button>
                         <button 
-                            className="pp-pill-btn primary" 
+                            className="pp-btn primary" 
                             style={{background: '#ff3b30', border: 'none'}}
                             onClick={() => setIsPresenting(false)}
                         >
