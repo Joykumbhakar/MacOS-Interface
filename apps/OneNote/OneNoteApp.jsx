@@ -237,7 +237,7 @@ const OneNoteApp = () => {
         e.stopPropagation();
         if (!activeSection) return;
         if (activeSection.pages.length <= 1) {
-            alert('A section must have at least one page.');
+            alert('A section must have at least one page.', 'Microsoft OneNote', 'images/Icons/MsOnenotes.png');
             return;
         }
 

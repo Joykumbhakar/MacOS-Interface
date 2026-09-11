@@ -54,17 +54,17 @@ window.addEventListener('scroll', () => {
 
             let iconHTML = '';
             if (iconType === 'fontawesome' || (typeof icon === 'string' && icon.startsWith('fa'))) {
-                iconHTML = `<div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg, #0a84ff, #5856d6);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(10,132,255,0.3);margin-bottom:14px;"><i class="${icon}" style="color:#ffffff;font-size:24px;"></i></div>`;
+                iconHTML = `<div style="width:52px;height:52px;border-radius:12px;background:#3a3a3c;display:flex;align-items:center;justify-content:center;margin-bottom:14px;"><i class="${icon}" style="color:#ffffff;font-size:22px;"></i></div>`;
             } else if (icon) {
-                iconHTML = `<div style="position:relative;width:56px;height:56px;margin-bottom:14px;display:flex;align-items:center;justify-content:center;">
-                    <img src="${icon}" style="width:56px;height:56px;border-radius:13px;object-fit:cover;box-shadow:0 6px 18px rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.15);" onerror="this.src='images/Icons/Apple.png'">
-                    ${badge ? `<div style="position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-radius:50%;background:#34c759;border:2px solid #fff;display:flex;align-items:center;justify-content:center;"><i class="fas fa-check" style="color:white;font-size:9px;"></i></div>` : ''}
+                iconHTML = `<div style="position:relative;width:52px;height:52px;margin-bottom:14px;display:flex;align-items:center;justify-content:center;">
+                    <img src="${icon}" style="width:52px;height:52px;border-radius:12px;object-fit:contain;" onerror="this.src='images/Icons/Finder.png'">
+                    ${badge ? `<div style="position:absolute;bottom:-2px;right:-2px;width:18px;height:18px;border-radius:50%;background:#34c759;border:2px solid #fff;display:flex;align-items:center;justify-content:center;"><i class="fas fa-check" style="color:white;font-size:8px;"></i></div>` : ''}
                 </div>`;
             }
 
             const inputHTML = input ? `
                 <div style="width:100%;margin-top:14px;">
-                    <input id="mac-dialog-input" type="${input.type || 'text'}" placeholder="${input.placeholder || ''}" value="${input.defaultValue || ''}" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);color:#ffffff;font-size:13px;outline:none;box-sizing:border-box;font-family:inherit;" />
+                    <input id="mac-dialog-input" type="${input.type || 'text'}" placeholder="${input.placeholder || ''}" value="${input.defaultValue || ''}" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#ffffff;font-size:13px;outline:none;box-sizing:border-box;font-family:inherit;" />
                 </div>
             ` : '';
 
@@ -73,12 +73,12 @@ window.addEventListener('scroll', () => {
                 const isDestructive = b.destructive || (destructive && isPrimary);
                 let btnStyle = `
                     flex: 1;
-                    padding: 8px 16px;
-                    border-radius: 9px;
+                    padding: 7px 16px;
+                    border-radius: 7px;
                     font-size: 13px;
-                    font-weight: 600;
+                    font-weight: 500;
                     cursor: pointer;
-                    transition: all 0.15s ease;
+                    transition: background 0.12s ease;
                     outline: none;
                     text-align: center;
                     display: inline-flex;
@@ -87,11 +87,11 @@ window.addEventListener('scroll', () => {
                     user-select: none;
                 `;
                 if (isDestructive) {
-                    btnStyle += `background:#ff3b30;color:#ffffff;border:1px solid rgba(255,59,48,0.8);box-shadow:0 2px 8px rgba(255,59,48,0.35);`;
+                    btnStyle += `background:#ff3b30;color:#ffffff;border:none;`;
                 } else if (isPrimary) {
-                    btnStyle += `background:#007aff;color:#ffffff;border:1px solid rgba(0,122,255,0.9);box-shadow:0 2px 10px rgba(0,122,255,0.35);`;
+                    btnStyle += `background:#007aff;color:#ffffff;border:none;`;
                 } else {
-                    btnStyle += `background:rgba(255,255,255,0.12);color:#ffffff;border:1px solid rgba(255,255,255,0.22);`;
+                    btnStyle += `background:rgba(255,255,255,0.12);color:#ffffff;border:1px solid rgba(255,255,255,0.18);`;
                 }
                 return `<button class="mac-dialog-btn" data-index="${idx}" style="${btnStyle}">${b.label}</button>`;
             }).join('');
@@ -100,29 +100,28 @@ window.addEventListener('scroll', () => {
                 <div class="mac-dialog-card" style="
                     width: 320px;
                     max-width: 90vw;
-                    background: rgba(36, 36, 38, 0.92);
-                    backdrop-filter: blur(40px) saturate(190%);
-                    -webkit-backdrop-filter: blur(40px) saturate(190%);
-                    border: 1px solid rgba(255, 255, 255, 0.16);
-                    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 28px 65px rgba(0, 0, 0, 0.55);
-                    border-radius: 20px;
-                    padding: 24px 22px 20px;
+                    background: rgba(36, 36, 38, 0.95);
+                    backdrop-filter: blur(40px);
+                    -webkit-backdrop-filter: blur(40px);
+                    border: 1px solid rgba(255, 255, 255, 0.14);
+                    border-radius: 18px;
+                    padding: 22px 20px 18px;
                     color: #ffffff;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     text-align: center;
-                    transform: scale(0.92);
+                    transform: scale(0.94);
                     opacity: 0;
-                    transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease;
+                    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.18s ease;
                     box-sizing: border-box;
-                    font-family: -apple-system, 'SF Pro Display', sans-serif;
+                    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
                 ">
                     ${iconHTML}
-                    <div style="font-size: 15px; font-weight: 700; color: #ffffff; letter-spacing: -0.2px; line-height: 1.25; margin-bottom: 6px;">${title}</div>
+                    <div style="font-size: 14.5px; font-weight: 600; color: #ffffff; letter-spacing: -0.2px; line-height: 1.25; margin-bottom: 6px;">${title}</div>
                     <div style="font-size: 12.5px; font-weight: 400; color: rgba(255, 255, 255, 0.75); line-height: 1.45; word-break: break-word;">${message}</div>
                     ${inputHTML}
-                    <div style="display: flex; gap: 10px; width: 100%; margin-top: 20px; justify-content: center;">
+                    <div style="display: flex; gap: 10px; width: 100%; margin-top: 18px; justify-content: center;">
                         ${buttonsHTML}
                     </div>
                 </div>
@@ -144,7 +143,7 @@ window.addEventListener('scroll', () => {
                 container.style.opacity = '0';
                 const card = container.querySelector('.mac-dialog-card');
                 if (card) {
-                    card.style.transform = 'scale(0.94)';
+                    card.style.transform = 'scale(0.96)';
                     card.style.opacity = '0';
                 }
                 setTimeout(() => {
@@ -152,7 +151,7 @@ window.addEventListener('scroll', () => {
                     container.innerHTML = '';
                     if (onClose) onClose(result);
                     resolve(result);
-                }, 220);
+                }, 180);
             };
 
             const btnElements = container.querySelectorAll('.mac-dialog-btn');
@@ -168,21 +167,67 @@ window.addEventListener('scroll', () => {
         });
     };
 
-    // Override default browser alert, confirm, prompt with native Apple modals
-    window.alert = function(msg, title = 'macOS Interface') {
+    // Override default browser alert, confirm, prompt with native Apple modals & correct app icons
+    window.alert = function(msg, title = null, icon = null) {
+        let alertIcon = icon;
+        let alertTitle = title;
+
+        if (!alertIcon || !alertTitle) {
+            // Find active focused window
+            const windows = Array.from(document.querySelectorAll('.mac-window')).filter(w => w.style.display !== 'none');
+            let topWin = null;
+            let maxZ = -1;
+            windows.forEach(w => {
+                const z = parseInt(w.style.zIndex || '0', 10);
+                if (z > maxZ) {
+                    maxZ = z;
+                    topWin = w;
+                }
+            });
+
+            if (topWin) {
+                const id = topWin.id ? topWin.id.replace('-window', '') : '';
+                const appObj = (typeof APP_DATA !== 'undefined' && Array.isArray(APP_DATA)) ? APP_DATA.find(a => a.id.toLowerCase() === id.toLowerCase()) : null;
+                if (appObj) {
+                    if (!alertTitle) alertTitle = appObj.name;
+                    if (!alertIcon) alertIcon = appObj.icon;
+                } else {
+                    const knownIcons = {
+                        'onenote': { name: 'OneNote', icon: 'images/Icons/MsOnenotes.png' },
+                        'outlook': { name: 'Outlook', icon: 'images/Icons/MsOutlook.png' },
+                        'word': { name: 'Word', icon: 'images/Icons/MsWord.png' },
+                        'excel': { name: 'Excel', icon: 'images/Icons/MsExcel.png' },
+                        'powerpoint': { name: 'PowerPoint', icon: 'images/Icons/PowerPoint.png' },
+                        'music': { name: 'Music', icon: 'images/Icons/Music.png' },
+                        'messages': { name: 'Messages', icon: 'images/Icons/Messages.png' },
+                        'calculator': { name: 'Calculator', icon: 'images/Icons/Calculator.png' },
+                        'finder': { name: 'Finder', icon: 'images/Icons/Finder.png' },
+                        'settings': { name: 'System Settings', icon: 'images/Icons/Settings.png' }
+                    };
+                    if (knownIcons[id]) {
+                        if (!alertTitle) alertTitle = knownIcons[id].name;
+                        if (!alertIcon) alertIcon = knownIcons[id].icon;
+                    }
+                }
+            }
+        }
+
+        if (!alertTitle) alertTitle = 'macOS Interface';
+        if (!alertIcon) alertIcon = 'images/Icons/Finder.png';
+
         return window.showMacDialog({
-            title: title || 'Apple Music',
+            title: alertTitle,
             message: msg,
-            icon: 'fas fa-music',
+            icon: alertIcon,
             buttons: [{ label: 'OK', primary: true, value: true }]
         });
     };
 
-    window.confirm = function(msg, title = 'macOS Confirmation') {
+    window.confirm = function(msg, title = 'Confirmation', icon = null) {
         return window.showMacDialog({
             title: title || 'Confirmation',
             message: msg,
-            icon: 'images/Icons/Apple.png',
+            icon: icon || 'images/Icons/Finder.png',
             buttons: [
                 { label: 'Cancel', primary: false, value: false },
                 { label: 'Continue', primary: true, value: true }
@@ -190,11 +235,11 @@ window.addEventListener('scroll', () => {
         });
     };
 
-    window.prompt = function(msg, defaultText = '', title = 'Input Required') {
+    window.prompt = function(msg, defaultText = '', title = 'Input Required', icon = null) {
         return window.showMacDialog({
-            title: title || 'Input',
+            title: title || 'Input Required',
             message: msg,
-            icon: 'fas fa-folder',
+            icon: icon || 'images/Icons/Finder.png',
             input: { defaultValue: defaultText, placeholder: 'Type here...' },
             buttons: [
                 { label: 'Cancel', primary: false, value: null },

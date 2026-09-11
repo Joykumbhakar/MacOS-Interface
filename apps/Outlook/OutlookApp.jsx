@@ -226,7 +226,7 @@ const OutlookApp = () => {
     const handleSendMail = (e) => {
         e.preventDefault();
         if (!composeTo.trim()) {
-            alert('Please specify a recipient');
+            alert('Please specify a recipient before sending.', 'Microsoft Outlook', 'images/Icons/MsOutlook.png');
             return;
         }
 
