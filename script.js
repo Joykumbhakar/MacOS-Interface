@@ -1173,23 +1173,70 @@ const ICONS = {
         window.MacWindowManager = MacWindowManager;
 
         function makeDraggable(element) {
-            const headers = element.querySelectorAll('.window-header, .mac-toolbar, .settings-sidebar .window-header, .mac-window > div:first-child');
             let offsetX = 0, offsetY = 0;
             const dragMouseDown = (e) => {
-                if (e.target.tagName === 'BUTTON' || e.target.closest('.tl-btn') || e.target.tagName === 'INPUT' || e.target.closest('.view-toggles') || e.target.closest('.tb-action-btn') || e.target.closest('.am-top-tab') || e.target.closest('.am-nav-item') || e.target.closest('.am-search-bar')) return;
+                // Ignore interactive controls
+                if (
+                    e.target.tagName === 'BUTTON' || 
+                    e.target.closest('button') || 
+                    e.target.closest('.tl-btn') || 
+                    e.target.tagName === 'INPUT' || 
+                    e.target.closest('input') || 
+                    e.target.tagName === 'TEXTAREA' || 
+                    e.target.closest('textarea') || 
+                    e.target.closest('.view-toggles') || 
+                    e.target.closest('.tb-action-btn') || 
+                    e.target.closest('.am-top-tab') || 
+                    e.target.closest('.am-nav-item') || 
+                    e.target.closest('.am-search-bar') ||
+                    e.target.closest('.safari-btn') ||
+                    e.target.closest('.safari-omnibar') ||
+                    e.target.closest('.safari-tab') ||
+                    e.target.closest('.safari-tab-new-btn') ||
+                    e.target.closest('.safari-popover') ||
+                    e.target.closest('.safari-sb-item') ||
+                    e.target.closest('.safari-favorite-card') ||
+                    e.target.closest('.safari-reading-card') ||
+                    e.target.closest('.safari-sb-tab') ||
+                    e.target.closest('a')
+                ) return;
+
+                // Check if clicking in a designated header or draggable region
+                const isHeader = e.target.closest('.window-header, .mac-toolbar, .safari-toolbar, .safari-traffic-spacer, .safari-tab-bar, .onenote-header-bar, .outlook-header-bar, .ppt-header-bar, .word-header, .excel-header, .calc-header, .settings-sidebar, [data-drag-handle]');
+                if (!isHeader) return;
                 if (element.classList.contains('maximized')) return;
+
                 e.preventDefault();
                 const rect = element.getBoundingClientRect();
-                if (!element.classList.contains('dragged')) { element.classList.add('dragged'); element.style.margin = "0"; }
-                element.style.left = rect.left + "px"; element.style.top = rect.top + "px";
-                offsetX = e.clientX - rect.left; offsetY = e.clientY - rect.top;
+                if (!element.classList.contains('dragged')) { 
+                    element.classList.add('dragged'); 
+                    element.style.margin = "0"; 
+                }
+                element.style.left = rect.left + "px"; 
+                element.style.top = rect.top + "px";
+                offsetX = e.clientX - rect.left; 
+                offsetY = e.clientY - rect.top;
                 element.classList.add('is-dragging');
-                document.addEventListener('mouseup', closeDragElement); document.addEventListener('mousemove', elementDrag);
-            };
-            if (headers.length > 0) { headers.forEach(h => h.addEventListener('mousedown', dragMouseDown)); }
 
-            function elementDrag(e) { e.preventDefault(); element.style.left = (e.clientX - offsetX) + "px"; element.style.top = (e.clientY - offsetY) + "px"; }
-            function closeDragElement() { element.classList.remove('is-dragging'); document.removeEventListener('mouseup', closeDragElement); document.removeEventListener('mousemove', elementDrag); }
+                function elementDrag(ev) { 
+                    ev.preventDefault(); 
+                    const newTop = Math.max(28, ev.clientY - offsetY);
+                    const newLeft = ev.clientX - offsetX;
+                    element.style.left = newLeft + "px"; 
+                    element.style.top = newTop + "px"; 
+                }
+
+                function closeDragElement() { 
+                    element.classList.remove('is-dragging'); 
+                    document.removeEventListener('mouseup', closeDragElement); 
+                    document.removeEventListener('mousemove', elementDrag); 
+                }
+
+                document.addEventListener('mouseup', closeDragElement); 
+                document.addEventListener('mousemove', elementDrag);
+            };
+
+            element.addEventListener('mousedown', dragMouseDown);
         }
 
         // Expose globally for dynamically created skeletons
