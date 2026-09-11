@@ -930,13 +930,13 @@ const TopBar = () => {
                     className={`am-top-tab ${['Songs', 'Albums', 'Artists', 'Pins', 'Recently Added'].includes(activeTab) ? 'active' : ''}`} 
                     onClick={() => navigateTo('Songs')}
                 >
-                    Your Library
+                    Library
                 </div>
                 <div 
                     className={`am-top-tab ${activeTab === 'iTunes Store' ? 'active' : ''}`} 
                     onClick={() => navigateTo('iTunes Store')}
                 >
-                    iTunes Store
+                    Store
                 </div>
             </div>
 
