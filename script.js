@@ -1184,57 +1184,10 @@ const ICONS = {
         };
 
         window.showFaceIdAuth = function(title = 'Face ID') {
-            return new Promise(resolve => {
-                if (window.MacIsland && window.MacIsland.dispatch) {
-                    window.MacIsland.dispatch({
-                        type: 'auth',
-                        mode: 'expanded',
-                        data: { title: title },
-                        autoDismiss: false,
-                        persistent: true
-                    });
-
-                    // Start scanning sequence
-                    setTimeout(() => {
-                        const faceGroup = document.getElementById('island-face-group');
-                        const tickGroup = document.getElementById('island-tick-group');
-                        const circleAnim = document.getElementById('island-circle-anim');
-                        const checkAnim = document.getElementById('island-check-anim');
-                        const authLabel = document.getElementById('island-auth-label');
-
-                        if (faceGroup) {
-                            faceGroup.classList.remove('scanning-pulse');
-                            faceGroup.style.transform = 'scale(0.6)';
-                            faceGroup.style.opacity = '0';
-                        }
-
-                        setTimeout(() => {
-                            if (faceGroup) faceGroup.style.display = 'none';
-                            if (tickGroup) {
-                                tickGroup.style.display = 'block';
-                                void tickGroup.offsetWidth;
-                                tickGroup.style.opacity = '1';
-                                tickGroup.style.transform = 'scale(1)';
-                            }
-                            if (circleAnim) circleAnim.style.animation = 'drawCircle 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
-                            if (checkAnim) checkAnim.style.animation = 'drawCheck 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.15s';
-                            if (authLabel) {
-                                authLabel.style.color = '#32D74B';
-                                authLabel.textContent = 'Unlocked';
-                            }
-
-                            setTimeout(() => {
-                                window.MacIsland.dismiss();
-                                setTimeout(() => {
-                                    resolve(true);
-                                }, 300);
-                            }, 700);
-                        }, 300);
-                    }, 1200);
-                } else {
-                    resolve(true);
-                }
-            });
+            if (window.MacIsland && window.MacIsland.auth) {
+                return window.MacIsland.auth(title);
+            }
+            return Promise.resolve(true);
         };
 
         appState.openApp = async function(appId, sourceElement = null) {
@@ -3077,10 +3030,12 @@ const SETTINGS_VIEWS = {
                 const dockIconEl = document.getElementById('dock-' + app.id);
 
                 if (app.id === 'settings') {
-                    openIsland(mode, data);
-                    // Do not open app yet. Wait for auth to complete.
-                    setTimeout(() => {
-                        const targetWindow = document.getElementById(app.id + '-window');
+                    const targetWindow = document.getElementById(app.id + '-window');
+                    if (targetWindow && targetWindow.classList.contains('active') && !targetWindow.classList.contains('is-minimized')) {
+                        MacWindowManager.focus(targetWindow);
+                        return;
+                    }
+                    window.showFaceIdAuth('Settings').then(() => {
                         if (targetWindow) { 
                             if (targetWindow.classList.contains('is-minimized')) {
                                 MacWindowManager.restore(targetWindow, dockIconEl);
@@ -3092,7 +3047,7 @@ const SETTINGS_VIEWS = {
                         } else {
                             appState.openApp(app.id, dockIconEl);
                         }
-                    }, 2000);
+                    });
                 } else {
                     const targetWindow = document.getElementById(app.id + '-window');
                     if (targetWindow) { 
@@ -3290,54 +3245,16 @@ const SETTINGS_VIEWS = {
             const touchIdBtn = document.getElementById('touch-id-btn');
 
             let isAuthenticating = false;
-            window.authenticateFaceID = async function() {
+            window.authenticateFaceID = async function(title = 'Face ID') {
                 if (isAuthenticating) return;
                 isAuthenticating = true;
                 
                 try {
-                    if (window.MacIsland && window.MacIsland.dispatch) {
-                        window.MacIsland.dispatch({
-                            type: 'auth',
-                            mode: 'expanded',
-                            data: { title: 'Face ID' },
-                            autoDismiss: false,
-                            persistent: true
-                        });
-
-                        // Start scanning sequence
-                        await new Promise(r => setTimeout(r, 1100));
-
-                        const faceGroup = document.getElementById('island-face-group');
-                        const tickGroup = document.getElementById('island-tick-group');
-                        const circleAnim = document.getElementById('island-circle-anim');
-                        const checkAnim = document.getElementById('island-check-anim');
-                        const authLabel = document.getElementById('island-auth-label');
-
-                        if (faceGroup) {
-                            faceGroup.classList.remove('scanning-pulse');
-                            faceGroup.style.transform = 'scale(0.6)';
-                            faceGroup.style.opacity = '0';
-                        }
-
-                        await new Promise(r => setTimeout(r, 300));
-                        if (faceGroup) faceGroup.style.display = 'none';
-                        if (tickGroup) {
-                            tickGroup.style.display = 'block';
-                            void tickGroup.offsetWidth;
-                            tickGroup.style.opacity = '1';
-                            tickGroup.style.transform = 'scale(1)';
-                        }
-                        if (circleAnim) circleAnim.style.animation = 'drawCircle 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
-                        if (checkAnim) checkAnim.style.animation = 'drawCheck 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.15s';
-                        if (authLabel) {
-                            authLabel.style.color = '#32D74B';
-                            authLabel.textContent = 'Unlocked';
-                        }
-
-                        await new Promise(r => setTimeout(r, 700));
-                        window.MacIsland.dismiss();
+                    if (window.MacIsland && window.MacIsland.auth) {
+                        await window.MacIsland.auth(title);
+                    } else if (window.showFaceIdAuth) {
+                        await window.showFaceIdAuth(title);
                     }
-                    
                     unlock('', true);
                 } catch (err) {
                     console.error('Face ID auth error:', err);
@@ -3393,6 +3310,17 @@ const SETTINGS_VIEWS = {
                     });
                 }
             }
+
+            // Auto-trigger Face ID biometric scan on lock screen boot
+            setTimeout(() => {
+                const ls = document.getElementById('lock-screen');
+                if (ls && ls.style.display !== 'none' && ls.style.opacity !== '0') {
+                    const pwdBox = document.getElementById('ls-pwd-container');
+                    if (!pwdBox || pwdBox.style.display === 'none') {
+                        window.authenticateFaceID();
+                    }
+                }
+            }, 600);
 
         });
 

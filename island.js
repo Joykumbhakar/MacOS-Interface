@@ -361,21 +361,21 @@ const T = {
       <svg style="width:100%;height:100%;position:absolute;inset:0;pointer-events:none;" viewBox="0 0 100 100" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <g id="island-face-group" class="icon-group scanning-pulse" stroke="white" stroke-width="4.5">
           <path d="M 35 10 h -7 c -9.94 0 -18 8.06 -18 18 v 7" class="draw-path" style="animation-delay: 0.0s" />
-          <path d="M 65 10 h 7 c 9.94 0 18 8.06 18 18 v 7" class="draw-path" style="animation-delay: 0.1s" />
-          <path d="M 35 90 h -7 c -9.94 0 -18 -8.06 -18 -18 v -7" class="draw-path" style="animation-delay: 0.2s" />
-          <path d="M 65 90 h 7 c 9.94 0 18 -8.06 18 -18 v -7" class="draw-path" style="animation-delay: 0.3s" />
-          <path d="M 36 36 v 14" class="draw-path" style="animation-delay: 0.5s" />
-          <path d="M 64 36 v 14" class="draw-path" style="animation-delay: 0.5s" />
-          <path d="M 50 40 v 10 c 0 2 1.5 4 4 4 h 2" class="draw-path" style="animation-delay: 0.7s" />
-          <path d="M 32 64 Q 50 84 68 64" class="draw-path" style="animation-delay: 0.9s" />
+          <path d="M 65 10 h 7 c 9.94 0 18 8.06 18 18 v 7" class="draw-path" style="animation-delay: 0.08s" />
+          <path d="M 35 90 h -7 c -9.94 0 -18 -8.06 -18 -18 v -7" class="draw-path" style="animation-delay: 0.16s" />
+          <path d="M 65 90 h 7 c 9.94 0 18 -8.06 18 -18 v -7" class="draw-path" style="animation-delay: 0.24s" />
+          <path d="M 36 36 v 14" class="draw-path" style="animation-delay: 0.35s" />
+          <path d="M 64 36 v 14" class="draw-path" style="animation-delay: 0.35s" />
+          <path d="M 50 40 v 10 c 0 2 1.5 4 4 4 h 2" class="draw-path" style="animation-delay: 0.45s" />
+          <path d="M 32 64 Q 50 84 68 64" class="draw-path" style="animation-delay: 0.55s" />
         </g>
-        <g id="island-tick-group" class="icon-group opacity-0" style="transform: scale(0.5); display: none; opacity: 0;" stroke="#32D74B">
+        <g id="island-tick-group" class="icon-group" style="transform: scale(0.5); display: none; opacity: 0;" stroke="#32D74B">
           <circle cx="50" cy="50" r="40" class="tick-circle" stroke-width="5" id="island-circle-anim" />
           <path d="M 30 52 l 12 12 l 28 -26" class="tick-check" stroke-width="6" id="island-check-anim" />
         </g>
       </svg>
     </div>
-    <span id="island-auth-label" style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.9);letter-spacing:-0.2px;">${d.title || 'Face ID'}</span>
+    <span id="island-auth-label" style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.9);letter-spacing:-0.2px;transition:color 0.2s ease;">${d.title || 'Face ID'}</span>
   </div>`,
 
   collapsed: () => ``
@@ -658,5 +658,64 @@ window.MacIsland = {
   error: (message) => IslandBus.dispatch({ type: 'error', data: { message }, duration: 4500 }),
   notification: (title, subtitle, icon, duration = 3500) => IslandBus.dispatch({ type: 'notification', data: { title, subtitle, icon }, duration }),
   screenshot: () => IslandBus.dispatch({ type: 'screenshot', duration: 2500 }),
-  auth: (title = 'Face ID') => IslandBus.dispatch({ type: 'auth', mode: 'expanded', data: { title }, autoDismiss: false, persistent: true })
+  auth: (title = 'Face ID') => {
+    return new Promise((resolve) => {
+      IslandBus.dispatch({ 
+        type: 'auth', 
+        mode: 'expanded', 
+        data: { title }, 
+        autoDismiss: false, 
+        persistent: true 
+      });
+
+      // Step 1: Scanning pulse animation (1050ms)
+      setTimeout(() => {
+        const faceGroup = document.getElementById('island-face-group');
+        const tickGroup = document.getElementById('island-tick-group');
+        const circleAnim = document.getElementById('island-circle-anim');
+        const checkAnim = document.getElementById('island-check-anim');
+        const authLabel = document.getElementById('island-auth-label');
+
+        if (faceGroup) {
+          faceGroup.classList.remove('scanning-pulse');
+          faceGroup.style.transform = 'scale(0.65)';
+          faceGroup.style.opacity = '0';
+        }
+
+        // Step 2: Smooth transition to green checkmark tick (240ms)
+        setTimeout(() => {
+          if (faceGroup) faceGroup.style.display = 'none';
+          if (tickGroup) {
+            tickGroup.style.display = 'block';
+            void tickGroup.offsetWidth;
+            tickGroup.style.opacity = '1';
+            tickGroup.style.transform = 'scale(1)';
+          }
+          if (circleAnim) {
+            circleAnim.style.animation = 'drawCircle 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
+          }
+          if (checkAnim) {
+            checkAnim.style.animation = 'drawCheck 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.1s';
+          }
+          if (authLabel) {
+            authLabel.style.color = '#32D74B';
+            authLabel.textContent = 'Unlocked';
+          }
+
+          if (window.MacAudio) {
+            try { MacAudio.play('unlock'); } catch (e) {}
+          }
+
+          // Step 3: Hold verified state, then dismiss Island smoothly (650ms)
+          setTimeout(() => {
+            IslandBus.close();
+            setTimeout(() => {
+              resolve(true);
+            }, 260);
+          }, 650);
+        }, 240);
+      }, 1050);
+    });
+  }
 };
+
