@@ -190,8 +190,8 @@
 
         .dock-wrapper { position: fixed; bottom: 5px; left: 0; right: 0; z-index: 8500; display: flex; align-items: flex-end; justify-content: center; pointer-events: none; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease; }
 
-/* Hide dock when any window is maximized (Full Screen mode) */
-.macOS-body:has(.mac-window.maximized) .dock-wrapper {
+/* Hide dock when any active, non-minimized window is maximized (Full Screen mode) */
+.macOS-body:has(.mac-window.active.maximized:not(.is-minimized)) .dock-wrapper {
     transform: translateY(150px);
     opacity: 0;
     pointer-events: none;
@@ -408,7 +408,7 @@
             transition: opacity 0.28s cubic-bezier(0.4, 0, 0.2, 1), transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), filter 0.28s ease !important;
             filter: blur(6px);
         }
-        .mac-window.maximized {
+        .mac-window.maximized:not(.is-minimized) {
             width: 100vw !important;
             height: calc(100vh - 28px) !important;
             max-width: 100vw !important;
