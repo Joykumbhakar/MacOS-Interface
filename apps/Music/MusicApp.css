@@ -1147,11 +1147,11 @@
 }
 
 /* --------------------------------------------------------------------------
-   Floating Player Bar (Thin Glossy Glass Pill)
+   Floating Player Bar (macOS Sequoia Liquid Glass Pill)
    -------------------------------------------------------------------------- */
 .am-floating-player-wrapper {
     position: absolute;
-    bottom: 14px;
+    bottom: 16px;
     left: 0;
     width: 100%;
     display: flex;
@@ -1161,70 +1161,78 @@
 }
 
 .am-floating-player {
-    background: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(35px) saturate(200%);
-    -webkit-backdrop-filter: blur(35px) saturate(200%);
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.95), 0 0 0 1px rgba(0, 0, 0, 0.08);
-    border-radius: 9999px;
-    height: 56px;
-    padding: 0 16px;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(45px) saturate(210%);
+    -webkit-backdrop-filter: blur(45px) saturate(210%);
+    border: 0.5px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.22), 0 0 0 0.5px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    border-radius: 980px;
+    height: 60px;
+    padding: 0 18px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     pointer-events: auto;
-    width: min(800px, 94%);
+    width: min(820px, 94%);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .am-player-controls {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
 }
 
 .am-btn {
-    background: rgba(255, 255, 255, 0.4);
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
-    color: #48484a;
+    background: rgba(0, 0, 0, 0.04);
+    border: 0.5px solid rgba(0, 0, 0, 0.06);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    color: #3c3c43;
     font-size: 13px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
+    transition: all 0.12s ease;
 }
 
 .am-btn:hover {
     color: #1d1d1f;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(0, 0, 0, 0.08);
     border-color: rgba(0, 0, 0, 0.12);
+    transform: scale(1.05);
 }
 
 .am-btn.active {
     color: #fa243c;
-    border-color: rgba(250, 36, 60, 0.25);
-    background: rgba(250, 36, 60, 0.08);
+    border-color: rgba(250, 36, 60, 0.3);
+    background: rgba(250, 36, 60, 0.12);
 }
 
 .am-btn.play-pause {
-    color: #1d1d1f;
-    width: 32px;
-    height: 32px;
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    color: #ffffff;
+    width: 34px;
+    height: 34px;
+    background: linear-gradient(180deg, #ff3b50 0%, #fa243c 100%);
+    border: 0.5px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 3px 10px rgba(250, 36, 60, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
+
 .am-btn.play-pause:hover {
-    background: #ffffff;
-    border-color: rgba(0, 0, 0, 0.16);
+    background: linear-gradient(180deg, #ff2d44 0%, #e01b33 100%);
+    transform: scale(1.06);
+}
+
+.am-btn.play-pause:active {
+    transform: scale(0.96);
 }
 
 .am-player-divider {
     width: 1px;
-    height: 22px;
+    height: 24px;
     background: rgba(0, 0, 0, 0.08);
     box-shadow: 1px 0 0 rgba(255, 255, 255, 0.6);
 }
@@ -1233,19 +1241,19 @@
 .am-now-playing-container {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     flex: 1;
     min-width: 0;
 }
 
 .am-np-cover {
-    width: 38px;
-    height: 38px;
-    border-radius: 5px;
+    width: 42px;
+    height: 42px;
+    border-radius: 7px;
     object-fit: cover;
     flex-shrink: 0;
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 0 0 1px rgba(0, 0, 0, 0.08);
+    border: 0.5px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 .am-np-details {

@@ -367,7 +367,7 @@ const AppleMusicApp = () => {
         if (ccNowPlaying) {
             const titleEl = ccNowPlaying.querySelector('.cc-title');
             if (titleEl) {
-                titleEl.textContent = track ? `${track.title} â€¢ ${track.artist}` : 'Not Playing';
+                titleEl.textContent = track ? `${track.title} • ${track.artist}` : 'Not Playing';
             }
         }
     };
@@ -993,7 +993,7 @@ const HomeView = () => {
                     <div className="am-hero-content">
                         <span className="am-hero-badge">SPOTLIGHT PREMIERE</span>
                         <h1 className="am-hero-title">{currentHero.title}</h1>
-                        <p className="am-hero-subtitle">{currentHero.artist} â€¢ {currentHero.album}</p>
+                        <p className="am-hero-subtitle">{currentHero.artist} • {currentHero.album}</p>
                         <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
                             <button className="am-pill-btn primary" onClick={() => playSong(currentHero)}>
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l12 8-12 8V4z"/></svg>
@@ -1069,7 +1069,7 @@ const HomeView = () => {
                             </div>
                         </div>
                         <div className="am-card-title">{alb.title}</div>
-                        <div className="am-card-subtitle">{alb.artist} â€¢ {alb.year}</div>
+                        <div className="am-card-subtitle">{alb.artist} • {alb.year}</div>
                     </div>
                 ))}
             </div>
@@ -1161,7 +1161,7 @@ const NewView = () => {
                             </div>
                         </div>
                         <div className="am-card-title">{alb.title}</div>
-                        <div className="am-card-subtitle">{alb.artist} â€¢ Lossless</div>
+                        <div className="am-card-subtitle">{alb.artist} • Lossless</div>
                     </div>
                 ))}
             </div>
@@ -1213,7 +1213,7 @@ const RadioView = () => {
                     <div className="am-schedule-time">09:00 - 12:00</div>
                     <div className="am-schedule-info">
                         <div className="am-schedule-title">The Apple Music 1 Morning Show</div>
-                        <div className="am-schedule-desc">Zane Lowe with todayâ€™s hottest global world records and premieres.</div>
+                        <div className="am-schedule-desc">Zane Lowe with today's hottest global world records and premieres.</div>
                     </div>
                 </div>
                 <div className="am-schedule-row">
@@ -1449,7 +1449,7 @@ const RecentlyAddedView = () => {
                             </div>
                         </div>
                         <div className="am-card-title" style={{ marginTop: '8px' }}>{alb.title}</div>
-                        <div className="am-card-subtitle">{alb.artist} â€¢ Added Today</div>
+                        <div className="am-card-subtitle">{alb.artist} • Added Today</div>
                     </div>
                 ))}
             </div>
@@ -1543,7 +1543,7 @@ const AlbumsView = () => {
                             </div>
                         </div>
                         <div className="am-card-title" style={{ marginTop: '8px' }}>{alb.title}</div>
-                        <div className="am-card-subtitle">{alb.artist} â€¢ {alb.year}</div>
+                        <div className="am-card-subtitle">{alb.artist} • {alb.year}</div>
                     </div>
                 ))}
             </div>
@@ -1568,7 +1568,7 @@ const AlbumDetailView = () => {
                     <h3 className="am-album-header-artist">{selectedAlbum.artist}</h3>
                     <p className="am-album-header-desc">{selectedAlbum.description}</p>
                     <p style={{ fontSize: '12px', color: '#8e8e93', marginTop: '6px' }}>
-                        {selectedAlbum.year} â€¢ {albumSongs.length} Songs â€¢ Lossless â€¢ Apple Digital Master
+                        {selectedAlbum.year} • {albumSongs.length} Songs • Lossless • Apple Digital Master
                     </p>
                     <div style={{ display: 'flex', gap: '12px', marginTop: '18px' }}>
                         <button className="am-pill-btn primary" onClick={() => albumSongs[0] && playSong(albumSongs[0], albumSongs)}>
@@ -1659,16 +1659,16 @@ const SongsView = () => {
                     <div className="am-song-index">#</div>
                     <div style={{ width: '28px' }}></div>
                     <div style={{ flex: 2, cursor: 'pointer' }} onClick={() => handleSort('title')}>
-                        Title {sortKey === 'title' && (sortAsc ? 'â–²' : 'â–¼')}
+                        Title {sortKey === 'title' && (sortAsc ? '▲' : '▼')}
                     </div>
                     <div style={{ flex: 1.5, cursor: 'pointer' }} onClick={() => handleSort('artist')}>
-                        Artist {sortKey === 'artist' && (sortAsc ? 'â–²' : 'â–¼')}
+                        Artist {sortKey === 'artist' && (sortAsc ? '▲' : '▼')}
                     </div>
                     <div style={{ flex: 1.5, cursor: 'pointer' }} onClick={() => handleSort('album')}>
-                        Album {sortKey === 'album' && (sortAsc ? 'â–²' : 'â–¼')}
+                        Album {sortKey === 'album' && (sortAsc ? '▲' : '▼')}
                     </div>
                     <div style={{ width: '60px', textAlign: 'right', cursor: 'pointer' }} onClick={() => handleSort('duration')}>
-                        Time {sortKey === 'duration' && (sortAsc ? 'â–²' : 'â–¼')}
+                        Time {sortKey === 'duration' && (sortAsc ? '▲' : '▼')}
                     </div>
                 </div>
 
@@ -1734,7 +1734,7 @@ const MusicVideosView = () => {
                             </div>
                         </div>
                         <div className="am-card-title" style={{ marginTop: '8px' }}>{song.title}</div>
-                        <div className="am-card-subtitle">{song.artist} â€¢ Official Music Video</div>
+                        <div className="am-card-subtitle">{song.artist} • Official Music Video</div>
                     </div>
                 ))}
             </div>
@@ -1862,7 +1862,7 @@ const AllPlaylistsView = () => {
                             </div>
                         </div>
                         <div className="am-card-title" style={{ marginTop: '8px' }}>{pl.name}</div>
-                        <div className="am-card-subtitle">{pl.curator || 'User Playlist'} â€¢ {pl.tracks ? pl.tracks.length : 0} Songs</div>
+                        <div className="am-card-subtitle">{pl.curator || 'User Playlist'} • {pl.tracks ? pl.tracks.length : 0} Songs</div>
                     </div>
                 ))}
             </div>
@@ -1886,7 +1886,7 @@ const PlaylistDetailView = () => {
                     <h3 className="am-album-header-artist">Curated by {selectedPlaylist.curator || 'You'}</h3>
                     <p className="am-album-header-desc">{selectedPlaylist.description}</p>
                     <p style={{ fontSize: '12px', color: '#8e8e93', marginTop: '6px' }}>
-                        {playlistSongs.length} Songs â€¢ Lossless Audio
+                        {playlistSongs.length} Songs • Lossless Audio
                     </p>
                     <div style={{ display: 'flex', gap: '12px', marginTop: '18px' }}>
                         <button className="am-pill-btn primary" onClick={() => playlistSongs[0] && playSong(playlistSongs[0], playlistSongs)}>
@@ -1975,7 +1975,7 @@ const FloatingPlayer = () => {
                     <button className={`am-btn ${isShuffle ? 'active' : ''}`} onClick={() => setIsShuffle(!isShuffle)} title="Shuffle">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
                     </button>
-                    <button className="am-btn" onClick={playPrev} title="Previous (âŒ˜â†)">
+                    <button className="am-btn" onClick={playPrev} title="Previous (Cmd+Left)">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11 5L3 12l8 7V5z"/><path d="M19 5l-8 7 8 7V5z"/><rect x="2" y="5" width="2" height="14"/></svg>
                     </button>
                     <button className="am-btn play-pause" onClick={togglePlay} title={isPlaying ? 'Pause (Space)' : 'Play (Space)'}>
@@ -1984,7 +1984,7 @@ const FloatingPlayer = () => {
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style={{marginLeft: '2px'}}><path d="M7 4l12 8-12 8V4z"/></svg>
                         }
                     </button>
-                    <button className="am-btn" onClick={playNext} title="Next (âŒ˜â†’)">
+                    <button className="am-btn" onClick={playNext} title="Next (Cmd+Right)">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13 5l8 7-8 7V5z"/><path d="M5 5l8 7-8 7V5z"/><rect x="20" y="5" width="2" height="14"/></svg>
                     </button>
                     <button className={`am-btn ${repeatMode !== 'off' ? 'active' : ''}`} onClick={toggleRepeat} title={`Repeat: ${repeatMode}`}>
@@ -2000,7 +2000,7 @@ const FloatingPlayer = () => {
                     <div className="am-np-details">
                         <div className="am-np-text-row">
                             <span className="am-np-title">{currentTrack.title}</span>
-                            <span className="am-np-dot">â€¢</span>
+                            <span className="am-np-dot">•</span>
                             <span className="am-np-artist">{currentTrack.artist}</span>
                             <button 
                                 className="am-np-heart" 
@@ -2267,7 +2267,7 @@ const SongInfoModal = ({ song, onClose }) => {
                         <SafeImage src={song.cover} className="am-modal-thumb" alt={song.title} />
                         <div>
                             <h3 style={{ fontSize: '15px', fontWeight: '700', color: '#1d1d1f' }}>{song.title}</h3>
-                            <p style={{ fontSize: '12px', color: '#8e8e93' }}>{song.artist} â€” {song.album}</p>
+                            <p style={{ fontSize: '12px', color: '#8e8e93' }}>{song.artist} — {song.album}</p>
                         </div>
                     </div>
                     <LucideIcon name="x" size={16} color="#8e8e93" style={{ cursor: 'pointer' }} onClick={onClose} />
@@ -2401,7 +2401,7 @@ const ContextMenu = ({ x, y, track }) => {
             <div className="am-cm-divider"></div>
             <div className="am-cm-item" onClick={() => setShowSongInfo(track)}>
                 <LucideIcon name="info" size={14} />
-                <span>Get Info (âŒ˜I)</span>
+                <span>Get Info (Cmd+I)</span>
             </div>
         </div>
     );
