@@ -47,16 +47,20 @@ const SafariIcon = ({ name, size = 16, color = 'currentColor', strokeWidth = 2, 
     );
 };
 
-// Favorites Configuration
+// Favorites Configuration using authentic macOS icons
 const FAVORITES = [
-    { id: 'fav-apple', title: 'Apple', url: 'apple.com', iconColor: '#000000', icon: 'globe', badge: 'Official' },
-    { id: 'fav-google', title: 'Google', url: 'google.com', iconColor: '#4285f4', icon: 'search', badge: 'Search' },
-    { id: 'fav-github', title: 'GitHub', url: 'github.com', iconColor: '#24292e', icon: 'code', badge: 'Dev' },
-    { id: 'fav-wikipedia', title: 'Wikipedia', url: 'wikipedia.org', iconColor: '#636466', icon: 'book-open', badge: 'Wiki' },
-    { id: 'fav-hn', title: 'Hacker News', url: 'news.ycombinator.com', iconColor: '#ff6600', icon: 'external-link', badge: 'Tech' },
-    { id: 'fav-reddit', title: 'Reddit', url: 'reddit.com', iconColor: '#ff4500', icon: 'message-square', badge: 'Forum' },
-    { id: 'fav-dribbble', title: 'Dribbble', url: 'dribbble.com', iconColor: '#ea4c89', icon: 'compass', badge: 'Design' },
-    { id: 'fav-figma', title: 'Figma', url: 'figma.com', iconColor: '#a259ff', icon: 'grid', badge: 'UI/UX' }
+    { id: 'fav-apple', title: 'Apple', url: 'apple.com', iconSrc: 'images/Icons/Apple.png' },
+    { id: 'fav-google', title: 'Google', url: 'google.com', iconSrc: 'images/Icons/Google.png' },
+    { id: 'fav-github', title: 'GitHub', url: 'github.com', iconSrc: 'images/Icons/Github.png' },
+    { id: 'fav-youtube', title: 'YouTube', url: 'youtube.com', iconSrc: 'images/Icons/Youtube.png' },
+    { id: 'fav-chatgpt', title: 'ChatGPT', url: 'chatgpt.com', iconSrc: 'images/Icons/ChatGPT.png' },
+    { id: 'fav-reddit', title: 'Reddit', url: 'reddit.com', iconSrc: 'images/Icons/Reddit.png' },
+    { id: 'fav-x', title: 'X', url: 'x.com', iconSrc: 'images/Icons/X.png' },
+    { id: 'fav-figma', title: 'Figma', url: 'figma.com', iconSrc: 'images/Icons/Figma.png' },
+    { id: 'fav-spotify', title: 'Spotify', url: 'spotify.com', iconSrc: 'images/Icons/Spotify.png' },
+    { id: 'fav-netflix', title: 'Netflix', url: 'netflix.com', iconSrc: 'images/Icons/Netflix.png' },
+    { id: 'fav-claude', title: 'Claude', url: 'claude.ai', iconSrc: 'images/Icons/Claude.png' },
+    { id: 'fav-appstore', title: 'App Store', url: 'apps.apple.com', iconSrc: 'images/Icons/AppStore.png' }
 ];
 
 const READING_LIST = [
@@ -87,12 +91,33 @@ const READING_LIST = [
 ];
 
 const BOOKMARKS = [
-    { id: 'bm-1', title: 'Apple Developer Documentation', url: 'developer.apple.com', icon: 'code' },
-    { id: 'bm-2', title: 'WebKit Standards & Proposals', url: 'webkit.org', icon: 'compass' },
-    { id: 'bm-3', title: 'GitHub Open Source Projects', url: 'github.com', icon: 'code' },
-    { id: 'bm-4', title: 'Hacker News Tech Trends', url: 'news.ycombinator.com', icon: 'external-link' },
-    { id: 'bm-5', title: 'Wikipedia Reference Portal', url: 'wikipedia.org', icon: 'book-open' }
+    { id: 'bm-1', title: 'Apple Developer', url: 'developer.apple.com', iconSrc: 'images/Icons/Apple.png' },
+    { id: 'bm-2', title: 'GitHub Open Source', url: 'github.com', iconSrc: 'images/Icons/Github.png' },
+    { id: 'bm-3', title: 'Google Search & Cloud', url: 'google.com', iconSrc: 'images/Icons/Google.png' },
+    { id: 'bm-4', title: 'YouTube Media', url: 'youtube.com', iconSrc: 'images/Icons/Youtube.png' },
+    { id: 'bm-5', title: 'Figma Design System', url: 'figma.com', iconSrc: 'images/Icons/Figma.png' },
+    { id: 'bm-6', title: 'OpenAI ChatGPT', url: 'chatgpt.com', iconSrc: 'images/Icons/ChatGPT.png' },
+    { id: 'bm-7', title: 'Spotify Web Player', url: 'spotify.com', iconSrc: 'images/Icons/Spotify.png' },
+    { id: 'bm-8', title: 'Anthropic Claude', url: 'claude.ai', iconSrc: 'images/Icons/Claude.png' }
 ];
+
+const getFavicon = (url) => {
+    if (!url || url === 'safari://startpage') return { type: 'svg', name: 'compass' };
+    const u = url.toLowerCase();
+    if (u.includes('apple.com')) return { type: 'img', src: 'images/Icons/Apple.png' };
+    if (u.includes('google.com')) return { type: 'img', src: 'images/Icons/Google.png' };
+    if (u.includes('github.com')) return { type: 'img', src: 'images/Icons/Github.png' };
+    if (u.includes('youtube.com')) return { type: 'img', src: 'images/Icons/Youtube.png' };
+    if (u.includes('reddit.com')) return { type: 'img', src: 'images/Icons/Reddit.png' };
+    if (u.includes('x.com') || u.includes('twitter.com')) return { type: 'img', src: 'images/Icons/X.png' };
+    if (u.includes('figma.com')) return { type: 'img', src: 'images/Icons/Figma.png' };
+    if (u.includes('chatgpt.com') || u.includes('openai.com')) return { type: 'img', src: 'images/Icons/ChatGPT.png' };
+    if (u.includes('claude.ai')) return { type: 'img', src: 'images/Icons/Claude.png' };
+    if (u.includes('spotify.com')) return { type: 'img', src: 'images/Icons/Spotify.png' };
+    if (u.includes('netflix.com')) return { type: 'img', src: 'images/Icons/Netflix.png' };
+    if (u.includes('apps.apple.com')) return { type: 'img', src: 'images/Icons/AppStore.png' };
+    return { type: 'svg', name: 'globe' };
+};
 
 const INITIAL_TABS = [
     {
@@ -277,22 +302,28 @@ const SafariApp = () => {
         const results = [];
 
         if ('google'.includes(q) || 'search'.includes(q)) {
-            results.push({ type: 'site', title: 'Google Search Engine', url: 'google.com', icon: 'search' });
+            results.push({ type: 'site', title: 'Google Search Engine', url: 'google.com', iconSrc: 'images/Icons/Google.png' });
         }
         if ('apple'.includes(q) || 'mac'.includes(q) || 'sequoia'.includes(q)) {
-            results.push({ type: 'site', title: 'Apple Official Site', url: 'apple.com', icon: 'globe' });
+            results.push({ type: 'site', title: 'Apple Official Site', url: 'apple.com', iconSrc: 'images/Icons/Apple.png' });
         }
         if ('github'.includes(q) || 'code'.includes(q) || 'repo'.includes(q)) {
-            results.push({ type: 'site', title: 'GitHub — Open Source Repositories', url: 'github.com', icon: 'code' });
+            results.push({ type: 'site', title: 'GitHub — Open Source Repositories', url: 'github.com', iconSrc: 'images/Icons/Github.png' });
         }
-        if ('wiki'.includes(q) || 'wikipedia'.includes(q)) {
-            results.push({ type: 'site', title: 'Wikipedia — The Free Encyclopedia', url: 'wikipedia.org', icon: 'book-open' });
+        if ('youtube'.includes(q) || 'video'.includes(q)) {
+            results.push({ type: 'site', title: 'YouTube Videos', url: 'youtube.com', iconSrc: 'images/Icons/Youtube.png' });
         }
-        if ('hacker'.includes(q) || 'hn'.includes(q) || 'news'.includes(q)) {
-            results.push({ type: 'site', title: 'Hacker News (Y Combinator)', url: 'news.ycombinator.com', icon: 'external-link' });
+        if ('chatgpt'.includes(q) || 'ai'.includes(q) || 'openai'.includes(q)) {
+            results.push({ type: 'site', title: 'ChatGPT AI Assistant', url: 'chatgpt.com', iconSrc: 'images/Icons/ChatGPT.png' });
+        }
+        if ('figma'.includes(q) || 'design'.includes(q)) {
+            results.push({ type: 'site', title: 'Figma Design System', url: 'figma.com', iconSrc: 'images/Icons/Figma.png' });
+        }
+        if ('reddit'.includes(q) || 'forum'.includes(q)) {
+            results.push({ type: 'site', title: 'Reddit Communities', url: 'reddit.com', iconSrc: 'images/Icons/Reddit.png' });
         }
 
-        results.push({ type: 'search', title: `Search for "${omnibarText}" with Google`, url: 'google.com', icon: 'search', query: omnibarText });
+        results.push({ type: 'search', title: `Search for "${omnibarText}" with Google`, url: 'google.com', iconSrc: 'images/Icons/Google.png', query: omnibarText });
         return results;
     }, [omnibarText, isOmnibarFocused]);
 
@@ -381,7 +412,11 @@ const SafariApp = () => {
                                     onMouseDown={() => handleNavigate(item.url, item.query || item.title)}
                                 >
                                     <div className="safari-sugg-icon">
-                                        <SafariIcon name={item.icon} size={14} />
+                                        {item.iconSrc ? (
+                                            <img src={item.iconSrc} style={{ width: '15px', height: '15px', objectFit: 'contain' }} alt="" />
+                                        ) : (
+                                            <SafariIcon name={item.icon || 'globe'} size={14} />
+                                        )}
                                     </div>
                                     <div className="safari-sugg-text">{item.title}</div>
                                     <div className="safari-sugg-url">{item.url}</div>
@@ -447,25 +482,32 @@ const SafariApp = () => {
 
             {/* Tab Strip */}
             <div className="safari-tab-bar">
-                {tabs.map(tab => (
-                    <div 
-                        key={tab.id}
-                        className={`safari-tab ${tab.id === activeTabId ? 'active' : ''}`}
-                        onClick={() => { setActiveTabId(tab.id); setReaderMode(false); }}
-                    >
-                        <div className="safari-tab-favicon">
-                            <SafariIcon name={tab.favicon || 'globe'} size={13} color={tab.id === activeTabId ? '#007aff' : '#6b7280'} />
-                        </div>
-                        <div className="safari-tab-title">{tab.title}</div>
-                        <button 
-                            className="safari-tab-close"
-                            onClick={(e) => handleCloseTab(tab.id, e)}
-                            title="Close Tab"
+                {tabs.map(tab => {
+                    const fav = getFavicon(tab.url);
+                    return (
+                        <div 
+                            key={tab.id}
+                            className={`safari-tab ${tab.id === activeTabId ? 'active' : ''}`}
+                            onClick={() => { setActiveTabId(tab.id); setReaderMode(false); }}
                         >
-                            <SafariIcon name="x" size={11} />
-                        </button>
-                    </div>
-                ))}
+                            <div className="safari-tab-favicon">
+                                {fav.type === 'img' ? (
+                                    <img src={fav.src} className="safari-tab-fav-img" alt="" />
+                                ) : (
+                                    <SafariIcon name={fav.name} size={13} color={tab.id === activeTabId ? '#007aff' : '#6b7280'} />
+                                )}
+                            </div>
+                            <div className="safari-tab-title">{tab.title}</div>
+                            <button 
+                                className="safari-tab-close"
+                                onClick={(e) => handleCloseTab(tab.id, e)}
+                                title="Close Tab"
+                            >
+                                <SafariIcon name="x" size={11} />
+                            </button>
+                        </div>
+                    );
+                })}
                 <button 
                     className="safari-tab-new-btn"
                     onClick={() => handleCreateTab()}
@@ -507,7 +549,7 @@ const SafariApp = () => {
                                         onClick={() => handleNavigate(f.url)}
                                     >
                                         <div className="safari-sb-icon-box">
-                                            <SafariIcon name={f.icon} size={13} color={f.iconColor} />
+                                            <img src={f.iconSrc} className="safari-sb-icon-img" alt="" />
                                         </div>
                                         <span className="safari-sb-label">{f.title}</span>
                                     </div>
@@ -521,7 +563,7 @@ const SafariApp = () => {
                                         onClick={() => handleNavigate(b.url)}
                                     >
                                         <div className="safari-sb-icon-box">
-                                            <SafariIcon name={b.icon} size={13} />
+                                            <img src={b.iconSrc} className="safari-sb-icon-img" alt="" />
                                         </div>
                                         <span className="safari-sb-label">{b.title}</span>
                                     </div>
@@ -629,7 +671,7 @@ const StartPageView = ({ onNavigate }) => {
                                 onClick={() => onNavigate(fav.url)}
                             >
                                 <div className="safari-fav-icon-wrapper">
-                                    <SafariIcon name={fav.icon} size={28} color={fav.iconColor} />
+                                    <img src={fav.iconSrc} className="safari-fav-img" alt={fav.title} />
                                 </div>
                                 <div className="safari-fav-title">{fav.title}</div>
                             </div>
@@ -785,7 +827,7 @@ const GoogleView = ({ query, onNavigate, searchQueryInput, setSearchQueryInput }
 
                     <div className="safari-google-buttons">
                         <button type="submit" className="safari-g-btn">Google Search</button>
-                        <button type="button" className="safari-g-btn" onClick={() => onNavigate('apple.com')}>I'm Feeling Lucky</button>
+                        <button type="button" className="safari-g-btn" onClick={() => onNavigate('apple.com')}>{"I'm Feeling Lucky"}</button>
                     </div>
                 </form>
             </div>
@@ -798,6 +840,7 @@ const AppleView = ({ onNavigate }) => {
     return (
         <div className="safari-web-apple">
             <div className="safari-apple-nav">
+                <img src="images/Icons/Apple.png" style={{ width: '16px', height: '16px', objectFit: 'contain', cursor: 'pointer' }} onClick={() => onNavigate('apple.com')} alt="Apple" />
                 <span onClick={() => onNavigate('apple.com')}>Mac</span>
                 <span onClick={() => onNavigate('apple.com')}>iPad</span>
                 <span onClick={() => onNavigate('apple.com')}>iPhone</span>
@@ -844,14 +887,14 @@ const GitHubView = ({ onNavigate }) => {
     return (
         <div className="safari-web-github">
             <div className="safari-gh-header">
-                <SafariIcon name="code" size={24} color="#ffffff" />
+                <img src="images/Icons/Github.png" style={{ width: '24px', height: '24px', objectFit: 'contain' }} alt="GitHub" />
                 <span style={{ fontWeight: '600', fontSize: '14px', color: '#ffffff' }}>GitHub</span>
                 <span style={{ fontSize: '13px', color: '#8b949e', marginLeft: '12px' }}>Joykumbhakar / MacOS-Interface</span>
             </div>
 
             <div className="safari-gh-body">
                 <div className="safari-gh-repo-title">
-                    <SafariIcon name="code" size={18} color="#58a6ff" />
+                    <img src="images/Icons/Github.png" style={{ width: '18px', height: '18px', objectFit: 'contain' }} alt="" />
                     <span>MacOS-Interface</span>
                     <span style={{ fontSize: '12px', padding: '2px 8px', borderRadius: '12px', border: '1px solid #30363d', color: '#8b949e' }}>Public</span>
                 </div>
@@ -941,8 +984,8 @@ const HackerNewsView = ({ onNavigate }) => {
 const GenericWebsiteView = ({ url, onNavigate }) => {
     return (
         <div style={{ flex: 1, padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', background: '#fcfcfd' }}>
-            <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'rgba(0, 122, 255, 0.1)', color: '#007aff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-                <SafariIcon name="globe" size={28} color="#007aff" />
+            <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+                <img src="images/Icons/safari.png" style={{ width: '48px', height: '48px', objectFit: 'contain' }} alt="Safari" />
             </div>
             <h2 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '8px', color: '#1d1d1f' }}>{url}</h2>
             <p style={{ fontSize: '14px', color: '#86868b', maxWidth: '440px', lineHeight: '1.5', marginBottom: '24px' }}>
