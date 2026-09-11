@@ -106,14 +106,14 @@ const INITIAL_SLIDES = [
 const PowerPointApp = () => {
     const [slides, setSlides] = useState(() => {
         try {
-            const saved = localStorage.getItem('mac_powerpoint_presentation_v2');
+            const saved = localStorage.getItem('mac_powerpoint_presentation_v3');
             return saved ? JSON.parse(saved) : INITIAL_SLIDES;
         } catch (e) {
             return INITIAL_SLIDES;
         }
     });
 
-    const [activeSlideId, setActiveSlideId] = useState(slides[0]?.id || 1);
+    const [activeSlideId, setActiveSlideId] = useState(slides && slides[0] ? slides[0].id : 1);
     const [activeRibbonTab, setActiveRibbonTab] = useState('home');
     const [inspectorTab, setInspectorTab] = useState('format');
     const [showInspector, setShowInspector] = useState(true);
@@ -126,10 +126,6 @@ const PowerPointApp = () => {
     const [presenterIndex, setPresenterIndex] = useState(0);
     const [laserActive, setLaserActive] = useState(false);
     const [laserPos, setLaserPos] = useState({ x: -100, y: -100 });
-    const [penActive, setPenActive] = useState(false);
-    const [penColor, setPenColor] = useState('#ff3b30');
-    const [drawings, setDrawings] = useState({});
-    const [isDrawing, setIsDrawing] = useState(false);
     const [isBlackout, setIsBlackout] = useState(false);
     const [isWhiteout, setIsWhiteout] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
@@ -143,7 +139,7 @@ const PowerPointApp = () => {
     // Autosave presentation
     useEffect(() => {
         try {
-            localStorage.setItem('mac_powerpoint_presentation_v2', JSON.stringify(slides));
+            localStorage.setItem('mac_powerpoint_presentation_v3', JSON.stringify(slides));
         } catch (e) {}
     }, [slides]);
 
@@ -236,16 +232,6 @@ const PowerPointApp = () => {
         }
     };
 
-    const moveSlide = (idx, direction) => {
-        const targetIdx = idx + direction;
-        if (targetIdx < 0 || targetIdx >= slides.length) return;
-        const nextSlides = [...slides];
-        const temp = nextSlides[idx];
-        nextSlides[idx] = nextSlides[targetIdx];
-        nextSlides[targetIdx] = temp;
-        pushHistory(nextSlides);
-    };
-
     const insertShape = (type) => {
         const newElem = {
             id: Date.now(),
@@ -279,8 +265,6 @@ const PowerPointApp = () => {
                 setPresenterIndex(prev => Math.max(prev - 1, 0));
             } else if (e.key === 'l' || e.key === 'L') {
                 setLaserActive(prev => !prev);
-            } else if (e.key === 'p' || e.key === 'P') {
-                setPenActive(prev => !prev);
             } else if (e.key === 'b' || e.key === 'B') {
                 setIsBlackout(prev => !prev);
                 setIsWhiteout(false);
@@ -867,9 +851,7 @@ const PowerPointApp = () => {
                         }
                     }}
                     onClick={() => {
-                        if (!penActive) {
-                            setPresenterIndex(prev => Math.min(prev + 1, slides.length - 1));
-                        }
+                        setPresenterIndex(prev => Math.min(prev + 1, slides.length - 1));
                     }}
                 >
                     {laserActive && (
