@@ -483,25 +483,41 @@
 }
 
 /* ==========================================================================
-   START PAGE DESIGN (Clean Apple HIG Layout)
+   START PAGE DESIGN (Authentic macOS Safari HIG Layout)
    ========================================================================== */
 .safari-startpage {
     flex: 1;
     min-height: 100%;
-    padding: 40px 48px 60px;
+    padding: 36px 44px 64px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+    background-color: #1a1a1e;
+    background-image: url('images/Wallpapers/27-Golden-Gate.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
     overflow-y: auto;
+}
+
+.safari-startpage.no-wallpaper {
+    background-image: none;
+    background: linear-gradient(180deg, #f5f5f7 0%, #ffffff 100%);
 }
 
 .safari-startpage-container {
     width: 100%;
-    max-width: 860px;
+    max-width: 820px;
     display: flex;
     flex-direction: column;
-    gap: 36px;
+    gap: 32px;
+}
+
+.safari-sp-section {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 }
 
 .safari-sp-header {
@@ -511,17 +527,23 @@
 }
 
 .safari-sp-title {
-    font-size: 20px;
+    font-size: 19px;
     font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    letter-spacing: -0.2px;
+}
+
+.safari-startpage.no-wallpaper .safari-sp-title {
     color: #1d1d1f;
-    letter-spacing: -0.3px;
+    text-shadow: none;
 }
 
 /* Favorites Grid */
 .safari-favorites-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
-    gap: 20px 16px;
+    grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+    gap: 18px 12px;
     width: 100%;
 }
 
@@ -529,21 +551,21 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
     cursor: pointer;
     text-decoration: none;
     user-select: none;
 }
 
 .safari-fav-icon-wrapper {
-    width: 60px;
-    height: 60px;
+    width: 58px;
+    height: 58px;
     border-radius: 14px;
-    background: transparent;
+    background: rgba(255, 255, 255, 0.95);
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     transition: opacity 0.12s ease;
 }
 
@@ -552,10 +574,10 @@
 }
 
 .safari-fav-img {
-    width: 56px;
-    height: 56px;
+    width: 44px;
+    height: 44px;
     object-fit: contain;
-    border-radius: 13px;
+    border-radius: 10px;
     user-select: none;
     pointer-events: none;
 }
@@ -579,14 +601,258 @@
 }
 
 .safari-fav-title {
-    font-size: 11.5px;
+    font-size: 11px;
     font-weight: 500;
-    color: #1d1d1f;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 100%;
+    max-width: 68px;
+    margin-top: 5px;
+}
+
+.safari-startpage.no-wallpaper .safari-fav-title {
+    color: #1d1d1f;
+    text-shadow: none;
+}
+
+/* Frequently Visited Grid */
+.safari-fv-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    width: 100%;
+}
+
+.safari-fv-card {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.safari-fv-preview {
+    aspect-ratio: 16/10;
+    border-radius: 9px;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.12s ease;
+}
+
+.safari-fv-card:hover .safari-fv-preview {
+    opacity: 0.9;
+}
+
+.safari-fv-topbar {
+    height: 14px;
+    background: rgba(240, 240, 240, 0.96);
+    display: flex;
+    align-items: center;
+    padding: 0 6px;
+    gap: 6px;
+}
+
+.safari-fv-dots {
+    display: flex;
+    gap: 3px;
+}
+
+.safari-fv-dot {
+    width: 4.5px;
+    height: 4.5px;
+    border-radius: 50%;
+    background: #c7c7cc;
+}
+
+.safari-fv-url-bar {
+    flex: 1;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.07);
+    border-radius: 3px;
+    font-size: 6.5px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 8px;
+}
+
+.safari-fv-img {
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+}
+
+.safari-fv-overlay {
+    width: 100%;
+    padding: 6px 8px;
+    background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.65) 100%);
+}
+
+.safari-fv-headline {
+    font-size: 10px;
+    font-weight: 500;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.safari-fv-domain {
+    font-size: 11px;
+    font-weight: 500;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+    text-align: center;
+    margin-top: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.safari-startpage.no-wallpaper .safari-fv-domain {
+    color: #555555;
+    text-shadow: none;
+}
+
+/* Siri Suggestions Grid */
+.safari-siri-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    width: 100%;
+}
+
+.safari-siri-card {
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    cursor: pointer;
+    transition: opacity 0.12s ease;
+}
+
+.safari-siri-card:hover {
+    opacity: 0.88;
+}
+
+.safari-siri-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.safari-siri-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.safari-siri-domain {
+    font-size: 10.5px;
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.safari-siri-thumb {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    object-fit: contain;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px;
+}
+
+/* Customization Button & Popover */
+.safari-sp-customize-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 24px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 25;
+    transition: background 0.12s ease;
+}
+
+.safari-sp-customize-btn:hover {
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.safari-sp-customize-modal {
+    position: absolute;
+    bottom: 62px;
+    right: 24px;
+    width: 210px;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 12px;
+    padding: 6px;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.safari-sp-option-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    color: #1d1d1f;
+    transition: background 0.1s ease;
+}
+
+.safari-sp-option-row:hover {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.safari-sp-option-row input[type="checkbox"] {
+    accent-color: #007aff;
+    cursor: pointer;
 }
 
 /* Privacy Report Card */

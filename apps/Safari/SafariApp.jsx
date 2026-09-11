@@ -13,9 +13,11 @@ const SafariIcon = ({ name, size = 16, color = 'currentColor', strokeWidth = 2, 
         'plus': <g><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></g>,
         'x': <g><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></g>,
         'grid': <g><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></g>,
+        'tabs-overview': <g><rect x="3" y="7" width="13" height="13" rx="2"/><path d="M8 3h10a2 2 0 0 1 2 2v10"/></g>,
         'book-open': <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />,
         'bookmark': <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />,
         'search': <g><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></g>,
+        'sliders': <g><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></g>,
         'download': <g><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></g>,
         'font': <g><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></g>,
         'check': <polyline points="20 6 9 17 4 12" />,
@@ -50,17 +52,77 @@ const SafariIcon = ({ name, size = 16, color = 'currentColor', strokeWidth = 2, 
 // Favorites Configuration using authentic macOS icons
 const FAVORITES = [
     { id: 'fav-apple', title: 'Apple', url: 'apple.com', iconSrc: 'images/Icons/Apple.png' },
+    { id: 'fav-webkit', title: 'WebKit', url: 'webkit.org', iconSrc: 'images/Icons/safari.png' },
+    { id: 'fav-figma', title: 'Figma', url: 'figma.com', iconSrc: 'images/Icons/Figma.png' },
     { id: 'fav-google', title: 'Google', url: 'google.com', iconSrc: 'images/Icons/Google.png' },
     { id: 'fav-github', title: 'GitHub', url: 'github.com', iconSrc: 'images/Icons/Github.png' },
     { id: 'fav-youtube', title: 'YouTube', url: 'youtube.com', iconSrc: 'images/Icons/Youtube.png' },
     { id: 'fav-chatgpt', title: 'ChatGPT', url: 'chatgpt.com', iconSrc: 'images/Icons/ChatGPT.png' },
+    { id: 'fav-claude', title: 'Claude', url: 'claude.ai', iconSrc: 'images/Icons/Claude.png' },
     { id: 'fav-reddit', title: 'Reddit', url: 'reddit.com', iconSrc: 'images/Icons/Reddit.png' },
-    { id: 'fav-x', title: 'X', url: 'x.com', iconSrc: 'images/Icons/X.png' },
-    { id: 'fav-figma', title: 'Figma', url: 'figma.com', iconSrc: 'images/Icons/Figma.png' },
+    { id: 'fav-x', title: 'Twitter', url: 'x.com', iconSrc: 'images/Icons/Twitter.png' },
     { id: 'fav-spotify', title: 'Spotify', url: 'spotify.com', iconSrc: 'images/Icons/Spotify.png' },
     { id: 'fav-netflix', title: 'Netflix', url: 'netflix.com', iconSrc: 'images/Icons/Netflix.png' },
-    { id: 'fav-claude', title: 'Claude', url: 'claude.ai', iconSrc: 'images/Icons/Claude.png' },
-    { id: 'fav-appstore', title: 'App Store', url: 'apps.apple.com', iconSrc: 'images/Icons/AppStore.png' }
+    { id: 'fav-appstore', title: 'App Store', url: 'apps.apple.com', iconSrc: 'images/Icons/AppStore.png' },
+    { id: 'fav-linkedin', title: 'LinkedIn', url: 'linkedin.com', iconSrc: 'images/Icons/Linkedln.png' },
+    { id: 'fav-facebook', title: 'Facebook', url: 'facebook.com', iconSrc: 'images/Icons/Facebook.png' },
+    { id: 'fav-whatsapp', title: 'WhatsApp', url: 'whatsapp.com', iconSrc: 'images/Icons/WhatsApp.png' },
+    { id: 'fav-telegram', title: 'Telegram', url: 'telegram.org', iconSrc: 'images/Icons/Telegram.png' },
+    { id: 'fav-steam', title: 'Steam', url: 'steampowered.com', iconSrc: 'images/Icons/Steam.png' }
+];
+
+const FREQUENTLY_VISITED = [
+    {
+        id: 'fv-1',
+        title: 'Adventure Journal',
+        url: 'adventure.com',
+        domain: 'adventure.com',
+        previewImage: 'images/Wallpapers/26-Tahoe-Light-6K.jpg',
+        headline: 'Explore pristine alpine landscapes & mountain trails'
+    },
+    {
+        id: 'fv-2',
+        title: 'Atlas Obscura',
+        url: 'atlasobscura.com',
+        domain: 'atlasobscura.com',
+        previewImage: 'images/Wallpapers/Referance.jpg',
+        headline: 'Curious places & hidden wonders of the world'
+    },
+    {
+        id: 'fv-3',
+        title: 'The Design Files',
+        url: 'thedesignfiles.net',
+        domain: 'thedesignfiles.net',
+        previewImage: 'images/Wallpapers/27-Golden-Gate.jpg',
+        headline: 'Architecture, modern interiors & sustainable craft'
+    }
+];
+
+const SIRI_SUGGESTIONS = [
+    {
+        id: 'siri-1',
+        title: 'Building Your Space',
+        domain: 'openhouse-magazine.com',
+        url: 'openhouse-magazine.com',
+        bg: 'rgba(255, 179, 71, 0.35)',
+        img: 'images/Icons/Purple_Documents_Folder.png'
+    },
+    {
+        id: 'siri-2',
+        title: 'How to Cut Your Own Hair',
+        domain: 'goodhousekeeping.com',
+        url: 'goodhousekeeping.com',
+        bg: 'rgba(255, 204, 0, 0.35)',
+        img: 'images/Icons/Soulver_2_Document__Notepad__Notes___Pen_Calculator_File.png'
+    },
+    {
+        id: 'siri-3',
+        title: 'Ones to Watch',
+        domain: 'itsnicethat.com',
+        url: 'itsnicethat.com',
+        bg: 'rgba(90, 180, 255, 0.35)',
+        img: 'images/Icons/Dev Tools Icons/figma.png'
+    }
 ];
 
 const READING_LIST = [
@@ -142,6 +204,14 @@ const SafariApp = () => {
     const [showShareMenu, setShowShareMenu] = useState(false);
     const [showDownloads, setShowDownloads] = useState(false);
     const [searchQueryInput, setSearchQueryInput] = useState('');
+    const [startPageConfig, setStartPageConfig] = useState({
+        favorites: true,
+        frequentlyVisited: true,
+        siriSuggestions: true,
+        readingList: false,
+        privacyReport: false,
+        backgroundImage: true
+    });
 
     const activeTab = useMemo(() => {
         return tabs.find(t => t.id === activeTabId) || tabs[0];
@@ -607,6 +677,8 @@ const SafariApp = () => {
                             onNavigate={handleNavigate}
                             searchQueryInput={searchQueryInput}
                             setSearchQueryInput={setSearchQueryInput}
+                            startPageConfig={startPageConfig}
+                            setStartPageConfig={setStartPageConfig}
                         />
                     )}
                 </div>
@@ -616,11 +688,17 @@ const SafariApp = () => {
 };
 
 // Router for simulated websites
-const WebpageRouter = ({ tab, onNavigate, searchQueryInput, setSearchQueryInput }) => {
+const WebpageRouter = ({ tab, onNavigate, searchQueryInput, setSearchQueryInput, startPageConfig, setStartPageConfig }) => {
     const url = tab.url || 'safari://startpage';
 
     if (url === 'safari://startpage') {
-        return <StartPageView onNavigate={onNavigate} />;
+        return (
+            <StartPageView 
+                onNavigate={onNavigate} 
+                startPageConfig={startPageConfig} 
+                setStartPageConfig={setStartPageConfig} 
+            />
+        );
     }
 
     if (url === 'google.com' || url.includes('google')) {
@@ -653,69 +731,187 @@ const WebpageRouter = ({ tab, onNavigate, searchQueryInput, setSearchQueryInput 
     return <GenericWebsiteView url={url} onNavigate={onNavigate} />;
 };
 
-// Start Page Component
-const StartPageView = ({ onNavigate }) => {
+// Start Page Component (Matching authentic macOS Safari)
+const StartPageView = ({ onNavigate, startPageConfig, setStartPageConfig }) => {
+    const [showCustomizeModal, setShowCustomizeModal] = useState(false);
+
+    const toggleOption = (key) => {
+        if (setStartPageConfig) {
+            setStartPageConfig(prev => ({ ...prev, [key]: !prev[key] }));
+        }
+    };
+
+    const hasBg = !startPageConfig || startPageConfig.backgroundImage;
+
     return (
-        <div className="safari-startpage">
+        <div className={`safari-startpage ${hasBg ? 'with-wallpaper' : 'no-wallpaper'}`}>
             <div className="safari-startpage-container">
                 {/* Favorites Section */}
-                <div>
-                    <div className="safari-sp-header" style={{ marginBottom: '18px' }}>
-                        <div className="safari-sp-title">Favorites</div>
-                    </div>
-                    <div className="safari-favorites-grid">
-                        {FAVORITES.map(fav => (
-                            <div 
-                                key={fav.id} 
-                                className="safari-favorite-card"
-                                onClick={() => onNavigate(fav.url)}
-                            >
-                                <div className="safari-fav-icon-wrapper">
-                                    <img src={fav.iconSrc} className="safari-fav-img" alt={fav.title} />
+                {(!startPageConfig || startPageConfig.favorites) && (
+                    <div className="safari-sp-section">
+                        <div className="safari-sp-header">
+                            <div className="safari-sp-title">Favorites</div>
+                        </div>
+                        <div className="safari-favorites-grid">
+                            {FAVORITES.map(fav => (
+                                <div 
+                                    key={fav.id} 
+                                    className="safari-favorite-card"
+                                    onClick={() => onNavigate(fav.url)}
+                                >
+                                    <div className="safari-fav-icon-wrapper">
+                                        <img src={fav.iconSrc} className="safari-fav-img" alt={fav.title} />
+                                    </div>
+                                    <div className="safari-fav-title">{fav.title}</div>
                                 </div>
-                                <div className="safari-fav-title">{fav.title}</div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                </div>
+                )}
 
-                {/* Privacy Report Card */}
-                <div className="safari-privacy-card">
-                    <div className="safari-privacy-left">
-                        <div className="safari-privacy-shield">
-                            <SafariIcon name="shield" size={24} color="#34c759" />
+                {/* Frequently Visited Section */}
+                {(!startPageConfig || startPageConfig.frequentlyVisited) && (
+                    <div className="safari-sp-section">
+                        <div className="safari-sp-header">
+                            <div className="safari-sp-title">Frequently Visited</div>
                         </div>
-                        <div>
-                            <div className="safari-privacy-title">Privacy Report</div>
-                            <div className="safari-privacy-desc">In the last 30 days, Safari prevented 78 trackers from profiling you.</div>
+                        <div className="safari-fv-grid">
+                            {FREQUENTLY_VISITED.map(site => (
+                                <div 
+                                    key={site.id} 
+                                    className="safari-fv-card"
+                                    onClick={() => onNavigate(site.url)}
+                                >
+                                    <div className="safari-fv-preview">
+                                        <div className="safari-fv-topbar">
+                                            <div className="safari-fv-dots">
+                                                <div className="safari-fv-dot"></div>
+                                                <div className="safari-fv-dot"></div>
+                                                <div className="safari-fv-dot"></div>
+                                            </div>
+                                            <div className="safari-fv-url-bar">{site.domain}</div>
+                                        </div>
+                                        <div 
+                                            className="safari-fv-img" 
+                                            style={{ backgroundImage: `url(${site.previewImage})` }}
+                                        >
+                                            <div className="safari-fv-overlay">
+                                                <div className="safari-fv-headline">{site.headline}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="safari-fv-domain">{site.domain}</div>
+                                </div>
+                            ))}
                         </div>
                     </div>
-                    <div className="safari-privacy-stat">
-                        78
-                        <span>Trackers Blocked</span>
+                )}
+
+                {/* Siri Suggestions Section */}
+                {(!startPageConfig || startPageConfig.siriSuggestions) && (
+                    <div className="safari-sp-section">
+                        <div className="safari-sp-header">
+                            <div className="safari-sp-title">Siri Suggestions</div>
+                        </div>
+                        <div className="safari-siri-grid">
+                            {SIRI_SUGGESTIONS.map(siri => (
+                                <div 
+                                    key={siri.id} 
+                                    className="safari-siri-card"
+                                    style={{ background: siri.bg }}
+                                    onClick={() => onNavigate(siri.url)}
+                                >
+                                    <div className="safari-siri-info">
+                                        <div className="safari-siri-title">{siri.title}</div>
+                                        <div className="safari-siri-domain">{siri.domain}</div>
+                                    </div>
+                                    <img src={siri.img} className="safari-siri-thumb" alt="" />
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
+                )}
+
+                {/* Privacy Report Section */}
+                {startPageConfig && startPageConfig.privacyReport && (
+                    <div className="safari-privacy-card">
+                        <div className="safari-privacy-left">
+                            <div className="safari-privacy-shield">
+                                <SafariIcon name="shield" size={24} color="#34c759" />
+                            </div>
+                            <div>
+                                <div className="safari-privacy-title">Privacy Report</div>
+                                <div className="safari-privacy-desc">In the last 30 days, Safari prevented 78 trackers from profiling you.</div>
+                            </div>
+                        </div>
+                        <div className="safari-privacy-stat">
+                            78
+                            <span>Trackers Blocked</span>
+                        </div>
+                    </div>
+                )}
 
                 {/* Reading List Section */}
-                <div>
-                    <div className="safari-sp-header" style={{ marginBottom: '18px' }}>
-                        <div className="safari-sp-title">Reading List</div>
+                {startPageConfig && startPageConfig.readingList && (
+                    <div className="safari-sp-section">
+                        <div className="safari-sp-header">
+                            <div className="safari-sp-title">Reading List</div>
+                        </div>
+                        <div className="safari-reading-grid">
+                            {READING_LIST.map(article => (
+                                <div 
+                                    key={article.id} 
+                                    className="safari-reading-card"
+                                    onClick={() => onNavigate(article.url)}
+                                >
+                                    <div className="safari-rc-site">{article.site}</div>
+                                    <div className="safari-rc-title">{article.title}</div>
+                                    <div className="safari-rc-preview">{article.preview}</div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                    <div className="safari-reading-grid">
-                        {READING_LIST.map(article => (
-                            <div 
-                                key={article.id} 
-                                className="safari-reading-card"
-                                onClick={() => onNavigate(article.url)}
-                            >
-                                <div className="safari-rc-site">{article.site}</div>
-                                <div className="safari-rc-title">{article.title}</div>
-                                <div className="safari-rc-preview">{article.preview}</div>
-                            </div>
-                        ))}
+                )}
+            </div>
+
+            {/* Customization Sliders Button */}
+            <button 
+                className="safari-sp-customize-btn"
+                onClick={() => setShowCustomizeModal(!showCustomizeModal)}
+                title="Customize Start Page"
+            >
+                <SafariIcon name="sliders" size={16} color="#ffffff" />
+            </button>
+
+            {/* Customization Popover */}
+            {showCustomizeModal && (
+                <div className="safari-sp-customize-modal">
+                    <div className="safari-sp-option-row" onClick={() => toggleOption('favorites')}>
+                        <span>Favorites</span>
+                        <input type="checkbox" checked={!!startPageConfig?.favorites} readOnly />
+                    </div>
+                    <div className="safari-sp-option-row" onClick={() => toggleOption('frequentlyVisited')}>
+                        <span>Frequently Visited</span>
+                        <input type="checkbox" checked={!!startPageConfig?.frequentlyVisited} readOnly />
+                    </div>
+                    <div className="safari-sp-option-row" onClick={() => toggleOption('siriSuggestions')}>
+                        <span>Siri Suggestions</span>
+                        <input type="checkbox" checked={!!startPageConfig?.siriSuggestions} readOnly />
+                    </div>
+                    <div className="safari-sp-option-row" onClick={() => toggleOption('readingList')}>
+                        <span>Reading List</span>
+                        <input type="checkbox" checked={!!startPageConfig?.readingList} readOnly />
+                    </div>
+                    <div className="safari-sp-option-row" onClick={() => toggleOption('privacyReport')}>
+                        <span>Privacy Report</span>
+                        <input type="checkbox" checked={!!startPageConfig?.privacyReport} readOnly />
+                    </div>
+                    <div className="safari-sp-option-row" onClick={() => toggleOption('backgroundImage')}>
+                        <span>Background Image</span>
+                        <input type="checkbox" checked={!!startPageConfig?.backgroundImage} readOnly />
                     </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };
