@@ -26,21 +26,21 @@
     gap: 8px;
     position: relative;
     z-index: 40;
-    -webkit-app-region: drag;
+
 }
 
 .safari-traffic-spacer {
     width: 84px;
     height: 100%;
     flex-shrink: 0;
-    -webkit-app-region: drag;
+
 }
 
 .safari-nav-cluster {
     display: flex;
     align-items: center;
     gap: 4px;
-    -webkit-app-region: no-drag;
+
 }
 
 .safari-btn {
@@ -83,7 +83,7 @@
     max-width: 680px;
     margin: 0 auto;
     position: relative;
-    -webkit-app-region: no-drag;
+
 }
 
 .safari-omnibar {
@@ -240,7 +240,7 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    -webkit-app-region: no-drag;
+
 }
 
 /* Safari Multi-Tab Strip */
@@ -493,7 +493,7 @@
     flex-direction: column;
     align-items: center;
     background-color: #1a1a1e;
-    background-image: url('images/Wallpapers/27-Golden-Gate.jpg');
+    background-image: url('../../images/Wallpapers/27-Golden-Gate.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -530,13 +530,13 @@
     font-size: 19px;
     font-weight: 700;
     color: #ffffff;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    
     letter-spacing: -0.2px;
 }
 
 .safari-startpage.no-wallpaper .safari-sp-title {
     color: #1d1d1f;
-    text-shadow: none;
+    
 }
 
 /* Favorites Grid */
@@ -604,7 +604,7 @@
     font-size: 11px;
     font-weight: 500;
     color: #ffffff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+    
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -616,7 +616,7 @@
 
 .safari-startpage.no-wallpaper .safari-fav-title {
     color: #1d1d1f;
-    text-shadow: none;
+    
 }
 
 /* Frequently Visited Grid */
@@ -705,7 +705,7 @@
     font-size: 10px;
     font-weight: 500;
     color: #ffffff;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -715,7 +715,7 @@
     font-size: 11px;
     font-weight: 500;
     color: #ffffff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+    
     text-align: center;
     margin-top: 6px;
     overflow: hidden;
@@ -725,7 +725,7 @@
 
 .safari-startpage.no-wallpaper .safari-fv-domain {
     color: #555555;
-    text-shadow: none;
+    
 }
 
 /* Siri Suggestions Grid */
@@ -766,7 +766,7 @@
     font-size: 12px;
     font-weight: 600;
     color: #ffffff;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+    
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -775,7 +775,7 @@
 .safari-siri-domain {
     font-size: 10.5px;
     color: rgba(255, 255, 255, 0.85);
-    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
