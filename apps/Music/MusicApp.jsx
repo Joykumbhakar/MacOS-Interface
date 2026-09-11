@@ -205,25 +205,46 @@ const LucideIcon = ({ name, size = 18, color = 'currentColor', strokeWidth = 1.8
    Safe Image Component with SVG / Data URL Handling
    ========================================================================== */
 const SafeImage = ({ src, className, style, alt = 'Cover', song = null }) => {
+    let effectiveSrc = src;
+    if (!effectiveSrc && song && window.createGradientCover) {
+        effectiveSrc = window.createGradientCover(song.title, song.artist);
+    }
+
     let isSvgData = false;
     let rawSvgContent = '';
     
-    if (src && typeof src === 'string' && src.startsWith('data:image/svg+xml;utf8,')) {
-        isSvgData = true;
-        try {
-            rawSvgContent = decodeURIComponent(src.replace('data:image/svg+xml;utf8,', ''));
-            rawSvgContent = rawSvgContent
-                .replace(/width="[0-9]+"/, 'width="100%"')
-                .replace(/height="[0-9]+"/, 'height="100%"');
-            if (!rawSvgContent.includes('style="display:block')) {
-                rawSvgContent = rawSvgContent.replace('<svg ', '<svg style="display:block; width:100%; height:100%;" ');
+    if (effectiveSrc && typeof effectiveSrc === 'string') {
+        if (effectiveSrc.startsWith('data:image/svg+xml;utf8,')) {
+            isSvgData = true;
+            try {
+                rawSvgContent = decodeURIComponent(effectiveSrc.replace('data:image/svg+xml;utf8,', ''));
+            } catch(e) {
+                isSvgData = false;
             }
-        } catch(e) {
-            isSvgData = false;
+        } else if (effectiveSrc.startsWith('data:image/svg+xml;charset=utf-8,')) {
+            isSvgData = true;
+            try {
+                rawSvgContent = decodeURIComponent(effectiveSrc.replace('data:image/svg+xml;charset=utf-8,', ''));
+            } catch(e) {
+                isSvgData = false;
+            }
+        } else if (effectiveSrc.startsWith('data:image/svg+xml;base64,')) {
+            isSvgData = true;
+            try {
+                rawSvgContent = decodeURIComponent(escape(atob(effectiveSrc.replace('data:image/svg+xml;base64,', ''))));
+            } catch(e) {
+                isSvgData = false;
+            }
         }
     }
 
-    if (isSvgData) {
+    if (isSvgData && rawSvgContent) {
+        rawSvgContent = rawSvgContent
+            .replace(/width="[0-9]+"/, 'width="100%"')
+            .replace(/height="[0-9]+"/, 'height="100%"');
+        if (!rawSvgContent.includes('style="display:block')) {
+            rawSvgContent = rawSvgContent.replace('<svg ', '<svg style="display:block; width:100%; height:100%;" ');
+        }
         return (
             <div 
                 className={className || ''} 
@@ -233,15 +254,22 @@ const SafeImage = ({ src, className, style, alt = 'Cover', song = null }) => {
         );
     }
 
-    const fallbackSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="%23fa243c"><rect width="100" height="100" rx="14" fill="%23ff3b30"/><circle cx="50" cy="50" r="22" fill="%23ffffff" opacity="0.2"/><path d="M46 38v24l16-12z" fill="%23ffffff"/></svg>`;
+    const fallbackSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="100%" height="100%"><defs><linearGradient id="fbGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23fa243c"/><stop offset="50%" stop-color="%239c27b0"/><stop offset="100%" stop-color="%230d1b2a"/></linearGradient></defs><rect width="300" height="300" fill="url(%23fbGrad)"/><circle cx="150" cy="150" r="90" fill="%23ffffff" opacity="0.08"/><circle cx="150" cy="150" r="40" fill="%23ffffff" opacity="0.12"/><path d="M165 110v50a25 25 0 1 1-15-23v-27l30-8v8z" fill="%23ffffff"/></svg>`;
 
     return (
         <img 
-            src={src || fallbackSvg} 
+            src={effectiveSrc || fallbackSvg} 
             className={className || ''} 
             style={style} 
             alt={alt}
-            onError={(e) => { e.currentTarget.src = fallbackSvg; }} 
+            onError={(e) => { 
+                if (song && window.createGradientCover) {
+                    const fallbackGrad = window.createGradientCover(song.title, song.artist);
+                    e.currentTarget.src = fallbackGrad;
+                } else {
+                    e.currentTarget.src = fallbackSvg;
+                }
+            }} 
         />
     );
 };
@@ -1063,7 +1091,7 @@ const HomeView = () => {
                 {data.albums.map(alb => (
                     <div className="am-card" key={alb.id} onClick={() => navigateTo('AlbumDetail', alb)}>
                         <div className="am-card-img-wrapper">
-                            <SafeImage src={alb.cover} className="am-card-img" alt={alb.title} />
+                            <SafeImage src={alb.cover} song={{ title: alb.title, artist: alb.artist }} className="am-card-img" alt={alb.title} />
                             <div className="am-card-play">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{marginLeft: '2px'}}><path d="M7 4l12 8-12 8V4z"/></svg>
                             </div>
@@ -1084,7 +1112,7 @@ const HomeView = () => {
                 {data.playlists.map(pl => (
                     <div className="am-card" key={pl.id} onClick={() => navigateTo('PlaylistDetail', pl)}>
                         <div className="am-card-img-wrapper">
-                            <SafeImage src={pl.cover} className="am-card-img" alt={pl.name} />
+                            <SafeImage src={pl.cover} song={{ title: pl.name, artist: pl.curator }} className="am-card-img" alt={pl.name} />
                             <div className="am-card-play">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{marginLeft: '2px'}}><path d="M7 4l12 8-12 8V4z"/></svg>
                             </div>
@@ -1155,7 +1183,7 @@ const NewView = () => {
                 {data.albums.slice(0, 4).map(alb => (
                     <div className="am-card" key={alb.id} onClick={() => navigateTo('AlbumDetail', alb)}>
                         <div className="am-card-img-wrapper">
-                            <SafeImage src={alb.cover} className="am-card-img" alt={alb.title} />
+                            <SafeImage src={alb.cover} song={{ title: alb.title, artist: alb.artist }} className="am-card-img" alt={alb.title} />
                             <div className="am-card-play">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{marginLeft: '2px'}}><path d="M7 4l12 8-12 8V4z"/></svg>
                             </div>
@@ -1443,7 +1471,7 @@ const RecentlyAddedView = () => {
                 {data.albums.map(alb => (
                     <div className="am-card-lg" key={alb.id} onClick={() => navigateTo('AlbumDetail', alb)}>
                         <div className="am-card-img-wrapper">
-                            <SafeImage src={alb.cover} className="am-card-img" alt={alb.title} />
+                            <SafeImage src={alb.cover} song={{ title: alb.title, artist: alb.artist }} className="am-card-img" alt={alb.title} />
                             <div className="am-card-play">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{marginLeft: '2px'}}><path d="M7 4l12 8-12 8V4z"/></svg>
                             </div>
@@ -1469,7 +1497,7 @@ const ArtistsView = () => {
             <div className="am-artists-grid">
                 {data.artists.map(ar => (
                     <div className="am-artist-card" key={ar.id} onClick={() => navigateTo('ArtistDetail', ar)}>
-                        <SafeImage src={ar.image} className="am-artist-avatar" alt={ar.name} />
+                        <SafeImage src={ar.image} song={{ title: ar.name, artist: 'Artist Spotlight' }} className="am-artist-avatar" alt={ar.name} />
                         <div className="am-artist-name">{ar.name}</div>
                         <div className="am-artist-sub">{ar.monthlyListeners} Monthly Listeners</div>
                     </div>
@@ -1489,7 +1517,7 @@ const ArtistDetailView = () => {
         <div>
             {/* Artist Hero Header */}
             <div className="am-artist-hero">
-                <SafeImage src={selectedArtist.image} className="am-artist-hero-img" alt={selectedArtist.name} />
+                <SafeImage src={selectedArtist.image} song={{ title: selectedArtist.name, artist: 'Artist Spotlight' }} className="am-artist-hero-img" alt={selectedArtist.name} />
                 <div className="am-artist-hero-info">
                     <span className="am-hero-badge">ARTIST SPOTLIGHT</span>
                     <h1 className="am-artist-hero-name">{selectedArtist.name}</h1>
@@ -1537,7 +1565,7 @@ const AlbumsView = () => {
                 {data.albums.map(alb => (
                     <div className="am-card-lg" key={alb.id} onClick={() => navigateTo('AlbumDetail', alb)}>
                         <div className="am-card-img-wrapper">
-                            <SafeImage src={alb.cover} className="am-card-img" alt={alb.title} />
+                            <SafeImage src={alb.cover} song={{ title: alb.title, artist: alb.artist }} className="am-card-img" alt={alb.title} />
                             <div className="am-card-play">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{marginLeft: '2px'}}><path d="M7 4l12 8-12 8V4z"/></svg>
                             </div>
@@ -1561,7 +1589,7 @@ const AlbumDetailView = () => {
         <div>
             {/* Album Header Banner */}
             <div className="am-album-header">
-                <SafeImage src={selectedAlbum.cover} className="am-album-header-cover" alt={selectedAlbum.title} />
+                <SafeImage src={selectedAlbum.cover} song={{ title: selectedAlbum.title, artist: selectedAlbum.artist }} className="am-album-header-cover" alt={selectedAlbum.title} />
                 <div className="am-album-header-info">
                     <span className="am-hero-badge">{selectedAlbum.genre}</span>
                     <h1 className="am-album-header-title">{selectedAlbum.title}</h1>
@@ -1856,7 +1884,7 @@ const AllPlaylistsView = () => {
                 {combined.map(pl => (
                     <div className="am-card-lg" key={pl.id} onClick={() => navigateTo('PlaylistDetail', pl)}>
                         <div className="am-card-img-wrapper">
-                            <SafeImage src={pl.cover} className="am-card-img" alt={pl.name} />
+                            <SafeImage src={pl.cover} song={{ title: pl.name, artist: pl.curator || 'Playlist' }} className="am-card-img" alt={pl.name} />
                             <div className="am-card-play">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{marginLeft: '2px'}}><path d="M7 4l12 8-12 8V4z"/></svg>
                             </div>
@@ -1879,7 +1907,7 @@ const PlaylistDetailView = () => {
     return (
         <div>
             <div className="am-album-header">
-                <SafeImage src={selectedPlaylist.cover} className="am-album-header-cover" alt={selectedPlaylist.name} />
+                <SafeImage src={selectedPlaylist.cover} song={{ title: selectedPlaylist.name, artist: selectedPlaylist.curator || 'Playlist' }} className="am-album-header-cover" alt={selectedPlaylist.name} />
                 <div className="am-album-header-info">
                     <span className="am-hero-badge">PLAYLIST</span>
                     <h1 className="am-album-header-title">{selectedPlaylist.name}</h1>

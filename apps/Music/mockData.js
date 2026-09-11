@@ -1,10 +1,22 @@
 // Apple Music Database & State Engine - Professional Gradients Edition
 
 // High-fidelity Apple Music Mesh Gradient & Vinyl Cover Generator
+function escapeXml(unsafe) {
+    if (!unsafe) return '';
+    return String(unsafe)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+}
+
 function createGradientCover(text, artist, _bgGrad, textColor, variation) {
     const cleanTitle = (text || 'MUSIC').trim();
     const displayTitle = cleanTitle.length > 24 ? cleanTitle.slice(0, 24) + '...' : cleanTitle;
     const displayArtist = (artist || 'Apple Music').toUpperCase().slice(0, 30);
+    const safeTitle = escapeXml(displayTitle);
+    const safeArtist = escapeXml(displayArtist);
 
     let hash = 0;
     const str = cleanTitle + displayArtist;
@@ -46,44 +58,44 @@ function createGradientCover(text, artist, _bgGrad, textColor, variation) {
     if (layout === 0) {
         textSVG = `
         <g transform="translate(24, 236)">
-            <text x="0" y="0" font-family="-apple-system, 'system-ui', 'Helvetica Neue', sans-serif" font-size="22" font-weight="700" fill="${txtColor}" letter-spacing="-0.5">${displayTitle}</text>
-            <text x="0" y="22" font-family="-apple-system, 'Helvetica Neue', sans-serif" font-size="12" font-weight="600" fill="${subColor}" letter-spacing="0.5">${displayArtist}</text>
+            <text x="0" y="0" font-family="-apple-system, 'SF Pro Display', Helvetica, Arial, sans-serif" font-size="21" font-weight="700" fill="${txtColor}" letter-spacing="-0.5">${safeTitle}</text>
+            <text x="0" y="22" font-family="-apple-system, 'SF Pro Text', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600" fill="${subColor}" letter-spacing="0.5">${safeArtist}</text>
         </g>`;
     } else if (layout === 1) {
         textSVG = `
         <g transform="translate(150, 145)">
-            <text x="0" y="0" text-anchor="middle" font-family="-apple-system, 'system-ui', 'Helvetica Neue', sans-serif" font-size="24" font-weight="800" fill="${txtColor}" letter-spacing="-0.6">${displayTitle.toUpperCase()}</text>
-            <text x="0" y="26" text-anchor="middle" font-family="-apple-system, 'Helvetica Neue', sans-serif" font-size="11" font-weight="600" fill="${subColor}" letter-spacing="1.8">${displayArtist}</text>
+            <text x="0" y="0" text-anchor="middle" font-family="-apple-system, 'SF Pro Display', Helvetica, Arial, sans-serif" font-size="22" font-weight="800" fill="${txtColor}" letter-spacing="-0.6">${safeTitle.toUpperCase()}</text>
+            <text x="0" y="26" text-anchor="middle" font-family="-apple-system, 'SF Pro Text', Helvetica, Arial, sans-serif" font-size="10.5" font-weight="600" fill="${subColor}" letter-spacing="1.5">${safeArtist}</text>
         </g>`;
     } else {
         textSVG = `
         <g transform="translate(24, 75)">
-            <text x="0" y="0" font-family="-apple-system, 'system-ui', 'Helvetica Neue', sans-serif" font-size="23" font-weight="800" fill="${txtColor}" letter-spacing="-0.5">${displayTitle}</text>
+            <text x="0" y="0" font-family="-apple-system, 'SF Pro Display', Helvetica, Arial, sans-serif" font-size="22" font-weight="800" fill="${txtColor}" letter-spacing="-0.5">${safeTitle}</text>
             <rect x="0" y="12" width="34" height="3" fill="${t.c2}" rx="1.5" />
-            <text x="0" y="34" font-family="-apple-system, 'Helvetica Neue', sans-serif" font-size="11.5" font-weight="600" fill="${subColor}" letter-spacing="0.5">${displayArtist}</text>
+            <text x="0" y="34" font-family="-apple-system, 'SF Pro Text', Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="${subColor}" letter-spacing="0.5">${safeArtist}</text>
         </g>`;
     }
 
     const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="100%" height="100%" style="display:block;">
         <defs>
-            <filter id="meshBlur_${v}" x="-50%" y="-50%" width="200%" height="200%">
+            <filter id="meshBlur_${v}_${hash}" x="-50%" y="-50%" width="200%" height="200%">
                 <feGaussianBlur in="SourceGraphic" stdDeviation="36" />
             </filter>
-            <radialGradient id="r1_${v}" cx="25%" cy="25%" r="75%">
+            <radialGradient id="r1_${v}_${hash}" cx="25%" cy="25%" r="75%">
                 <stop offset="0%" stop-color="${t.c1}" stop-opacity="1" />
                 <stop offset="100%" stop-color="${t.c1}" stop-opacity="0" />
             </radialGradient>
-            <radialGradient id="r2_${v}" cx="75%" cy="75%" r="75%">
+            <radialGradient id="r2_${v}_${hash}" cx="75%" cy="75%" r="75%">
                 <stop offset="0%" stop-color="${t.c2}" stop-opacity="1" />
                 <stop offset="100%" stop-color="${t.c2}" stop-opacity="0" />
             </radialGradient>
-            <radialGradient id="r3_${v}" cx="50%" cy="15%" r="65%">
+            <radialGradient id="r3_${v}_${hash}" cx="50%" cy="15%" r="65%">
                 <stop offset="0%" stop-color="${t.c3}" stop-opacity="1" />
                 <stop offset="100%" stop-color="${t.c3}" stop-opacity="0" />
             </radialGradient>
-            <linearGradient id="overlayGrad_${v}" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stop-color="rgba(255,255,255,0.12)" />
+            <linearGradient id="overlayGrad_${v}_${hash}" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="rgba(255,255,255,0.15)" />
                 <stop offset="100%" stop-color="rgba(0,0,0,0.4)" />
             </linearGradient>
         </defs>
@@ -92,32 +104,27 @@ function createGradientCover(text, artist, _bgGrad, textColor, variation) {
         <rect width="300" height="300" fill="${t.bg}" />
         
         <!-- Glowing Fluid Mesh Orbs -->
-        <g filter="url(#meshBlur_${v})">
-            <circle cx="60" cy="60" r="160" fill="url(#r1_${v})" />
-            <circle cx="240" cy="240" r="170" fill="url(#r2_${v})" />
-            <circle cx="150" cy="40" r="150" fill="url(#r3_${v})" />
+        <g filter="url(#meshBlur_${v}_${hash})">
+            <circle cx="60" cy="60" r="160" fill="url(#r1_${v}_${hash})" />
+            <circle cx="240" cy="240" r="170" fill="url(#r2_${v}_${hash})" />
+            <circle cx="150" cy="40" r="150" fill="url(#r3_${v}_${hash})" />
             <circle cx="260" cy="70" r="130" fill="${t.c1}" opacity="0.65" />
             <circle cx="40" cy="260" r="140" fill="${t.c3}" opacity="0.75" />
         </g>
         
         <!-- Subtle Specular Glass Sheen -->
-        <rect width="300" height="300" fill="url(#overlayGrad_${v})" />
+        <rect width="300" height="300" fill="url(#overlayGrad_${v}_${hash})" />
 
         <!-- Apple Music Badge -->
         <g transform="translate(18, 18) scale(0.6)" opacity="0.92">
             <path d="M 20.35,14.61 C 20.37,11.23 23.11,9.6 23.23,9.52 C 21.67,7.24 19.16,6.92 18.25,6.8 C 16.27,6.6 14.33,7.96 13.3,7.96 C 12.28,7.96 10.68,6.83 9.04,6.86 C 6.9,6.89 4.93,8.1 3.82,9.99 C 1.55,13.88 3.24,19.64 5.46,22.84 C 6.54,24.39 7.82,26.13 9.48,26.07 C 11.08,26.01 11.7,25.05 13.62,25.05 C 15.53,25.05 16.08,26.07 17.75,26.04 C 19.46,26.01 20.55,24.45 21.61,22.89 C 22.88,21.05 23.4,19.26 23.44,19.17 C 23.36,19.14 20.32,17.97 20.35,14.61 Z M 16.23,4.55 C 17.11,3.48 17.72,1.96 17.56,0.44 C 16.28,0.5 14.66,1.29 13.73,2.34 C 12.92,3.27 12.18,4.82 12.37,6.31 C 13.81,6.42 15.34,5.61 16.23,4.55 Z" fill="${appleLogoColor}" />
-            <text x="32" y="22" font-family="-apple-system, 'Helvetica Neue', sans-serif" font-size="18" font-weight="700" fill="${appleLogoColor}" letter-spacing="0">Music</text>
+            <text x="32" y="22" font-family="-apple-system, 'SF Pro Display', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="${appleLogoColor}" letter-spacing="0">Music</text>
         </g>
         
         ${textSVG}
     </svg>`;
     
-    try {
-        const base64 = btoa(unescape(encodeURIComponent(svg)));
-        return `data:image/svg+xml;base64,${base64}`;
-    } catch (e) {
-        return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-    }
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
 }
 window.createGradientCover = createGradientCover;
 
