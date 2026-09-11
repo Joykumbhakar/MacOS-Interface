@@ -734,10 +734,18 @@ const WebpageRouter = ({ tab, onNavigate, searchQueryInput, setSearchQueryInput,
 // Start Page Component (Matching authentic macOS Safari)
 const StartPageView = ({ onNavigate, startPageConfig, setStartPageConfig }) => {
     const [showCustomizeModal, setShowCustomizeModal] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const toggleOption = (key) => {
         if (setStartPageConfig) {
             setStartPageConfig(prev => ({ ...prev, [key]: !prev[key] }));
+        }
+    };
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (searchTerm.trim()) {
+            onNavigate('google.com', searchTerm.trim());
         }
     };
 
@@ -746,6 +754,32 @@ const StartPageView = ({ onNavigate, startPageConfig, setStartPageConfig }) => {
     return (
         <div className={`safari-startpage ${hasBg ? 'with-wallpaper' : 'no-wallpaper'}`}>
             <div className="safari-startpage-container">
+                {/* Search Bar */}
+                <form onSubmit={handleSearch} style={{ width: '100%', maxWidth: '680px', margin: '0 auto 20px auto', position: 'relative' }}>
+                    <div style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.6)' }}>
+                        <SafariIcon name="search" size={16} />
+                    </div>
+                    <input 
+                        type="text" 
+                        value={searchTerm}
+                        onChange={e => setSearchTerm(e.target.value)}
+                        placeholder="Search or enter website name"
+                        style={{
+                            width: '100%',
+                            height: '46px',
+                            borderRadius: '12px',
+                            border: 'none',
+                            background: 'rgba(255, 255, 255, 0.15)',
+                            backdropFilter: 'blur(30px)',
+                            WebkitBackdropFilter: 'blur(30px)',
+                            padding: '0 16px 0 44px',
+                            fontSize: '15px',
+                            color: '#ffffff',
+                            outline: 'none',
+                            boxShadow: '0 2px 12px rgba(0,0,0,0.1)'
+                        }}
+                    />
+                </form>
                 {/* Favorites Section */}
                 {(!startPageConfig || startPageConfig.favorites) && (
                     <div className="safari-sp-section">
