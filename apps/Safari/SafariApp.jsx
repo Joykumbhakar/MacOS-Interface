@@ -212,6 +212,34 @@ const SafariApp = () => {
         privacyReport: false,
         backgroundImage: true
     });
+    
+    const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
+
+    const handleContextMenu = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Hide global finder context menu if open
+        const globalMenu = document.getElementById('finder-ctx-menu');
+        if (globalMenu) globalMenu.remove();
+        
+        setContextMenu({
+            visible: true,
+            x: e.clientX,
+            y: e.clientY
+        });
+    };
+
+    const closeContextMenu = () => {
+        if (contextMenu.visible) {
+            setContextMenu({ visible: false, x: 0, y: 0 });
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('click', closeContextMenu);
+        return () => document.removeEventListener('click', closeContextMenu);
+    }, [contextMenu.visible]);
 
     const activeTab = useMemo(() => {
         return tabs.find(t => t.id === activeTabId) || tabs[0];
@@ -398,7 +426,7 @@ const SafariApp = () => {
     }, [omnibarText, isOmnibarFocused]);
 
     return (
-        <div className="safari-app-container">
+        <div className="safari-app-container" onContextMenu={handleContextMenu}>
             {/* Unified Toolbar */}
             <div className="safari-toolbar">
                 {/* 84px traffic spacer for native traffic lights */}
@@ -683,6 +711,33 @@ const SafariApp = () => {
                     )}
                 </div>
             </div>
+            {/* Custom Safari Context Menu */}
+            {contextMenu.visible && (
+                <div style={{
+                    position: 'fixed',
+                    top: contextMenu.y,
+                    left: contextMenu.x,
+                    zIndex: 10000,
+                    background: 'rgba(255, 255, 255, 0.7)',
+                    backdropFilter: 'blur(30px) saturate(200%)',
+                    WebkitBackdropFilter: 'blur(30px) saturate(200%)',
+                    borderRadius: '8px',
+                    boxShadow: '0 8px 30px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05)',
+                    padding: '5px',
+                    minWidth: '220px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    fontSize: '13px',
+                    color: '#1d1d1f'
+                }} onClick={(e) => e.stopPropagation()}>
+                    <div className="safari-ctx-item" onClick={() => { handleNavigate(activeTab.url); closeContextMenu(); }}>Reload Page</div>
+                    <div style={{ height: '1px', background: 'rgba(0,0,0,0.1)', margin: '4px 0' }}></div>
+                    <div className="safari-ctx-item" onClick={() => { handleNewTab(); closeContextMenu(); }}>Open in New Tab</div>
+                    <div className="safari-ctx-item" onClick={() => closeContextMenu()}>Copy Link</div>
+                    <div style={{ height: '1px', background: 'rgba(0,0,0,0.1)', margin: '4px 0' }}></div>
+                    <div className="safari-ctx-item" onClick={() => closeContextMenu()}>Inspect Element</div>
+                </div>
+            )}
         </div>
     );
 };
@@ -1114,29 +1169,18 @@ const HackerNewsView = ({ onNavigate }) => {
 
 // Generic / Custom Web Page View
 const GenericWebsiteView = ({ url, onNavigate }) => {
+    let finalUrl = url;
+    if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
+        finalUrl = 'https://' + finalUrl;
+    }
+
     return (
-        <div style={{ flex: 1, padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', background: '#fcfcfd' }}>
-            <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-                <img src="images/Icons/safari.png" style={{ width: '48px', height: '48px', objectFit: 'contain' }} alt="Safari" />
-            </div>
-            <h2 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '8px', color: '#1d1d1f' }}>{url}</h2>
-            <p style={{ fontSize: '14px', color: '#86868b', maxWidth: '440px', lineHeight: '1.5', marginBottom: '24px' }}>
-                Simulated web connection established. You are browsing the web securely inside Safari for macOS Sequoia.
-            </p>
-            <div style={{ display: 'flex', gap: '12px' }}>
-                <button 
-                    onClick={() => onNavigate('safari://startpage')}
-                    style={{ padding: '8px 16px', borderRadius: '8px', background: '#007aff', color: '#ffffff', border: 'none', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}
-                >
-                    Return to Start Page
-                </button>
-                <button 
-                    onClick={() => onNavigate('google.com')}
-                    style={{ padding: '8px 16px', borderRadius: '8px', background: 'rgba(0,0,0,0.06)', color: '#1d1d1f', border: 'none', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}
-                >
-                    Search on Google
-                </button>
-            </div>
+        <div style={{ width: '100%', height: '100%', backgroundColor: '#ffffff' }}>
+            <iframe 
+                src={finalUrl} 
+                style={{ width: '100%', height: '100%', border: 'none' }}
+                title="Browser Content"
+            />
         </div>
     );
 };

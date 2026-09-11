@@ -1419,3 +1419,17 @@
 .safari-popover-item:hover svg {
     stroke: #ffffff;
 }
+
+/* Custom Safari Context Menu */
+.safari-ctx-item {
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: default;
+    user-select: none;
+    transition: background 0.1s ease;
+}
+
+.safari-ctx-item:hover {
+    background: #007aff;
+    color: #ffffff;
+}
