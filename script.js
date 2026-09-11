@@ -2245,39 +2245,20 @@ const SETTINGS_VIEWS = {
 
     // --- Touch ID ---
     'touch-id': () => `
-        <div class="touch-id-test-container">
-            <div class="touch-id-interactive-sensor" id="touch-id-test-sensor" onclick="testTouchIdSensor()" title="Click sensor to test Touch ID verification">
-                <svg viewBox="0 0 100 100" class="touch-id-svg" style="width:44px;height:44px;stroke:#444;" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path id="tid-r1" d="M 50 18 A 32 32 0 0 1 82 50 C 82 66 74 78 68 84" stroke-width="3.5" />
-                    <path id="tid-r2" d="M 32 84 C 26 78 18 66 18 50 A 32 32 0 0 1 50 18" stroke-width="3.5" />
-                    <path id="tid-r3" d="M 50 26 A 24 24 0 0 1 74 50 C 74 62 68 72 63 78" stroke-width="3.5" />
-                    <path id="tid-r4" d="M 37 78 C 32 72 26 62 26 50 A 24 24 0 0 1 50 26" stroke-width="3.5" />
-                    <path id="tid-r5" d="M 50 34 A 16 16 0 0 1 66 50 C 66 58 62 66 58 72" stroke-width="3.5" />
-                    <path id="tid-r6" d="M 42 72 C 38 66 34 58 34 50 A 16 16 0 0 1 50 34" stroke-width="3.5" />
-                    <path id="tid-r7" d="M 50 42 A 8 8 0 0 1 58 50 C 58 54 55 60 52 66" stroke-width="3.5" />
-                    <path id="tid-r8" d="M 48 66 C 45 60 42 54 42 50 A 8 8 0 0 1 50 42" stroke-width="3.5" />
-                </svg>
-                <div class="touch-id-sensor-laser"></div>
-            </div>
-            <div class="touch-id-status-badge" id="touch-id-status-badge">
-                <span id="touch-id-status-dot" style="width:7px;height:7px;border-radius:50%;background:#0a84ff;display:inline-block;"></span>
-                <span id="touch-id-status-text">Click sensor to test Touch ID verification</span>
-            </div>
+        <div style="display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:12px;">
+            <img src="images/Icons/fingerprint.png" style="width:64px;height:64px;object-fit:contain;opacity:0.7;">
+            <div style="font-size:13px;color:#555;text-align:center;">Place your finger on Touch ID<br>to verify your identity.</div>
         </div>
         ${setSection('Fingerprints', `
-            <div class="set-row" style="gap:12px;cursor:pointer;" onclick="testTouchIdSensor()" title="Click to verify Finger 1">
+            <div class="set-row" style="gap:12px;">
                 <div style="width:32px;height:32px;border-radius:8px;background:#e5e5ea;display:flex;align-items:center;justify-content:center;">
-                    <svg viewBox="0 0 100 100" style="width:18px;height:18px;stroke:#555;" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M 50 20 A 30 30 0 0 1 80 50 C 80 65 72 77 66 83" stroke-width="5" />
-                        <path d="M 34 83 C 28 77 20 65 20 50 A 30 30 0 0 1 50 20" stroke-width="5" />
-                        <path d="M 50 36 A 14 14 0 0 1 64 50 C 64 57 60 65 56 70" stroke-width="5" />
-                    </svg>
+                    <img src="images/Icons/fingerprint.png" style="width:18px;height:18px;object-fit:contain;opacity:0.5;">
                 </div>
-                <span style="flex:1;font-weight:500;">Finger 1 (Primary)</span>
+                <span style="flex:1;">Finger 1</span>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
             </div>
             
-            <div class="set-row" style="padding:12px 16px;"><span style="color:#0a84ff;font-size:13px;font-weight:500;cursor:pointer;" onclick="openTouchIdEnrollment()">+ Add Fingerprint...</span></div>
+            <div class="set-row" style="padding:12px 16px;"><span style="color:#0a84ff;font-size:13px;cursor:pointer;">Add Fingerprint...</span></div>
         `)}
         ${setSection('Use Touch ID for', `
             ${setRow('Unlocking your Mac', toggleHTML('t-tid-unlock', true))}
@@ -3282,46 +3263,7 @@ const SETTINGS_VIEWS = {
                     isAuthenticating = false;
                 }
             };
-
-            window.authenticateTouchID = async function(title = 'Touch ID') {
-                if (isAuthenticating) return;
-                isAuthenticating = true;
-                
-                const lsSensor = document.getElementById('ls-fingerprint-sensor');
-                if (lsSensor) {
-                    lsSensor.classList.add('scanning');
-                }
-                
-                try {
-                    if (window.MacIsland && window.MacIsland.touchId) {
-                        await window.MacIsland.touchId(title);
-                    } else if (window.showTouchIdAuth) {
-                        await window.showTouchIdAuth(title);
-                    } else if (window.MacIsland && window.MacIsland.auth) {
-                        await window.MacIsland.auth(title);
-                    }
-                    if (lsSensor) {
-                        lsSensor.classList.remove('scanning');
-                        lsSensor.classList.add('verified');
-                    }
-                    unlock('', true);
-                } catch (err) {
-                    console.error('Touch ID auth error:', err);
-                    if (lsSensor) {
-                        lsSensor.classList.remove('scanning');
-                    }
-                    unlock('', true);
-                } finally {
-                    isAuthenticating = false;
-                }
-            };
-
-            window.showTouchIdAuth = function(title = 'Touch ID') {
-                if (window.MacIsland && window.MacIsland.touchId) {
-                    return window.MacIsland.touchId(title);
-                }
-                return Promise.resolve(true);
-            };
+            window.authenticateTouchID = window.authenticateFaceID;
 
             function unlock(pwdAttempt = '', force = false) {
                 const ls = document.getElementById('lock-screen');
@@ -3344,8 +3286,8 @@ const SETTINGS_VIEWS = {
                     return;
                 }
                 
-                if (!force && window.authenticateTouchID) {
-                    window.authenticateTouchID();
+                if (!force && window.authenticateFaceID) {
+                    window.authenticateFaceID();
                     return;
                 }
                 
@@ -3369,13 +3311,13 @@ const SETTINGS_VIEWS = {
                 }
             }
 
-            // Auto-trigger Touch ID biometric scan on lock screen boot
+            // Auto-trigger Face ID biometric scan on lock screen boot
             setTimeout(() => {
                 const ls = document.getElementById('lock-screen');
                 if (ls && ls.style.display !== 'none' && ls.style.opacity !== '0') {
                     const pwdBox = document.getElementById('ls-pwd-container');
                     if (!pwdBox || pwdBox.style.display === 'none') {
-                        window.authenticateTouchID();
+                        window.authenticateFaceID();
                     }
                 }
             }, 600);
@@ -3387,14 +3329,15 @@ const SETTINGS_VIEWS = {
 function updateLockScreenClock() {
     const now = new Date();
     const lsTime = document.getElementById('ls-time');
-    const lsTopTime = document.getElementById('ls-top-time');
     const lsDate = document.getElementById('ls-date');
+    const lsTopTime = document.getElementById('ls-top-time');
+    
     let h = now.getHours();
-    const m = String(now.getMinutes()).padStart(2, '0');
-    const ampm = h >= 12 ? 'PM' : 'AM';
-    h = h % 12;
-    h = h ? h : 12;
-
+    let m = now.getMinutes();
+    let ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    m = m < 10 ? '0' + m : m;
+    
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -3409,11 +3352,9 @@ updateLockScreenClock();
 
 window.showPasswordInput = function() {
     const promptText = document.getElementById('ls-prompt-text');
-    const fpContainer = document.getElementById('ls-fingerprint-container');
     const pwdBox = document.getElementById('ls-pwd-container');
     const inp = document.getElementById('lock-password');
     if (promptText) promptText.style.display = 'none';
-    if (fpContainer) fpContainer.style.display = 'none';
     if (pwdBox) pwdBox.style.display = 'flex';
     if (inp) {
         inp.focus();
@@ -3426,199 +3367,17 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Tab' || e.key === 'Shift' || e.key === 'Control' || e.key === 'Alt' || e.key === 'Meta') return;
     if (e.key === 'Escape') {
         const promptText = document.getElementById('ls-prompt-text');
-        const fpContainer = document.getElementById('ls-fingerprint-container');
         const pwdBox = document.getElementById('ls-pwd-container');
         const inp = document.getElementById('lock-password');
         if (pwdBox && pwdBox.style.display !== 'none') {
             if (inp) inp.value = '';
             pwdBox.style.display = 'none';
             if (promptText) promptText.style.display = 'block';
-            if (fpContainer) fpContainer.style.display = 'flex';
         }
         return;
     }
     showPasswordInput();
 });
-
-// --- Touch ID Settings Tester & Interactive Enrollment Wizard ---
-window.testTouchIdSensor = function() {
-    const sensor = document.getElementById('touch-id-test-sensor');
-    const badge = document.getElementById('touch-id-status-badge');
-    const text = document.getElementById('touch-id-status-text');
-    const dot = document.getElementById('touch-id-status-dot');
-    const paths = sensor ? sensor.querySelectorAll('path') : [];
-
-    if (!sensor || sensor.classList.contains('scanning') || sensor.classList.contains('verified')) return;
-
-    if (window.MacAudio) {
-        try { MacAudio.play('click'); } catch (e) {}
-    }
-
-    sensor.classList.add('scanning');
-    if (badge) badge.className = 'touch-id-status-badge scanning';
-    if (text) text.textContent = 'Scanning Fingerprint... Hold still';
-    if (dot) dot.style.background = '#0a84ff';
-
-    // Highlight ridges incrementally
-    paths.forEach((p, idx) => {
-        setTimeout(() => {
-            p.style.stroke = '#0a84ff';
-            p.style.filter = 'drop-shadow(0 0 4px #0a84ff)';
-        }, idx * 100);
-    });
-
-    setTimeout(() => {
-        sensor.classList.remove('scanning');
-        sensor.classList.add('verified');
-        if (badge) badge.className = 'touch-id-status-badge verified';
-        if (text) text.textContent = 'Finger 1 Recognized - Touch ID Verified';
-        if (dot) dot.style.background = '#32D74B';
-
-        paths.forEach(p => {
-            p.style.stroke = '#32D74B';
-            p.style.filter = 'drop-shadow(0 0 6px #32D74B)';
-        });
-
-        if (window.MacAudio) {
-            try { MacAudio.play('unlock'); } catch (e) {}
-        }
-
-        setTimeout(() => {
-            sensor.classList.remove('verified');
-            if (badge) badge.className = 'touch-id-status-badge';
-            if (text) text.textContent = 'Click sensor to test Touch ID verification';
-            if (dot) dot.style.background = '#0a84ff';
-            paths.forEach(p => {
-                p.style.stroke = '#444';
-                p.style.filter = 'none';
-            });
-        }, 2500);
-    }, 1200);
-};
-
-window.openTouchIdEnrollment = function() {
-    let step = 0;
-    const totalSteps = 4;
-    
-    // Create enrollment dialog modal
-    const overlay = document.createElement('div');
-    overlay.className = 'mac-dialog-backdrop';
-    overlay.id = 'touchid-enroll-modal';
-    overlay.style.display = 'flex';
-
-    overlay.innerHTML = `
-        <div class="mac-dialog-card tid-enroll-card">
-            <div style="font-size:18px;font-weight:700;color:#ffffff;letter-spacing:-0.3px;margin-bottom:6px;">Touch ID Enrollment</div>
-            <div id="tid-enroll-instruction" style="font-size:13px;color:rgba(255,255,255,0.7);max-width:320px;line-height:1.4;">
-                Place your finger on Touch ID to begin capturing your fingerprint.
-            </div>
-
-            <div class="tid-enroll-sensor" id="tid-modal-sensor" title="Tap to capture fingerprint scan">
-                <svg viewBox="0 0 100 100" style="width:64px;height:64px;fill:none;stroke-linecap:round;stroke-linejoin:round;">
-                    <circle cx="50" cy="50" r="45" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
-                    <path class="tid-ridge-path er1" d="M 50 18 A 32 32 0 0 1 82 50 C 82 66 74 78 68 84" stroke="rgba(255,255,255,0.25)" stroke-width="3.5"/>
-                    <path class="tid-ridge-path er2" d="M 32 84 C 26 78 18 66 18 50 A 32 32 0 0 1 50 18" stroke="rgba(255,255,255,0.25)" stroke-width="3.5"/>
-                    <path class="tid-ridge-path er3" d="M 50 26 A 24 24 0 0 1 74 50 C 74 62 68 72 63 78" stroke="rgba(255,255,255,0.25)" stroke-width="3.5"/>
-                    <path class="tid-ridge-path er4" d="M 37 78 C 32 72 26 62 26 50 A 24 24 0 0 1 50 26" stroke="rgba(255,255,255,0.25)" stroke-width="3.5"/>
-                    <path class="tid-ridge-path er5" d="M 50 34 A 16 16 0 0 1 66 50 C 66 58 62 66 58 72" stroke="rgba(255,255,255,0.25)" stroke-width="3.5"/>
-                    <path class="tid-ridge-path er6" d="M 42 72 C 38 66 34 58 34 50 A 16 16 0 0 1 50 34" stroke="rgba(255,255,255,0.25)" stroke-width="3.5"/>
-                    <path class="tid-ridge-path er7" d="M 50 42 A 8 8 0 0 1 58 50 C 58 54 55 60 52 66" stroke="rgba(255,255,255,0.25)" stroke-width="3.5"/>
-                    <path class="tid-ridge-path er8" d="M 48 66 C 45 60 42 54 42 50 A 8 8 0 0 1 50 42" stroke="rgba(255,255,255,0.25)" stroke-width="3.5"/>
-                </svg>
-            </div>
-
-            <div style="width:100%;max-width:260px;height:6px;background:rgba(255,255,255,0.15);border-radius:3px;overflow:hidden;margin-bottom:12px;">
-                <div id="tid-progress-fill" style="width:0%;height:100%;background:linear-gradient(90deg,#ff6200,#ff3b30);border-radius:3px;transition:width 0.35s ease;"></div>
-            </div>
-
-            <div id="tid-progress-text" style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:20px;">0% Completed - Click sensor repeatedly</div>
-
-            <div style="display:flex;gap:12px;width:100%;justify-content:center;">
-                <button id="tid-enroll-cancel" class="mac-dialog-btn" style="padding:8px 24px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#ffffff;font-size:13px;font-weight:500;cursor:pointer;">Cancel</button>
-                <button id="tid-enroll-done" class="mac-dialog-btn" style="display:none;padding:8px 28px;border-radius:10px;border:none;background:#0a84ff;color:#ffffff;font-size:13px;font-weight:600;cursor:pointer;">Done</button>
-            </div>
-        </div>
-    `;
-
-    document.body.appendChild(overlay);
-
-    const sensor = overlay.querySelector('#tid-modal-sensor');
-    const instruction = overlay.querySelector('#tid-enroll-instruction');
-    const progFill = overlay.querySelector('#tid-progress-fill');
-    const progText = overlay.querySelector('#tid-progress-text');
-    const cancelBtn = overlay.querySelector('#tid-enroll-cancel');
-    const doneBtn = overlay.querySelector('#tid-enroll-done');
-
-    const ridgeGroups = [
-        ['.er7', '.er8'],
-        ['.er5', '.er6'],
-        ['.er3', '.er4'],
-        ['.er1', '.er2']
-    ];
-
-    const instructions = [
-        'Lift and rest your finger on Touch ID repeatedly.',
-        'Adjust your grip to capture the outer edges of your fingerprint.',
-        'Continue lifting and resting to complete enrollment.',
-        'Touch ID is ready. Your fingerprint has been enrolled successfully.'
-    ];
-
-    sensor.onclick = () => {
-        if (step >= totalSteps) return;
-        
-        if (window.MacAudio) {
-            try { MacAudio.play('click'); } catch (e) {}
-        }
-
-        const currentGroup = ridgeGroups[step];
-        currentGroup.forEach(sel => {
-            const el = overlay.querySelector(sel);
-            if (el) {
-                el.style.stroke = '#ff6200';
-                el.style.strokeWidth = '4';
-                el.style.filter = 'drop-shadow(0 0 6px #ff6200)';
-            }
-        });
-
-        step++;
-        const pct = Math.round((step / totalSteps) * 100);
-        progFill.style.width = pct + '%';
-        progText.textContent = `${pct}% Completed`;
-        instruction.textContent = instructions[step - 1];
-
-        if (step >= totalSteps) {
-            progFill.style.background = '#32D74B';
-            progText.textContent = 'Enrollment Complete';
-            progText.style.color = '#32D74B';
-            progText.style.fontWeight = '600';
-            instruction.style.color = '#ffffff';
-            
-            overlay.querySelectorAll('.tid-ridge-path').forEach(el => {
-                el.style.stroke = '#32D74B';
-                el.style.filter = 'drop-shadow(0 0 8px #32D74B)';
-            });
-
-            if (window.MacAudio) {
-                try { MacAudio.play('unlock'); } catch (e) {}
-            }
-
-            cancelBtn.style.display = 'none';
-            doneBtn.style.display = 'inline-block';
-        }
-    };
-
-    const cleanup = () => {
-        overlay.remove();
-    };
-
-    cancelBtn.onclick = cleanup;
-    doneBtn.onclick = () => {
-        cleanup();
-        if (window.appState && typeof window.appState.setSettingsView === 'function') {
-            window.appState.setSettingsView('touch-id');
-        }
-    };
-};
 
 
 // --- macOS Moveable Desktop Icons & Selection Engine ---
