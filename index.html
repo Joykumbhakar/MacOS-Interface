@@ -39,7 +39,7 @@
     <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <link rel="stylesheet" href="style.css?v=32">
+    <link rel="stylesheet" href="style.css?v=33">
     <link rel="stylesheet" href="apps/Music/MusicApp.css?v=12">
     <link rel="stylesheet" href="apps/Messages/MessagesApp.css?v=3">
     <link rel="stylesheet" href="apps/Calculator/CalculatorApp.css?v=1">
@@ -74,6 +74,22 @@
         </div>
     </div>
 
+
+    <!-- Dynamic Island (Universal Top-Level Hardware Layer) -->
+    <div class="island-system" id="islandSystem">
+        <div class="dynamic-island" id="dynamicIsland">
+            <div class="island-camera-cluster">
+                <div class="island-privacy-dot"></div>
+                <div class="island-camera-cutout"></div>
+            </div>
+            <div class="island-idle-content" id="islandIdle"></div>
+            <div class="island-content-wrapper" id="islandContent"></div>
+        </div>
+        <div class="dynamic-island-bubble" id="islandBubble">
+            <img src="images/Avatars/Profile-avatar.png" alt="Profile">
+            <span class="bubble-text">Joy Kumbhakar</span>
+        </div>
+    </div>
 
     <!-- Lock Screen -->
     <div id="lock-screen" class="mac-lock-screen">
@@ -670,21 +686,6 @@
         </div>
         <div id="dropdown-menus-container"></div>
 
-        <div class="island-system" id="islandSystem">
-            <div class="dynamic-island" id="dynamicIsland">
-                <div class="island-camera-cluster">
-                    <div class="island-privacy-dot"></div>
-                    <div class="island-camera-cutout"></div>
-                </div>
-                <div class="island-idle-content" id="islandIdle"></div>
-                <div class="island-content-wrapper" id="islandContent"></div>
-            </div>
-            <div class="dynamic-island-bubble" id="islandBubble">
-                <img src="images/Avatars/Profile-avatar.png" alt="Profile">
-                <span class="bubble-text">Joy Kumbhakar</span>
-            </div>
-        </div>
-
         <div id="dock-context-menu" class="dock-context-menu">
             <div class="dock-context-caret"></div>
             <div id="dock-context-items"></div>
@@ -786,8 +787,8 @@
 
     <script src="finder.js?v=12"></script>
     <script src="settings_engine.js?v=13"></script>
-    <script src="script.js?v=28"></script>
-    <script src="island.js?v=14"></script>
+    <script src="script.js?v=29"></script>
+    <script src="island.js?v=15"></script>
     <!-- Electron local file system bridge (only active in the .exe desktop app) -->
     <script src="electron-bridge.js?v=1"></script>
     <!-- YouTube Iframe API for Real Audio Playback -->

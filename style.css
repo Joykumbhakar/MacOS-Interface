@@ -265,7 +265,7 @@
         .launchpad-item:active img { transform: scale(0.9); }
         .launchpad-item span { color: white; font-size: 13px; font-weight: 500; text-align: center; text-shadow: 0 1px 2px rgba(0,0,0,0.3); letter-spacing: 0.2px; line-height: 1.2; }
 
-        .island-system { position: absolute; top: 0; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-start; z-index: 10005; }
+        .island-system { position: fixed; top: 0; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-start; z-index: 100005; pointer-events: auto; }
         .island-row { display: flex; align-items: center; }
         .island-col { display: flex; flex-direction: column; }
         .dynamic-island {
