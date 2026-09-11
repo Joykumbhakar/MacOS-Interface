@@ -907,31 +907,36 @@ const PowerPointApp = () => {
                     {/* Presenter Floating HUD Controls */}
                     <div className="pp-presenter-controls" onClick={(e) => e.stopPropagation()}>
                         <span>Slide {presenterIndex + 1} / {slides.length}</span>
-                        <span>⏱ {formatTime(elapsedTime)}</span>
+                        <span style={{display: 'inline-flex', alignItems: 'center', gap: '4px'}}>
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            {formatTime(elapsedTime)}
+                        </span>
                         <div className="pp-ribbon-divider" style={{background: 'rgba(255,255,255,0.2)'}}></div>
                         <button 
                             className={"pp-icon-btn " + (laserActive ? 'active' : '')} 
-                            style={{color: 'white'}}
+                            style={{color: 'white', display: 'inline-flex', alignItems: 'center', justifyContent: 'center'}}
                             title="Laser Pointer (L)" 
                             onClick={() => setLaserActive(!laserActive)}
                         >
-                            🔴
+                            <span style={{width: '9px', height: '9px', borderRadius: '50%', background: '#ff3b30', display: 'inline-block', boxShadow: laserActive ? '0 0 8px #ff3b30' : 'none'}}></span>
                         </button>
                         <button 
                             className="pp-btn" 
-                            style={{background: 'rgba(255,255,255,0.15)', color: 'white', border: 'none'}}
+                            style={{background: 'rgba(255,255,255,0.15)', color: 'white', border: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px'}}
                             onClick={() => setPresenterIndex(prev => Math.max(prev - 1, 0))}
                             disabled={presenterIndex === 0}
                         >
-                            ◀ Prev
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                            Prev
                         </button>
                         <button 
                             className="pp-btn" 
-                            style={{background: 'rgba(255,255,255,0.15)', color: 'white', border: 'none'}}
+                            style={{background: 'rgba(255,255,255,0.15)', color: 'white', border: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px'}}
                             onClick={() => setPresenterIndex(prev => Math.min(prev + 1, slides.length - 1))}
                             disabled={presenterIndex >= slides.length - 1}
                         >
-                            Next ▶
+                            Next
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
                         </button>
                         <button 
                             className="pp-btn primary" 
