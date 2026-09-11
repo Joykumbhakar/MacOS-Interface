@@ -380,27 +380,28 @@
             <div id="safari-react-root" style="width:100%;height:100%;border-radius:inherit;overflow:hidden;"></div>
         </div>
 
-        <div id="terminal-window" class="mac-window" style="width: 700px; max-width: 90vw; height: 450px; max-height: 80vh; background: rgba(30,30,30,0.95); flex-direction: column; margin-top: 40px; margin-left: -40px;">
-            <div class="window-header" style="display:flex; align-items:center; padding: 12px 20px; background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <div id="terminal-window" class="mac-window" style="width: 700px; max-width: 90vw; height: 450px; max-height: 80vh; background: rgba(30,30,30,0.85); backdrop-filter: blur(30px) saturate(150%); -webkit-backdrop-filter: blur(30px) saturate(150%); flex-direction: column; margin-top: 40px; margin-left: -40px; border: 1px solid rgba(255,255,255,0.15);">
+            <div class="window-header" style="display:flex; align-items:center; padding: 12px 20px; background: transparent; border-bottom: 1px solid rgba(255,255,255,0.05);">
                 <div class="traffic-lights" style="padding:0;">
                     <div class="tl-btn tl-close"></div>
                     <div class="tl-btn tl-min"></div>
-                    <div class="tl-btn tl-max"></div>
+                    <div class="tl-btn tl-max" onclick="MacWindowManager.maximize(document.getElementById('terminal-window'))"></div>
                 </div>
-                <div style="flex:1; text-align:center; font-size: 13px; color: #888; font-family: ui-monospace, SFMono-Regular, monospace;">
+                <div style="flex:1; text-align:center; font-size: 13px; color: #999; font-family: ui-monospace, SFMono-Regular, monospace; font-weight: 500;">
+                    <i class="fas fa-folder" style="margin-right: 6px; color: #555;"></i>
                     david@MacBook-Pro: ~ — zsh — 80x24
                 </div>
             </div>
-            <div style="padding: 16px 20px; font-family: ui-monospace, SFMono-Regular, monospace; color: #4af626; font-size: 14px; line-height: 1.6; letter-spacing: 0px; overflow-y: auto;">
-                <span style="color: #aaa">Last login: Tue Aug 18 09:41:00 on ttys000</span><br>
-                <span style="color: #007aff">david@MacBook-Pro</span> <span style="color: #fff">~ %</span> npm run dev<br>
-                > portfolio@1.0.0 dev<br>
-                > vite<br><br>
-                <span style="color: #4af626; font-weight: bold;">VITE v4.3.9</span>  <span style="color: #aaa">ready in 320 ms</span><br><br>
-                <span style="color: #34c759">➜</span>  <span style="color: #fff; font-weight: bold;">Local:</span>   <span style="color: #38bdf8; text-decoration: underline;">http://localhost:5173/</span><br>
-                <span style="color: #34c759">➜</span>  <span style="color: #fff; font-weight: bold;">Network:</span> <span style="color: #aaa">use --host to expose</span><br>
-                <span style="color: #34c759">➜</span>  <span style="color: #aaa">press h to show help</span><br>
-                <span style="color: #007aff">david@MacBook-Pro</span> <span style="color: #fff">~ %</span> <span style="display:inline-block; width:8px; height:15px; background:#4af626; animation: blink 1s step-end infinite; vertical-align: middle;"></span>
+            <div id="terminal-scroll-area" style="flex: 1; padding: 16px 20px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13.5px; line-height: 1.6; letter-spacing: 0px; overflow-y: auto;" onclick="document.getElementById('terminal-input').focus()">
+                <div id="terminal-output">
+                    <span style="color: #aaa" id="term-last-login">Last login: Tue Aug 18 09:41:00 on ttys000</span><br>
+                </div>
+                <div style="display: flex; margin-top: 4px;">
+                    <span style="color: #0a84ff; font-weight: 500;">david@MacBook-Pro</span> <span id="term-prompt-dir" style="color: #fff; margin: 0 8px 0 6px;">~ %</span> 
+                    <form id="terminal-form" style="flex:1; margin:0; padding:0; display:flex;">
+                        <input type="text" id="terminal-input" autocomplete="off" spellcheck="false" style="flex:1; background: transparent; border: none; color: #fff; outline: none; font-family: inherit; font-size: inherit; padding: 0; min-width: 100px;">
+                    </form>
+                </div>
             </div>
         </div>
 

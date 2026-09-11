@@ -4513,3 +4513,116 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+
+// --- Terminal Simulator ---
+document.addEventListener('DOMContentLoaded', () => {
+    const termForm = document.getElementById('terminal-form');
+    const termInput = document.getElementById('terminal-input');
+    const termOutput = document.getElementById('terminal-output');
+    const termScroll = document.getElementById('terminal-scroll-area');
+    const termLastLogin = document.getElementById('term-last-login');
+
+    if (termLastLogin) {
+        termLastLogin.textContent = 'Last login: ' + new Date().toString().substring(0, 24) + ' on ttys000';
+    }
+
+    const commandHistory = [];
+    let historyIndex = -1;
+
+    const fileSystem = ['Documents', 'Downloads', 'Desktop', 'Music', 'Pictures', 'Public', 'portfolio'];
+    let currentDir = '~';
+
+    const commands = {
+        help: () => 'Available commands: help, echo, date, whoami, clear, ls, cd, pwd, uname, hostname',
+        date: () => new Date().toString(),
+        whoami: () => 'david',
+        pwd: () => '/Users/david' + (currentDir === '~' ? '' : '/' + currentDir.substring(2)),
+        uname: (args) => args.includes('-a') ? 'Darwin MacBook-Pro.local 24.0.0 Darwin Kernel Version 24.0.0: root:xnu-11215.1.1~1/RELEASE_ARM64_T8122 arm64' : 'Darwin',
+        hostname: () => 'MacBook-Pro.local',
+        echo: (args) => args.join(' '),
+        ls: () => fileSystem.join('  '),
+        cd: (args) => {
+            const dir = args[0];
+            if (!dir || dir === '~') { currentDir = '~'; document.getElementById('term-prompt-dir').textContent = currentDir + ' %'; return ''; }
+            if (dir === '..') { currentDir = '~'; document.getElementById('term-prompt-dir').textContent = currentDir + ' %'; return ''; }
+            if (fileSystem.includes(dir)) {
+                currentDir = '~/' + dir;
+                document.getElementById('term-prompt-dir').textContent = currentDir + ' %';
+                return '';
+            }
+            return `cd: no such file or directory: ${dir}`;
+        },
+        clear: () => {
+            termOutput.innerHTML = '';
+            return null;
+        }
+    };
+
+    if (termForm) {
+        termForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const val = termInput.value.trim();
+            if (val) {
+                commandHistory.push(val);
+                historyIndex = commandHistory.length;
+                
+                // Add command to output
+                const cmdLine = document.createElement('div');
+                cmdLine.innerHTML = `<span style="color: #0a84ff; font-weight: 500;">david@MacBook-Pro</span> <span style="color: #fff; margin: 0 8px 0 6px;">${currentDir} %</span> <span style="color:#fff">${val}</span>`;
+                termOutput.appendChild(cmdLine);
+
+                const parts = val.split(' ');
+                const cmd = parts[0].toLowerCase();
+                const args = parts.slice(1);
+
+                if (commands[cmd]) {
+                    const result = commands[cmd](args);
+                    if (result !== null) {
+                        const resLine = document.createElement('div');
+                        resLine.style.color = '#ccc';
+                        resLine.style.marginTop = '2px';
+                        resLine.style.marginBottom = '6px';
+                        resLine.textContent = result;
+                        termOutput.appendChild(resLine);
+                    }
+                } else if (val === 'sudo') {
+                    const resLine = document.createElement('div');
+                    resLine.style.color = '#ccc';
+                    resLine.textContent = 'david is not in the sudoers file. This incident will be reported.';
+                    termOutput.appendChild(resLine);
+                } else if (val) {
+                    const resLine = document.createElement('div');
+                    resLine.style.color = '#ccc';
+                    resLine.textContent = `zsh: command not found: ${cmd}`;
+                    termOutput.appendChild(resLine);
+                }
+            } else {
+                const cmdLine = document.createElement('div');
+                cmdLine.innerHTML = `<span style="color: #0a84ff; font-weight: 500;">david@MacBook-Pro</span> <span style="color: #fff; margin: 0 8px 0 6px;">${currentDir} %</span> `;
+                termOutput.appendChild(cmdLine);
+            }
+            
+            termInput.value = '';
+            termScroll.scrollTop = termScroll.scrollHeight;
+        });
+
+        termInput.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    termInput.value = commandHistory[historyIndex];
+                }
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (historyIndex < commandHistory.length - 1) {
+                    historyIndex++;
+                    termInput.value = commandHistory[historyIndex];
+                } else {
+                    historyIndex = commandHistory.length;
+                    termInput.value = '';
+                }
+            }
+        });
+    }
+});
