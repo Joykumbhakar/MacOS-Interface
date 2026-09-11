@@ -2645,6 +2645,22 @@ const SETTINGS_VIEWS = {
         `)}`,
 };
 
+            appState.toggleSetting = function(id, isOn) {
+                if (!window.MacSettings) return;
+                if (id === 't-wifi') MacSettings.setWifi(isOn);
+                else if (id === 't-bt') MacSettings.setBluetooth(isOn);
+                else if (id === 't-reduce-motion') MacSettings.setReduceMotion(isOn);
+                else if (id === 't-reduce-trans') MacSettings.setReduceTransparency(isOn);
+                else if (id === 't-nightshift' || id === 't-nightshift-disp') MacSettings.setNightShift(isOn);
+                else if (id === 't-autohide') { MacSettings.state.dockAutoHide = isOn; MacSettings.applyDock(); }
+                else if (id === 't-magnify') { MacSettings.state.dockMagnify = isOn; MacSettings.save(); }
+                else if (id === 't-sound-open') { MacSettings.state.soundUnlock = isOn; MacSettings.state.soundOpen = isOn; MacSettings.save(); }
+                else if (id === 't-sound-close') { MacSettings.state.soundClose = isOn; MacSettings.state.soundMinimize = isOn; MacSettings.save(); }
+                else if (id === 't-sound-trash') { MacSettings.state.soundTrash = isOn; MacSettings.save(); }
+                else if (id === 't-sound-key') { MacSettings.state.soundKey = isOn; MacSettings.save(); }
+                else if (id === 't-sound-sys') { MacSettings.state.soundTap = isOn; MacSettings.state.soundToggle = isOn; MacSettings.state.soundSlider = isOn; MacSettings.save(); }
+            };
+
             appState.setSettingsView = function(view) {
             localStorage.setItem('macSettingsLastView', view);
             // Update active nav item
@@ -2769,16 +2785,6 @@ const SETTINGS_VIEWS = {
                 </div>
                 
                 </div>`;
-
-                // Wire reduce motion toggle
-                setTimeout(() => {
-                    const rm = document.getElementById('t-reduce-motion');
-                    if (rm) rm.addEventListener('click', () => MacSettings.setReduceMotion(rm.classList.contains('on')));
-                    const rt = document.getElementById('t-reduce-trans');
-                    if (rt) rt.addEventListener('click', () => MacSettings.setReduceTransparency(rt.classList.contains('on')));
-                    const ns = document.getElementById('t-nightshift');
-                    if (ns) ns.addEventListener('click', () => MacSettings.setNightShift(ns.classList.contains('on')));
-                }, 100);
             } else if (view === 'displays') {
                 titleEl.textContent = 'Displays';
                 contentArea.innerHTML = `
@@ -2816,12 +2822,7 @@ const SETTINGS_VIEWS = {
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
                             <input type="range" min="10" max="100" value="${window.MacSettings ? window.MacSettings.state.brightness : 100}" oninput="if(window.MacSettings) MacSettings.applyBrightness(+this.value);" style="flex:1;">
                         </div>
-                        <div class="set-row">
-                            <span>Night Shift</span>
-                            <div id="t-nightshift-disp" class="set-toggle ${window.MacSettings && window.MacSettings.state.nightShift ? 'on' : ''}" style="background:${window.MacSettings && window.MacSettings.state.nightShift ? window.MacSettings.state.accentColor : '#e5e5ea'}">
-                                <div class="toggle-track"></div><div class="toggle-knob"></div>
-                            </div>
-                        </div>
+                        ${setRow('Night Shift', toggleHTML('t-nightshift-disp', window.MacSettings && window.MacSettings.state.nightShift, 'MacSettings.setNightShift(this.checked);'))}
                     </div>
                     
                     <div class="set-section-header">Display Resolution</div>
@@ -2837,17 +2838,6 @@ const SETTINGS_VIEWS = {
                         </div>
                     </div>
                 `;
-                // Add event listener for Night Shift toggle
-                setTimeout(() => {
-                    const ns = document.getElementById('t-nightshift-disp');
-                    if (ns && window.MacSettings) {
-                        ns.addEventListener('click', () => {
-                            ns.classList.toggle('on');
-                            MacSettings.setNightShift(ns.classList.contains('on'));
-                            ns.style.background = ns.classList.contains('on') ? MacSettings.state.accentColor : '#e5e5ea';
-                        });
-                    }
-                }, 50);
             } else {
                 titleEl.textContent = view.charAt(0).toUpperCase() + view.slice(1);
                 contentArea.innerHTML = `<div style="padding: 40px; text-align: center; color: #999;">Select a setting on the left to configure.</div>`;

@@ -714,12 +714,12 @@
             
             <!-- Network Block -->
             <div class="cc-block" style="flex:1; padding: 12px; display:flex; flex-direction:column; gap:12px;">
-                <div class="cc-row" style="cursor:pointer;" onclick="const el=this.querySelector('.cc-icon-circle'); const isOn=el.classList.contains('active'); el.classList.toggle('active'); this.querySelector('.cc-sub').innerText = isOn ? 'Off' : 'Home_Network'; if(window.MacAudio) MacAudio.play(isOn ? 'toggleOff' : 'toggleOn');">
-                    <div class="cc-icon-circle active"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><circle cx="12" cy="20" r="1" fill="white" stroke="none"></circle></svg></div>
+                <div class="cc-row" style="cursor:pointer;" onclick="const el=this.querySelector('.cc-icon-circle'); const isOn=el.classList.contains('active'); el.classList.toggle('active'); this.querySelector('.cc-sub').innerText = isOn ? 'Off' : 'Home_Network'; if(window.MacSettings) MacSettings.setWifi(!isOn); if(window.MacAudio) MacAudio.play(isOn ? 'toggleOff' : 'toggleOn');">
+                    <div class="cc-icon-circle active"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><circle cx="12" cy="20" r="1.5" fill="currentColor" stroke="none"></circle></svg></div>
                     <div class="cc-text-col"><span class="cc-title">Wi-Fi</span><span class="cc-sub">Home_Network</span></div>
                 </div>
-                <div class="cc-row" style="cursor:pointer;" onclick="const s=MacSettings.state.bluetoothOn; MacSettings.setBluetooth(!s); this.querySelector('.cc-icon-circle').classList.toggle('active', !s); this.querySelector('.cc-sub').innerText = !s ? 'On' : 'Off';">
-                    <div class="cc-icon-circle active"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M6.5 6.5l11 11L12 23V1l5.5 5.5-11 11"></path></svg></div>
+                <div class="cc-row" style="cursor:pointer;" onclick="const el=this.querySelector('.cc-icon-circle'); const isOn=el.classList.contains('active'); el.classList.toggle('active'); this.querySelector('.cc-sub').innerText = isOn ? 'Off' : 'On'; if(window.MacSettings) MacSettings.setBluetooth(!isOn); if(window.MacAudio) MacAudio.play(isOn ? 'toggleOff' : 'toggleOn');">
+                    <div class="cc-icon-circle active"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.5 6.5l11 11L12 23V1l5.5 5.5-11 11"></path></svg></div>
                     <div class="cc-text-col"><span class="cc-title">Bluetooth</span><span class="cc-sub" id="cc-bt-status">On</span></div>
                 </div>
                 <div class="cc-row" style="cursor:pointer;" onclick="const el=this.querySelector('.cc-icon-circle'); const isOn=el.classList.contains('active'); el.classList.toggle('active'); this.querySelector('.cc-sub').innerText = isOn ? 'Off' : 'Contacts Only'; if(window.MacAudio) MacAudio.play(isOn ? 'toggleOff' : 'toggleOn');">
@@ -731,17 +731,17 @@
             <!-- Right Column -->
             <div style="flex:1; display:flex; flex-direction:column; gap: 12px;">
                 <!-- Focus -->
-                <div class="cc-block" style="flex:1; display:flex; align-items:center; gap: 10px; padding: 0 12px;">
-                    <div class="cc-icon-circle" style="background: rgba(0,0,0,0.05);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></div>
-                    <span class="cc-title">Focus</span>
+                <div class="cc-block" id="cc-focus-btn" style="flex:1; display:flex; align-items:center; gap: 10px; padding: 0 12px; cursor:pointer;" onclick="const circle=this.querySelector('.cc-icon-circle'); const isOn=circle.classList.contains('active'); circle.classList.toggle('active'); this.querySelector('.cc-sub').innerText = isOn ? 'Off' : 'Do Not Disturb'; if(window.MacSettings) MacSettings.state.doNotDisturb = !isOn; if(window.MacAudio) MacAudio.play(isOn ? 'toggleOff' : 'toggleOn');">
+                    <div class="cc-icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></div>
+                    <div class="cc-text-col"><span class="cc-title">Focus</span><span class="cc-sub">Off</span></div>
                 </div>
                 <!-- Small toggles grid -->
                 <div style="display:flex; gap: 12px; height: 60px;">
-                    <div class="cc-block" style="flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap: 4px;">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                    <div class="cc-block cc-toggle-block" style="flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap: 4px; cursor:pointer;" onclick="this.classList.toggle('active'); const isOn = this.classList.contains('active'); if(window.MacAudio) MacAudio.play(isOn ? 'toggleOn' : 'toggleOff');" title="Screen Mirroring">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
                     </div>
-                    <div class="cc-block" style="flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap: 4px;">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><path d="M6 8h.01"></path><path d="M10 8h.01"></path><path d="M14 8h.01"></path><path d="M18 8h.01"></path><path d="M8 12h8"></path></svg>
+                    <div class="cc-block cc-toggle-block" style="flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap: 4px; cursor:pointer;" onclick="this.classList.toggle('active'); const isOn = this.classList.contains('active'); if(window.MacAudio) MacAudio.play(isOn ? 'toggleOn' : 'toggleOff');" title="Stage Manager">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><path d="M6 8h.01"></path><path d="M10 8h.01"></path><path d="M14 8h.01"></path><path d="M18 8h.01"></path><path d="M8 12h8"></path></svg>
                     </div>
                 </div>
             </div>
