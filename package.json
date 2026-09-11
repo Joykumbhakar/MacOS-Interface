@@ -27,7 +27,7 @@
   "build": {
     "appId": "com.macOS.interface",
     "productName": "macOS Interface",
-    "win": {
+    "nsis": {"oneClick": false, "allowToChangeInstallationDirectory": true, "installerSidebar": "build/sidebar.bmp", "installerHeader": "build/header.bmp"}, "win": {
       "target": "nsis",
       "icon": "images/Icons/macOS.png"
     },
