@@ -1,6 +1,6 @@
 {
   "name": "macOS-interface",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A pixel-perfect macOS desktop experience built for the web. Full Finder, Settings, Apple Music, Dynamic Island, and more - running entirely in the browser.",
   "private": true,
   "main": "main.js",

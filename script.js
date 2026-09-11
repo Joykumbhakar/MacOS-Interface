@@ -1045,6 +1045,33 @@ const ICONS = {
                 if (appId !== 'finder') {
                     this.updateDockDot(appId, false);
                 }
+
+                setTimeout(() => {
+                    if (appId === 'browser') {
+                        if (window.ReactDOM) {
+                            const root = document.getElementById('safari-react-root');
+                            if (root) window.ReactDOM.unmountComponentAtNode(root);
+                        }
+                    } else if (appId === 'terminal') {
+                        const out = document.getElementById('terminal-output');
+                        if (out) out.innerHTML = '<span style="color: #aaa" id="term-last-login">Last login: ' + new Date().toString().split(' ').slice(0,5).join(' ') + ' on ttys000</span><br>';
+                        window.currentDir = '~';
+                        const promptDir = document.getElementById('term-prompt-dir');
+                        if (promptDir) promptDir.textContent = '~';
+                    } else if (appId === 'finder') {
+                        if (window.Finder && window.Finder.navigateTo) window.Finder.navigateTo('root');
+                    } else if (appId === 'settings') {
+                        document.querySelectorAll('.settings-tab').forEach(t => t.style.display = 'none');
+                        document.querySelectorAll('.settings-sidebar .sb-item').forEach(i => i.classList.remove('active'));
+                        const wifiTab = document.getElementById('settings-wifi');
+                        if (wifiTab) wifiTab.style.display = 'block';
+                        const wifiNav = document.querySelector('.settings-sidebar .sb-item[data-tab="wifi"]');
+                        if (wifiNav) wifiNav.classList.add('active');
+                    } else {
+                        // Dynamically created apps (Music, VSCode, Messages, Calculator, etc.)
+                        win.remove();
+                    }
+                }, 350);
             },
 
             minimize(winOrId) {
