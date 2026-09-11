@@ -1,0 +1,1135 @@
+/* macOS Sequoia Safari Authentic Professional Styling */
+.safari-app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: #fbfbfd;
+    color: #1d1d1f;
+    user-select: none;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Unified macOS Sequoia Safari Toolbar */
+.safari-toolbar {
+    height: 48px;
+    min-height: 48px;
+    background: rgba(246, 246, 248, 0.94);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 8px;
+    position: relative;
+    z-index: 40;
+    -webkit-app-region: drag;
+}
+
+.safari-traffic-spacer {
+    width: 84px;
+    height: 100%;
+    flex-shrink: 0;
+    -webkit-app-region: drag;
+}
+
+.safari-nav-cluster {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    -webkit-app-region: no-drag;
+}
+
+.safari-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: #4b5563;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.12s ease, color 0.12s ease;
+    padding: 0;
+}
+
+.safari-btn:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.06);
+    color: #111827;
+}
+
+.safari-btn:active:not(:disabled) {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.safari-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.safari-btn.active {
+    background: rgba(0, 122, 255, 0.12);
+    color: #007aff;
+}
+
+/* Unified Omnibar / Smart Search Bar */
+.safari-omnibar-wrapper {
+    flex: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    position: relative;
+    -webkit-app-region: no-drag;
+}
+
+.safari-omnibar {
+    height: 30px;
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    gap: 8px;
+    cursor: text;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.safari-omnibar:hover {
+    background: rgba(0, 0, 0, 0.07);
+}
+
+.safari-omnibar.focused {
+    background: #ffffff;
+    border-color: #007aff;
+}
+
+.safari-omnibar-lock {
+    display: flex;
+    align-items: center;
+    color: #34c759;
+    flex-shrink: 0;
+}
+
+.safari-omnibar-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #1d1d1f;
+    outline: none;
+    text-align: center;
+    padding: 0;
+    font-family: inherit;
+}
+
+.safari-omnibar.focused .safari-omnibar-input {
+    text-align: left;
+}
+
+.safari-omnibar-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.safari-omnibar-btn {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: none;
+    background: transparent;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+}
+
+.safari-omnibar-btn:hover {
+    background: rgba(0, 0, 0, 0.08);
+    color: #111827;
+}
+
+.safari-omnibar-btn.active {
+    color: #007aff;
+}
+
+/* Omnibar Suggestions Dropdown */
+.safari-suggestions-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 10px;
+    overflow: hidden;
+    z-index: 100;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.safari-sugg-header {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #86868b;
+    padding: 6px 8px 4px;
+}
+
+.safari-sugg-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12.5px;
+    color: #1d1d1f;
+    transition: background 0.1s ease;
+}
+
+.safari-sugg-item:hover, .safari-sugg-item.selected {
+    background: #007aff;
+    color: #ffffff;
+}
+
+.safari-sugg-item:hover .safari-sugg-icon, .safari-sugg-item.selected .safari-sugg-icon {
+    color: #ffffff;
+}
+
+.safari-sugg-item:hover .safari-sugg-url, .safari-sugg-item.selected .safari-sugg-url {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.safari-sugg-icon {
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.safari-sugg-text {
+    flex: 1;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.safari-sugg-url {
+    font-size: 11px;
+    color: #86868b;
+}
+
+/* Toolbar Right Cluster */
+.safari-actions-cluster {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    -webkit-app-region: no-drag;
+}
+
+/* Safari Multi-Tab Strip */
+.safari-tab-bar {
+    height: 32px;
+    background: rgba(238, 238, 240, 0.95);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: flex-end;
+    padding: 0 8px;
+    gap: 4px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+}
+
+.safari-tab-bar::-webkit-scrollbar {
+    display: none;
+}
+
+.safari-tab {
+    height: 28px;
+    min-width: 140px;
+    max-width: 220px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 6px 6px 0 0;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: #4b5563;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.12s ease, color 0.12s ease;
+    border-top: 1px solid transparent;
+}
+
+.safari-tab:hover {
+    background: rgba(0, 0, 0, 0.07);
+    color: #111827;
+}
+
+.safari-tab.active {
+    background: #fbfbfd;
+    color: #1d1d1f;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    font-weight: 600;
+}
+
+.safari-tab-favicon {
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.safari-tab-title {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.safari-tab-close {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: none;
+    background: transparent;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    opacity: 0;
+    transition: opacity 0.12s ease, background 0.12s ease, color 0.12s ease;
+}
+
+.safari-tab:hover .safari-tab-close, .safari-tab.active .safari-tab-close {
+    opacity: 1;
+}
+
+.safari-tab-close:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #111827;
+}
+
+.safari-tab-new-btn {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 2px;
+    border-radius: 5px;
+    border: none;
+    background: transparent;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.safari-tab-new-btn:hover {
+    background: rgba(0, 0, 0, 0.08);
+    color: #111827;
+}
+
+/* Safari App Body (Sidebar + Content) */
+.safari-body {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Collapsible Sidebar */
+.safari-sidebar {
+    width: 240px;
+    min-width: 240px;
+    background: rgba(246, 246, 248, 0.96);
+    border-right: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1), min-width 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+
+.safari-sidebar.collapsed {
+    width: 0;
+    min-width: 0;
+    opacity: 0;
+    pointer-events: none;
+    border-right: none;
+}
+
+.safari-sidebar-nav {
+    display: flex;
+    padding: 10px 10px 4px;
+    gap: 4px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.safari-sb-tab {
+    flex: 1;
+    height: 26px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: all 0.12s ease;
+}
+
+.safari-sb-tab.active {
+    background: #ffffff;
+    color: #111827;
+    font-weight: 600;
+}
+
+.safari-sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.safari-sb-section-title {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #86868b;
+    padding: 8px 8px 4px;
+}
+
+.safari-sb-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12.5px;
+    color: #1d1d1f;
+    transition: background 0.12s ease;
+}
+
+.safari-sb-item:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.safari-sb-item.active {
+    background: rgba(0, 122, 255, 0.12);
+    color: #007aff;
+    font-weight: 600;
+}
+
+.safari-sb-icon-box {
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4b5563;
+    flex-shrink: 0;
+}
+
+.safari-sb-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Safari Main Content View */
+.safari-content-view {
+    flex: 1;
+    overflow-y: auto;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* ==========================================================================
+   START PAGE DESIGN (Clean Apple HIG Layout)
+   ========================================================================== */
+.safari-startpage {
+    flex: 1;
+    min-height: 100%;
+    padding: 40px 48px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+    overflow-y: auto;
+}
+
+.safari-startpage-container {
+    width: 100%;
+    max-width: 860px;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+}
+
+.safari-sp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.safari-sp-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1d1d1f;
+    letter-spacing: -0.3px;
+}
+
+/* Favorites Grid */
+.safari-favorites-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+    gap: 20px 16px;
+    width: 100%;
+}
+
+.safari-favorite-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    user-select: none;
+    transition: transform 0.15s ease;
+}
+
+.safari-favorite-card:hover {
+    transform: translateY(-2px);
+}
+
+.safari-fav-icon-wrapper {
+    width: 62px;
+    height: 62px;
+    border-radius: 14px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.safari-favorite-card:hover .safari-fav-icon-wrapper {
+    border-color: rgba(0, 0, 0, 0.18);
+    background: #fafafa;
+}
+
+.safari-fav-title {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: #1d1d1f;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+}
+
+/* Privacy Report Card */
+.safari-privacy-card {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.safari-privacy-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.safari-privacy-shield {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: rgba(52, 199, 89, 0.12);
+    color: #34c759;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.safari-privacy-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1d1d1f;
+    margin-bottom: 2px;
+}
+
+.safari-privacy-desc {
+    font-size: 12px;
+    color: #6e6e73;
+    line-height: 1.4;
+}
+
+.safari-privacy-stat {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1d1d1f;
+    text-align: right;
+    letter-spacing: -0.5px;
+}
+
+.safari-privacy-stat span {
+    font-size: 11px;
+    font-weight: 500;
+    color: #86868b;
+    display: block;
+}
+
+/* Reading List Cards */
+.safari-reading-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px;
+}
+
+.safari-reading-card {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    cursor: pointer;
+    transition: border-color 0.12s ease;
+}
+
+.safari-reading-card:hover {
+    border-color: #007aff;
+}
+
+.safari-rc-site {
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #007aff;
+}
+
+.safari-rc-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1d1d1f;
+    line-height: 1.35;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.safari-rc-preview {
+    font-size: 11.5px;
+    color: #6e6e73;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+/* ==========================================================================
+   SIMULATED WEB PAGES (Rich Interactive Webviews)
+   ========================================================================== */
+/* Google Simulated View */
+.safari-web-google {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    background: #ffffff;
+}
+
+.safari-google-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 12px 24px;
+    gap: 16px;
+    font-size: 13px;
+    color: #3c4043;
+}
+
+.safari-google-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px 80px;
+}
+
+.safari-google-logo {
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+}
+
+.safari-g-blue { color: #4285f4; }
+.safari-g-red { color: #ea4335; }
+.safari-g-yellow { color: #fbbc05; }
+.safari-g-green { color: #34a853; }
+
+.safari-google-searchbox {
+    width: 100%;
+    max-width: 580px;
+    height: 44px;
+    border-radius: 24px;
+    border: 1px solid #dfe1e5;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+    transition: border-color 0.15s ease;
+    background: #ffffff;
+}
+
+.safari-google-searchbox:focus-within {
+    border-color: rgba(223, 225, 229, 0);
+    border: 1px solid #4285f4;
+}
+
+.safari-google-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    color: #1d1d1f;
+}
+
+.safari-google-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.safari-g-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid #f8f9fa;
+    background: #f8f9fa;
+    font-size: 13px;
+    font-weight: 500;
+    color: #3c4043;
+    cursor: pointer;
+    transition: border-color 0.12s ease;
+}
+
+.safari-g-btn:hover {
+    border-color: #dadce0;
+    color: #202124;
+}
+
+/* Google Search Results Page */
+.safari-google-results-view {
+    padding: 24px 48px;
+    max-width: 820px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.safari-gr-stat {
+    font-size: 12px;
+    color: #70757a;
+}
+
+.safari-gr-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.safari-gr-cite {
+    font-size: 12px;
+    color: #202124;
+}
+
+.safari-gr-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #1a0dab;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.safari-gr-title:hover {
+    text-decoration: underline;
+}
+
+.safari-gr-desc {
+    font-size: 13.5px;
+    color: #4d5156;
+    line-height: 1.5;
+}
+
+/* Apple Simulated Page */
+.safari-web-apple {
+    display: flex;
+    flex-direction: column;
+    background: #000000;
+    color: #f5f5f7;
+    min-height: 100%;
+}
+
+.safari-apple-nav {
+    height: 44px;
+    background: rgba(22, 22, 23, 0.8);
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    font-size: 12px;
+    color: #d6d6d6;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.safari-apple-nav span {
+    cursor: pointer;
+    transition: color 0.12s ease;
+}
+
+.safari-apple-nav span:hover {
+    color: #ffffff;
+}
+
+.safari-apple-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 60px 20px 40px;
+    background: radial-gradient(circle at center top, #1d1d1f 0%, #000000 70%);
+}
+
+.safari-apple-h1 {
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -1.2px;
+    margin-bottom: 8px;
+    color: #ffffff;
+}
+
+.safari-apple-sub {
+    font-size: 22px;
+    color: #86868b;
+    margin-bottom: 24px;
+    font-weight: 500;
+}
+
+.safari-apple-cta-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 36px;
+}
+
+.safari-apple-btn-blue {
+    padding: 8px 18px;
+    border-radius: 20px;
+    background: #0071e3;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+}
+
+.safari-apple-btn-outline {
+    padding: 8px 18px;
+    border-radius: 20px;
+    background: transparent;
+    border: 1px solid #0071e3;
+    color: #2997ff;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.safari-apple-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 20px 40px 60px;
+    max-width: 1080px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.safari-apple-card {
+    background: #161617;
+    border-radius: 16px;
+    padding: 30px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* GitHub Simulated Page */
+.safari-web-github {
+    display: flex;
+    flex-direction: column;
+    background: #0d1117;
+    color: #c9d1d9;
+    min-height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+.safari-gh-header {
+    height: 54px;
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 16px;
+}
+
+.safari-gh-body {
+    padding: 24px 32px;
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.safari-gh-repo-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #58a6ff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.safari-gh-readme {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.safari-gh-readme-head {
+    background: #161b22;
+    padding: 10px 16px;
+    border-bottom: 1px solid #30363d;
+    font-size: 13px;
+    font-weight: 600;
+    color: #c9d1d9;
+}
+
+.safari-gh-readme-body {
+    padding: 24px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #c9d1d9;
+}
+
+/* Wikipedia Simulated Page */
+.safari-web-wiki {
+    padding: 32px 50px;
+    max-width: 880px;
+    background: #ffffff;
+    color: #202122;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    line-height: 1.7;
+}
+
+.safari-wiki-h1 {
+    font-size: 32px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    border-bottom: 1px solid #a2a9b1;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+    font-weight: 400;
+}
+
+.safari-wiki-infobox {
+    float: right;
+    width: 280px;
+    background: #f8f9fa;
+    border: 1px solid #a2a9b1;
+    padding: 12px;
+    margin: 0 0 20px 24px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 12px;
+    border-radius: 4px;
+}
+
+/* Hacker News Simulated Page */
+.safari-web-hn {
+    background: #f6f6ef;
+    min-height: 100%;
+    padding: 12px 16px;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 13px;
+    color: #222;
+}
+
+.safari-hn-header {
+    background: #ff6600;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: #222;
+}
+
+.safari-hn-list {
+    padding: 12px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.safari-hn-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.safari-hn-rank {
+    color: #828282;
+    width: 22px;
+    text-align: right;
+    font-size: 12px;
+}
+
+.safari-hn-title {
+    font-weight: 500;
+    color: #000000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.safari-hn-sub {
+    font-size: 10px;
+    color: #828282;
+    margin-left: 30px;
+}
+
+/* Reader Mode Typography Layout */
+.safari-reader-view {
+    max-width: 680px;
+    margin: 40px auto;
+    padding: 0 24px;
+    font-family: 'Charter', 'Georgia', 'Times New Roman', serif;
+    font-size: 18px;
+    line-height: 1.75;
+    color: #2c3e50;
+}
+
+.safari-reader-h1 {
+    font-size: 34px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.25;
+}
+
+.safari-reader-meta {
+    font-size: 13px;
+    color: #86868b;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Share & Download Popovers */
+.safari-popover {
+    position: absolute;
+    top: 48px;
+    right: 12px;
+    width: 240px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 10px;
+    padding: 6px;
+    z-index: 120;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.safari-popover-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    color: #1d1d1f;
+    cursor: pointer;
+    transition: background 0.12s ease;
+}
+
+.safari-popover-item:hover {
+    background: #007aff;
+    color: #ffffff;
+}
+
+.safari-popover-item:hover svg {
+    stroke: #ffffff;
+}

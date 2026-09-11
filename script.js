@@ -1467,6 +1467,9 @@ const ICONS = {
                 win.style.setProperty('--icon-scale', Math.max(scale, 0.05));
             }
             
+            if (appId === 'Browser' && window.renderSafariApp) {
+                window.renderSafariApp();
+            }
             void win.offsetWidth;
             requestAnimationFrame(() => { requestAnimationFrame(() => { win.classList.add('active'); if (typeof focusWindow === 'function') focusWindow(win); }); });
         };
