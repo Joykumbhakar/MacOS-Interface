@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Apple-Inspired PowerPoint / Keynote Suite Design System (Light Mode)
+   Apple-Inspired PowerPoint / Keynote Suite Design System (macOS Sequoia)
    ========================================================================== */
 
 .pp-app-container {
@@ -8,26 +8,27 @@
     height: 100%;
     width: 100%;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
-    background: transparent;
+    background: #fbfbfd;
     color: #1d1d1f;
     user-select: none;
     -webkit-user-select: none;
     overflow: hidden;
+    position: relative;
 }
 
-/* ── Unified macOS Header & Toolbar ───────────────────────────────────────── */
+/* ── Unified macOS Header & Ribbon Tabs ──────────────────────────────────── */
 .pp-header {
-    height: 52px;
-    background: rgba(255, 255, 255, 0.45);
+    height: 48px;
+    background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(40px) saturate(180%);
     -webkit-backdrop-filter: blur(40px) saturate(180%);
-    border-bottom: 0.5px solid rgba(0, 0, 0, 0.12);
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 16px 0 80px; /* Leave space on left for macOS traffic lights */
+    padding: 0 16px 0 80px; /* Space for macOS window controls */
     position: relative;
-    z-index: 20;
+    z-index: 30;
     flex-shrink: 0;
 }
 
@@ -46,16 +47,23 @@
     color: #1d1d1f;
     display: flex;
     align-items: center;
-    gap: 4px;
-    cursor: default;
+    gap: 5px;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: background 0.15s ease;
+}
+
+.pp-doc-title:hover {
+    background: rgba(0, 0, 0, 0.05);
 }
 
 .pp-doc-badge {
     font-size: 10px;
-    font-weight: 500;
-    padding: 2px 6px;
-    border-radius: 4px;
-    background: rgba(0, 122, 255, 0.1);
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: rgba(0, 122, 255, 0.12);
     color: #007aff;
     letter-spacing: 0.2px;
 }
@@ -63,24 +71,92 @@
 .pp-toolbar-actions {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
-/* macOS Segmented Buttons & Action Pills */
+/* ── Ribbon Tab Selector Bar ─────────────────────────────────────────────── */
+.pp-ribbon-tabs-bar {
+    height: 32px;
+    background: rgba(246, 246, 248, 0.85);
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 2px;
+    flex-shrink: 0;
+    z-index: 25;
+}
+
+.pp-ribbon-tab {
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #555558;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pp-ribbon-tab:hover {
+    color: #1d1d1f;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.pp-ribbon-tab.active {
+    color: #007aff;
+    background: rgba(0, 122, 255, 0.12);
+    font-weight: 600;
+}
+
+/* ── Ribbon Toolbar Controls Bar ─────────────────────────────────────────── */
+.pp-ribbon-toolbar {
+    min-height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+    flex-shrink: 0;
+    z-index: 20;
+    overflow-x: auto;
+}
+
+.pp-ribbon-toolbar::-webkit-scrollbar {
+    display: none;
+}
+
+.pp-ribbon-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pp-ribbon-divider {
+    width: 1px;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.1);
+    margin: 0 4px;
+}
+
+/* macOS Buttons & Icons */
 .pp-pill-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    height: 28px;
+    height: 26px;
     padding: 0 10px;
-    background: rgba(0, 0, 0, 0.05);
+    background: rgba(0, 0, 0, 0.04);
     border: 0.5px solid rgba(0, 0, 0, 0.1);
     border-radius: 6px;
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 500;
     color: #1d1d1f;
     cursor: pointer;
     transition: all 0.15s ease;
+    white-space: nowrap;
 }
 
 .pp-pill-btn:hover {
@@ -97,23 +173,18 @@
     background: linear-gradient(180deg, #47A1FF 0%, #0071E3 100%);
     color: #ffffff;
     border: 0.5px solid #0058b0;
-    box-shadow: 0 1px 2px rgba(0, 113, 227, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    box-shadow: 0 1px 3px rgba(0, 113, 227, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .pp-pill-btn.primary:hover {
     background: linear-gradient(180deg, #5AB0FF 0%, #007DF5 100%);
 }
 
-.pp-pill-btn.active {
-    background: #e5e5ea;
-    color: #007aff;
-}
-
 .pp-icon-btn {
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    display: flex;
+    width: 26px;
+    height: 26px;
+    border-radius: 5px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     background: transparent;
@@ -133,44 +204,36 @@
     color: #007aff;
 }
 
-.pp-divider {
-    width: 1px;
-    height: 18px;
-    background: rgba(0, 0, 0, 0.12);
-    margin: 0 4px;
+.pp-select {
+    height: 26px;
+    background: rgba(0, 0, 0, 0.04);
+    border: 0.5px solid rgba(0, 0, 0, 0.12);
+    border-radius: 5px;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: #1d1d1f;
+    padding: 0 6px;
+    outline: none;
+    cursor: pointer;
 }
 
-/* ── Secondary Formatting Ribbon ─────────────────────────────────────────── */
-.pp-ribbon {
-    height: 38px;
-    background: rgba(248, 248, 248, 0.95);
-    border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
-    gap: 12px;
-    flex-shrink: 0;
+.pp-select:focus {
+    border-color: #007aff;
 }
 
-.pp-ribbon-group {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-/* ── App Workspace (3-Pane Layout) ───────────────────────────────────────── */
+/* ── Main Multi-Pane Workspace ───────────────────────────────────────────── */
 .pp-workspace {
     display: flex;
     flex: 1;
-    height: calc(100% - 90px);
+    height: calc(100% - 148px);
     overflow: hidden;
     position: relative;
 }
 
 /* ── Left Sidebar: Slide Navigator ───────────────────────────────────────── */
 .pp-navigator {
-    width: 190px;
-    background: rgba(255, 255, 255, 0.45);
+    width: 196px;
+    background: rgba(246, 246, 248, 0.7);
     backdrop-filter: blur(40px) saturate(180%);
     -webkit-backdrop-filter: blur(40px) saturate(180%);
     border-right: 0.5px solid rgba(0, 0, 0, 0.1);
@@ -180,7 +243,7 @@
 }
 
 .pp-nav-header {
-    padding: 10px 12px 6px;
+    padding: 8px 12px 6px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -200,12 +263,26 @@
     gap: 12px;
 }
 
+.pp-slides-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.pp-slides-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 3px;
+}
+
 .pp-slide-card {
     position: relative;
     display: flex;
     align-items: center;
     gap: 8px;
     cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.pp-slide-card:active {
+    transform: scale(0.98);
 }
 
 .pp-slide-num {
@@ -277,105 +354,253 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #f4f5f7 0%, #e2e4e8 100%);
+    background: linear-gradient(135deg, #f0f1f4 0%, #e2e4e8 100%);
     overflow: auto;
-    padding: 30px;
+    padding: 24px;
     position: relative;
 }
 
 .pp-slide-viewport {
-    width: 720px;
-    max-width: 90%;
+    width: 760px;
+    max-width: 94%;
     aspect-ratio: 16 / 9;
-    border-radius: 8px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14), 0 0 0 1px rgba(0, 0, 0, 0.08);
     position: relative;
-    padding: 48px;
+    padding: 44px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     box-sizing: border-box;
-    transition: background 0.3s ease, color 0.3s ease;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    overflow: hidden;
 }
 
-/* Slide Color Themes */
-.pp-theme-white { background: #ffffff; color: #1d1d1f; }
-.pp-theme-minimal { background: #1c1c1e; color: #ffffff; }
-.pp-theme-gradient { background: linear-gradient(135deg, #0A84FF 0%, #5E5CE6 100%); color: #ffffff; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2); }
-.pp-theme-warm { background: linear-gradient(135deg, #FF9500 0%, #FF2D55 100%); color: #ffffff; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2); }
-.pp-theme-mint { background: linear-gradient(135deg, #30D158 0%, #32ADE6 100%); color: #ffffff; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2); }
-
+/* Editable text blocks */
 .pp-editable-title {
-    font-size: 40px;
+    font-size: 34px;
     font-weight: 800;
-    letter-spacing: -0.8px;
     line-height: 1.15;
-    margin-bottom: 16px;
+    letter-spacing: -0.6px;
     outline: none;
+    margin-bottom: 12px;
+    cursor: text;
     border-radius: 4px;
-    padding: 4px 6px;
-    margin-left: -6px;
+    padding: 2px 4px;
     transition: background 0.15s ease;
-}
-
-.pp-editable-title:hover {
-    background: rgba(0, 0, 0, 0.03);
 }
 
 .pp-editable-title:focus {
     background: rgba(0, 122, 255, 0.08);
-    box-shadow: 0 0 0 1.5px #007aff;
-}
-
-.pp-editable-title:empty::before {
-    content: "Click to add title";
-    opacity: 0.35;
+    box-shadow: 0 0 0 1.5px rgba(0, 122, 255, 0.4);
 }
 
 .pp-editable-subtitle {
-    font-size: 20px;
+    font-size: 17px;
     font-weight: 400;
     line-height: 1.4;
     opacity: 0.85;
     outline: none;
+    margin-bottom: 20px;
+    cursor: text;
     border-radius: 4px;
-    padding: 4px 6px;
-    margin-left: -6px;
+    padding: 2px 4px;
     transition: background 0.15s ease;
-}
-
-.pp-editable-subtitle:hover {
-    background: rgba(0, 0, 0, 0.03);
 }
 
 .pp-editable-subtitle:focus {
     background: rgba(0, 122, 255, 0.08);
-    box-shadow: 0 0 0 1.5px #007aff;
-}
-
-.pp-editable-subtitle:empty::before {
-    content: "Click to add subtitle";
-    opacity: 0.35;
+    box-shadow: 0 0 0 1.5px rgba(0, 122, 255, 0.4);
 }
 
 .pp-bullet-list {
-    margin-top: 12px;
+    margin: 0;
     padding-left: 24px;
-    font-size: 17px;
-    line-height: 1.6;
+    font-size: 15px;
+    line-height: 1.7;
     outline: none;
+    border-radius: 4px;
+    padding: 4px 4px 4px 28px;
+    transition: background 0.15s ease;
 }
 
 .pp-bullet-list:focus {
-    background: rgba(0, 122, 255, 0.05);
-    border-radius: 6px;
-    box-shadow: 0 0 0 1.5px #007aff;
+    background: rgba(0, 122, 255, 0.08);
+    box-shadow: 0 0 0 1.5px rgba(0, 122, 255, 0.4);
 }
 
-/* ── Right Inspector Panel ────────────────────────────────────────────────── */
+/* ── Split Layout ────────────────────────────────────────────────────────── */
+.pp-split-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 14px;
+    flex: 1;
+}
+
+.pp-split-col {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    padding: 16px;
+    outline: none;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.pp-split-col:focus {
+    box-shadow: 0 0 0 1.5px rgba(0, 122, 255, 0.4);
+}
+
+/* ── Stats Grid Layout ───────────────────────────────────────────────────── */
+.pp-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.pp-stat-card {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.pp-stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: #007aff;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+}
+
+.pp-stat-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+/* ── Code Showcase Layout ────────────────────────────────────────────────── */
+.pp-code-block {
+    background: #1e1e24;
+    color: #38ef7d;
+    font-family: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 18px;
+    border-radius: 8px;
+    overflow-x: auto;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+    outline: none;
+    white-space: pre;
+}
+
+/* ── Custom Inserted Objects (Shapes, Tables, Images) ────────────────────── */
+.pp-element-container {
+    position: absolute;
+    cursor: move;
+    border: 1.5px solid transparent;
+    transition: border-color 0.15s ease;
+}
+
+.pp-element-container.selected {
+    border-color: #007aff;
+    box-shadow: 0 0 0 1px #ffffff;
+}
+
+.pp-shape-rect {
+    width: 120px;
+    height: 80px;
+    background: #007aff;
+    border-radius: 6px;
+}
+
+.pp-shape-circle {
+    width: 90px;
+    height: 90px;
+    background: #ff9500;
+    border-radius: 50%;
+}
+
+.pp-shape-star {
+    font-size: 60px;
+    color: #ffd60a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pp-table-grid {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 14px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.pp-table-grid td, .pp-table-grid th {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 8px 12px;
+    font-size: 13px;
+    outline: none;
+}
+
+.pp-table-grid th {
+    background: rgba(0, 122, 255, 0.12);
+    color: #007aff;
+    font-weight: 600;
+}
+
+/* ── Speaker Notes Drawer ────────────────────────────────────────────────── */
+.pp-notes-drawer {
+    width: 100%;
+    height: 110px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(25px);
+    border-top: 0.5px solid rgba(0, 0, 0, 0.12);
+    padding: 10px 16px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.pp-notes-header {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #86868b;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pp-notes-textarea {
+    width: 100%;
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #1d1d1f;
+    resize: none;
+    font-family: inherit;
+}
+
+/* ── Right Inspector Panel ───────────────────────────────────────────────── */
 .pp-inspector {
-    width: 240px;
-    background: rgba(255, 255, 255, 0.45);
+    width: 250px;
+    background: rgba(246, 246, 248, 0.7);
     backdrop-filter: blur(40px) saturate(180%);
     -webkit-backdrop-filter: blur(40px) saturate(180%);
     border-left: 0.5px solid rgba(0, 0, 0, 0.1);
@@ -386,36 +611,36 @@
 
 .pp-inspector-tabs {
     display: flex;
-    padding: 8px 12px;
-    background: rgba(0, 0, 0, 0.02);
     border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
-    gap: 4px;
+    background: rgba(0, 0, 0, 0.02);
 }
 
 .pp-tab-btn {
     flex: 1;
-    height: 24px;
-    border-radius: 5px;
-    border: none;
-    background: transparent;
-    font-size: 11px;
+    padding: 9px 0;
+    font-size: 11.5px;
     font-weight: 500;
-    color: #636366;
+    color: #86868b;
+    background: transparent;
+    border: none;
     cursor: pointer;
+    border-bottom: 2px solid transparent;
     transition: all 0.15s ease;
 }
 
-.pp-tab-btn.active {
-    background: #ffffff;
+.pp-tab-btn:hover {
     color: #1d1d1f;
+}
+
+.pp-tab-btn.active {
+    color: #007aff;
+    border-bottom-color: #007aff;
     font-weight: 600;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .pp-inspector-body {
-    flex: 1;
-    overflow-y: auto;
     padding: 16px;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 18px;
@@ -432,16 +657,16 @@
 
 .pp-theme-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 8px;
 }
 
 .pp-theme-swatch {
-    height: 40px;
-    border-radius: 6px;
+    aspect-ratio: 16 / 10;
+    border-radius: 5px;
     border: 1px solid rgba(0, 0, 0, 0.15);
     cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .pp-theme-swatch:hover {
@@ -449,7 +674,8 @@
 }
 
 .pp-theme-swatch.active {
-    box-shadow: 0 0 0 2px #007aff;
+    border-color: #007aff;
+    box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.4);
 }
 
 .pp-layout-btn {
@@ -457,72 +683,173 @@
     align-items: center;
     gap: 8px;
     width: 100%;
-    padding: 8px 10px;
-    background: rgba(0, 0, 0, 0.03);
-    border: 0.5px solid rgba(0, 0, 0, 0.08);
+    padding: 7px 10px;
     border-radius: 6px;
+    background: rgba(0, 0, 0, 0.04);
+    border: 0.5px solid rgba(0, 0, 0, 0.08);
     font-size: 12px;
     font-weight: 500;
     color: #1d1d1f;
     cursor: pointer;
     margin-bottom: 6px;
-    transition: background 0.15s ease;
+    transition: all 0.15s ease;
 }
 
 .pp-layout-btn:hover {
-    background: rgba(0, 122, 255, 0.08);
-    color: #007aff;
+    background: rgba(0, 0, 0, 0.08);
 }
 
-/* ── Fullscreen Slideshow Modal ──────────────────────────────────────────── */
+.pp-layout-btn.active {
+    background: rgba(0, 122, 255, 0.12);
+    border-color: rgba(0, 122, 255, 0.3);
+    color: #007aff;
+    font-weight: 600;
+}
+
+/* ── 8 Curated Luxury Themes ─────────────────────────────────────────────── */
+.pp-theme-gradient {
+    background: linear-gradient(135deg, #0a84ff 0%, #0058b0 50%, #002c66 100%);
+    color: #ffffff;
+}
+.pp-theme-gradient .pp-thumb-title, .pp-theme-gradient .pp-thumb-sub { color: #ffffff; }
+
+.pp-theme-white {
+    background: #ffffff;
+    color: #1d1d1f;
+}
+
+.pp-theme-minimal {
+    background: #141416;
+    color: #f5f5f7;
+}
+.pp-theme-minimal .pp-thumb-title, .pp-theme-minimal .pp-thumb-sub { color: #f5f5f7; }
+
+.pp-theme-warm {
+    background: linear-gradient(135deg, #ff9500 0%, #ff5e3a 100%);
+    color: #ffffff;
+}
+.pp-theme-warm .pp-thumb-title, .pp-theme-warm .pp-thumb-sub { color: #ffffff; }
+
+.pp-theme-mint {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: #ffffff;
+}
+.pp-theme-mint .pp-thumb-title, .pp-theme-mint .pp-thumb-sub { color: #ffffff; }
+
+.pp-theme-neon {
+    background: linear-gradient(135deg, #0d0221 0%, #0f084b 50%, #261447 100%);
+    color: #00f0ff;
+    border: 1px solid rgba(0, 240, 255, 0.3);
+}
+.pp-theme-neon .pp-thumb-title, .pp-theme-neon .pp-thumb-sub { color: #00f0ff; }
+
+.pp-theme-bauhaus {
+    background: #f4ede2;
+    color: #1a1a1a;
+}
+.pp-theme-bauhaus .pp-editable-title { font-family: "Georgia", serif; }
+
+.pp-theme-nordic {
+    background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%);
+    color: #ffffff;
+}
+.pp-theme-nordic .pp-thumb-title, .pp-theme-nordic .pp-thumb-sub { color: #ffffff; }
+
+/* ── Fullscreen Presenter Mode 2.0 ───────────────────────────────────────── */
 .pp-presenter-overlay {
     position: fixed;
     inset: 0;
-    background: #000000;
     z-index: 99999;
+    background: #000000;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    cursor: none;
+    cursor: default;
+    user-select: none;
 }
 
 .pp-presenter-slide {
     width: 90vw;
-    max-width: 1600px;
-    aspect-ratio: 16 / 9;
+    height: 85vh;
+    max-width: 1400px;
     border-radius: 12px;
-    padding: 80px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    padding: 60px 80px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     box-sizing: border-box;
-    animation: ppSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
 }
 
-@keyframes ppSlideIn {
-    from { opacity: 0; transform: scale(0.96); }
-    to { opacity: 1; transform: scale(1); }
-}
+/* Presenter Transitions */
+.pp-trans-dissolve { animation: ppFade 0.4s ease-in-out; }
+.pp-trans-slide { animation: ppSlideLeft 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+.pp-trans-push { animation: ppPushUp 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+.pp-trans-zoom { animation: ppZoom 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+.pp-trans-flip { animation: ppFlip 0.45s ease; }
 
+@keyframes ppFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ppSlideLeft { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes ppPushUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ppZoom { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+@keyframes ppFlip { from { opacity: 0; transform: perspective(800px) rotateY(15deg); } to { opacity: 1; transform: perspective(800px) rotateY(0deg); } }
+
+/* Presenter HUD Bar */
 .pp-presenter-controls {
-    position: fixed;
+    position: absolute;
     bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(30, 30, 30, 0.75);
-    backdrop-filter: blur(20px);
+    background: rgba(28, 28, 30, 0.85);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 0.5px solid rgba(255, 255, 255, 0.2);
     border-radius: 30px;
     padding: 8px 18px;
     display: flex;
     align-items: center;
     gap: 16px;
-    color: white;
+    color: #ffffff;
     font-size: 13px;
-    opacity: 0;
-    transition: opacity 0.25s ease;
-    cursor: default;
+    font-weight: 500;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 100;
 }
 
-.pp-presenter-overlay:hover .pp-presenter-controls {
-    opacity: 1;
+.pp-laser-pointer {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: #ff3b30;
+    border-radius: 50%;
+    box-shadow: 0 0 12px 6px #ff3b30, 0 0 24px 10px rgba(255, 59, 48, 0.6);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    transition: transform 0.04s ease-out;
+}
+
+.pp-pen-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: auto;
+    z-index: 500;
+    cursor: crosshair;
+}
+
+/* Bottom App Status Bar */
+.pp-status-bar {
+    height: 28px;
+    background: rgba(246, 246, 248, 0.9);
+    border-top: 0.5px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    font-size: 11px;
+    color: #86868b;
+    flex-shrink: 0;
 }
