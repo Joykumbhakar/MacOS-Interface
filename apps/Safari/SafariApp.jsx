@@ -950,117 +950,19 @@ const StartPageView = ({ onNavigate, startPageConfig, setStartPageConfig }) => {
     );
 };
 
-// Google View
-const GoogleView = ({ query, onNavigate, searchQueryInput, setSearchQueryInput }) => {
-    const [searchTerm, setSearchTerm] = useState(query || '');
-
-    const handleSearch = (e) => {
-        if (e) e.preventDefault();
-        if (searchTerm.trim()) {
-            onNavigate('google.com', searchTerm.trim());
-        }
-    };
-
-    if (query) {
-        // Render Search Results
-        return (
-            <div className="safari-web-google">
-                <div style={{ display: 'flex', alignItems: 'center', padding: '16px 28px', borderBottom: '1px solid #dfe1e5', gap: '24px' }}>
-                    <div 
-                        className="safari-google-logo" 
-                        style={{ fontSize: '24px', margin: 0, cursor: 'pointer' }}
-                        onClick={() => onNavigate('google.com')}
-                    >
-                        <span className="safari-g-blue">G</span>
-                        <span className="safari-g-red">o</span>
-                        <span className="safari-g-yellow">o</span>
-                        <span className="safari-g-blue">g</span>
-                        <span className="safari-g-green">l</span>
-                        <span className="safari-g-red">e</span>
-                    </div>
-
-                    <form onSubmit={handleSearch} style={{ flex: 1, maxWidth: '600px' }}>
-                        <div className="safari-google-searchbox" style={{ height: '38px' }}>
-                            <input 
-                                type="text"
-                                className="safari-google-input"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                            <SafariIcon name="search" size={16} color="#4285f4" />
-                        </div>
-                    </form>
-                </div>
-
-                <div className="safari-google-results-view">
-                    <div className="safari-gr-stat">About 1,420,000 results (0.34 seconds) for <strong>{query}</strong></div>
-
-                    <div className="safari-gr-card">
-                        <div className="safari-gr-cite">https://www.apple.com &gt; macos &gt; sequoia</div>
-                        <div className="safari-gr-title" onClick={() => onNavigate('apple.com')}>macOS Sequoia - Apple Official Overview</div>
-                        <div className="safari-gr-desc">Discover macOS Sequoia. Explore new ways to work with iPhone Mirroring, transform browsing with Safari Highlights, and discover effortless window tiling.</div>
-                    </div>
-
-                    <div className="safari-gr-card">
-                        <div className="safari-gr-cite">https://github.com &gt; Joykumbhakar &gt; MacOS-Interface</div>
-                        <div className="safari-gr-title" onClick={() => onNavigate('github.com')}>GitHub - Joykumbhakar/MacOS-Interface: Authentic macOS Simulator</div>
-                        <div className="safari-gr-desc">A pixel-perfect macOS desktop experience built for the web. Full Finder, Settings, Apple Music, Safari, Dynamic Island, and native office apps.</div>
-                    </div>
-
-                    <div className="safari-gr-card">
-                        <div className="safari-gr-cite">https://en.wikipedia.org &gt; wiki &gt; macOS_Sequoia</div>
-                        <div className="safari-gr-title" onClick={() => onNavigate('wikipedia.org')}>macOS Sequoia - Wikipedia, the free encyclopedia</div>
-                        <div className="safari-gr-desc">macOS Sequoia (version 15) is the upcoming major release of macOS, Apple Inc.'s operating system for Mac computers announced at WWDC.</div>
-                    </div>
-
-                    <div className="safari-gr-card">
-                        <div className="safari-gr-cite">https://news.ycombinator.com &gt; item?id=40643210</div>
-                        <div className="safari-gr-title" onClick={() => onNavigate('news.ycombinator.com')}>Show HN: WebKit Performance and Modern Browser Simulation</div>
-                        <div className="safari-gr-desc">Discussion and architectural insights on modern browser rendering pipelines, zero-latency state updates, and Apple design standards.</div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    // Google Home Page
+// Google View (Real Google via iframe)
+const GoogleView = ({ query, onNavigate }) => {
+    const finalUrl = query 
+        ? `https://www.google.com/search?igu=1&q=${encodeURIComponent(query)}` 
+        : `https://www.google.com/webhp?igu=1`;
+        
     return (
-        <div className="safari-web-google">
-            <div className="safari-google-topbar">
-                <span>Gmail</span>
-                <span>Images</span>
-                <SafariIcon name="grid" size={16} color="#5f6368" />
-            </div>
-
-            <div className="safari-google-center">
-                <div className="safari-google-logo">
-                    <span className="safari-g-blue">G</span>
-                    <span className="safari-g-red">o</span>
-                    <span className="safari-g-yellow">o</span>
-                    <span className="safari-g-blue">g</span>
-                    <span className="safari-g-green">l</span>
-                    <span className="safari-g-red">e</span>
-                </div>
-
-                <form onSubmit={handleSearch} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <div className="safari-google-searchbox">
-                        <SafariIcon name="search" size={16} color="#9aa0a6" />
-                        <input 
-                            type="text" 
-                            className="safari-google-input" 
-                            placeholder="Search Google or type a URL"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            autoFocus
-                        />
-                    </div>
-
-                    <div className="safari-google-buttons">
-                        <button type="submit" className="safari-g-btn">Google Search</button>
-                        <button type="button" className="safari-g-btn" onClick={() => onNavigate('apple.com')}>{"I'm Feeling Lucky"}</button>
-                    </div>
-                </form>
-            </div>
+        <div style={{ width: '100%', height: '100%', backgroundColor: '#ffffff' }}>
+            <iframe 
+                src={finalUrl} 
+                style={{ width: '100%', height: '100%', border: 'none' }}
+                title="Google Search"
+            />
         </div>
     );
 };
