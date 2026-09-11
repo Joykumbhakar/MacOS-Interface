@@ -2,7 +2,7 @@
 // Refined, Pixel-Perfect & Robust
 
 const PRIORITY = {
-  auth: 12, error: 10, call: 9, recording: 8, camera: 7, microphone: 7,
+  auth: 12, touch_id: 12, error: 10, call: 9, recording: 8, camera: 7, microphone: 7,
   QuickDrop: 6, download: 5, battery: 5, bluetooth: 4, media: 4,
   focus: 3, timer: 3, calendar: 3, navigation: 3,
   screenshot: 2, notification: 2, copy: 1, success: 1, idle: 0
@@ -14,6 +14,7 @@ const SIZE = {
   expanded: { w: 384, h: 182, br: 34 },
   idle_hover: { w: 260, h: 84, br: 24 },
   auth: { w: 164, h: 146, br: 32 },
+  touch_id: { w: 164, h: 146, br: 32 },
   notification: { w: 300, h: 62, br: 22 },
   QuickDrop: { w: 290, h: 82, br: 24 },
   QuickDrop_compact: { w: 200, h: 36, br: 18 },
@@ -378,6 +379,30 @@ const T = {
     <span id="island-auth-label" style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.9);letter-spacing:-0.2px;transition:color 0.2s ease;">${d.title || 'Face ID'}</span>
   </div>`,
 
+  touch_id_expanded: (d) => `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;padding:14px 10px;box-sizing:border-box;gap:8px;">
+    <div style="position:relative;width:72px;height:72px;display:flex;align-items:center;justify-content:center;">
+      <svg style="width:100%;height:100%;position:absolute;inset:0;pointer-events:none;" viewBox="0 0 100 100" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <g id="island-fingerprint-group" class="icon-group scanning-touchid" stroke="white" stroke-width="3.5">
+          <circle cx="50" cy="50" r="44" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+          <path d="M 50 18 A 32 32 0 0 1 82 50 C 82 66 74 78 68 84" class="draw-path" style="animation-delay: 0.0s" />
+          <path d="M 32 84 C 26 78 18 66 18 50 A 32 32 0 0 1 50 18" class="draw-path" style="animation-delay: 0.06s" />
+          <path d="M 50 26 A 24 24 0 0 1 74 50 C 74 62 68 72 63 78" class="draw-path" style="animation-delay: 0.12s" />
+          <path d="M 37 78 C 32 72 26 62 26 50 A 24 24 0 0 1 50 26" class="draw-path" style="animation-delay: 0.18s" />
+          <path d="M 50 34 A 16 16 0 0 1 66 50 C 66 58 62 66 58 72" class="draw-path" style="animation-delay: 0.24s" />
+          <path d="M 42 72 C 38 66 34 58 34 50 A 16 16 0 0 1 50 34" class="draw-path" style="animation-delay: 0.30s" />
+          <path d="M 50 42 A 8 8 0 0 1 58 50 C 58 54 55 60 52 66" class="draw-path" style="animation-delay: 0.36s" />
+          <path d="M 48 66 C 45 60 42 54 42 50 A 8 8 0 0 1 50 42" class="draw-path" style="animation-delay: 0.42s" />
+        </g>
+        <g id="island-tid-tick-group" class="icon-group" style="transform: scale(0.5); display: none; opacity: 0;" stroke="#32D74B">
+          <circle cx="50" cy="50" r="40" class="tick-circle" stroke-width="5" id="island-tid-circle-anim" />
+          <path d="M 30 52 l 12 12 l 28 -26" class="tick-check" stroke-width="6" id="island-tid-check-anim" />
+        </g>
+      </svg>
+      <div id="island-tid-sweep-line" class="island-scan-laser"></div>
+    </div>
+    <span id="island-tid-label" style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.9);letter-spacing:-0.2px;transition:color 0.2s ease;">${d.title || 'Touch ID'}</span>
+  </div>`,
+
   collapsed: () => ``
 };
 
@@ -715,6 +740,68 @@ window.MacIsland = {
           }, 650);
         }, 240);
       }, 1050);
+    });
+  },
+
+  touchId: (title = 'Touch ID') => {
+    return new Promise((resolve) => {
+      IslandBus.dispatch({ 
+        type: 'touch_id', 
+        mode: 'expanded', 
+        data: { title }, 
+        autoDismiss: false, 
+        persistent: true 
+      });
+
+      // Step 1: Scanning pulse & laser animation (1100ms)
+      setTimeout(() => {
+        const fpGroup = document.getElementById('island-fingerprint-group');
+        const laser = document.getElementById('island-tid-sweep-line');
+        const tickGroup = document.getElementById('island-tid-tick-group');
+        const circleAnim = document.getElementById('island-tid-circle-anim');
+        const checkAnim = document.getElementById('island-tid-check-anim');
+        const authLabel = document.getElementById('island-tid-label');
+
+        if (fpGroup) {
+          fpGroup.classList.remove('scanning-touchid');
+          fpGroup.style.transform = 'scale(0.65)';
+          fpGroup.style.opacity = '0';
+        }
+        if (laser) laser.style.display = 'none';
+
+        // Step 2: Smooth transition to green checkmark tick (240ms)
+        setTimeout(() => {
+          if (fpGroup) fpGroup.style.display = 'none';
+          if (tickGroup) {
+            tickGroup.style.display = 'block';
+            void tickGroup.offsetWidth;
+            tickGroup.style.opacity = '1';
+            tickGroup.style.transform = 'scale(1)';
+          }
+          if (circleAnim) {
+            circleAnim.style.animation = 'drawCircle 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
+          }
+          if (checkAnim) {
+            checkAnim.style.animation = 'drawCheck 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.1s';
+          }
+          if (authLabel) {
+            authLabel.style.color = '#32D74B';
+            authLabel.textContent = 'Touch ID Verified';
+          }
+
+          if (window.MacAudio) {
+            try { MacAudio.play('unlock'); } catch (e) {}
+          }
+
+          // Step 3: Hold verified state, then dismiss Island smoothly (650ms)
+          setTimeout(() => {
+            IslandBus.close();
+            setTimeout(() => {
+              resolve(true);
+            }, 260);
+          }, 650);
+        }, 240);
+      }, 1100);
     });
   }
 };

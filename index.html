@@ -39,7 +39,7 @@
     <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <link rel="stylesheet" href="style.css?v=34">
+    <link rel="stylesheet" href="style.css?v=35">
     <link rel="stylesheet" href="apps/Music/MusicApp.css?v=13">
     <link rel="stylesheet" href="apps/Messages/MessagesApp.css?v=3">
     <link rel="stylesheet" href="apps/Calculator/CalculatorApp.css?v=1">
@@ -131,10 +131,26 @@
 
             <!-- Password Input Pill / Touch ID Mode -->
             <div class="ls-input-wrapper" id="ls-input-wrapper">
-                <div class="ls-prompt-text" id="ls-prompt-text" onclick="authenticateFaceID()">
-                    Face ID or Enter Password
+                <div class="ls-prompt-text" id="ls-prompt-text" onclick="showPasswordInput()">
+                    Touch ID or Enter Password
                 </div>
                 
+                <div class="ls-fingerprint-container" id="ls-fingerprint-container" onclick="authenticateTouchID()" title="Scan Fingerprint to Unlock">
+                    <div class="ls-fingerprint-sensor" id="ls-fingerprint-sensor">
+                        <svg class="ls-fingerprint-svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M 50 18 A 32 32 0 0 1 82 50 C 82 66 74 78 68 84" stroke-width="3.5" />
+                            <path d="M 32 84 C 26 78 18 66 18 50 A 32 32 0 0 1 50 18" stroke-width="3.5" />
+                            <path d="M 50 26 A 24 24 0 0 1 74 50 C 74 62 68 72 63 78" stroke-width="3.5" />
+                            <path d="M 37 78 C 32 72 26 62 26 50 A 24 24 0 0 1 50 26" stroke-width="3.5" />
+                            <path d="M 50 34 A 16 16 0 0 1 66 50 C 66 58 62 66 58 72" stroke-width="3.5" />
+                            <path d="M 42 72 C 38 66 34 58 34 50 A 16 16 0 0 1 50 34" stroke-width="3.5" />
+                            <path d="M 50 42 A 8 8 0 0 1 58 50 C 58 54 55 60 52 66" stroke-width="3.5" />
+                            <path d="M 48 66 C 45 60 42 54 42 50 A 8 8 0 0 1 50 42" stroke-width="3.5" />
+                        </svg>
+                        <div class="ls-fingerprint-laser"></div>
+                    </div>
+                </div>
+
                 <div class="ls-password-box" id="ls-pwd-container" style="display:none;">
                     <input type="password" id="lock-password" placeholder="Enter Password" autocomplete="off" spellcheck="false">
                     <button class="ls-submit-btn" id="unlock-btn" onclick="unlock(document.getElementById('lock-password').value)" title="Unlock">
@@ -787,8 +803,8 @@
 
     <script src="finder.js?v=12"></script>
     <script src="settings_engine.js?v=13"></script>
-    <script src="script.js?v=29"></script>
-    <script src="island.js?v=15"></script>
+    <script src="script.js?v=30"></script>
+    <script src="island.js?v=16"></script>
     <!-- Electron local file system bridge (only active in the .exe desktop app) -->
     <script src="electron-bridge.js?v=1"></script>
     <!-- YouTube Iframe API for Real Audio Playback -->
