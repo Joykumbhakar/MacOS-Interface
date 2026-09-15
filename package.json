@@ -1,6 +1,6 @@
 {
   "name": "macOS-interface",
-  "version": "1.0.2",
+  "version": "1.0.1",
   "description": "A pixel-perfect macOS desktop experience built for the web. Full Finder, Settings, Apple Music, Dynamic Island, and more - running entirely in the browser.",
   "private": true,
   "main": "main.js",
@@ -27,6 +27,7 @@
   "build": {
     "appId": "com.macOS.interface",
     "productName": "macOS Interface",
+    "artifactName": "MacOS-v${version}.${ext}",
     "nsis": {"oneClick": false, "allowToChangeInstallationDirectory": true, "installerSidebar": "build/sidebar.bmp", "installerHeader": "build/header.bmp"}, "win": {
       "target": "nsis",
       "icon": "images/Icons/macOS.png"
