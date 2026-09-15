@@ -1,4 +1,4 @@
-﻿# Dependencies
+# Dependencies
 node_modules/
 
 # OS Files
@@ -47,7 +47,7 @@ npm-debug.log*
 .env.production
 
 # Audio tracks (too large for git — host on CDN in production)
-Tracks/
+# Tracks/
 
 # Dev prototype HTML files
 htmls/
