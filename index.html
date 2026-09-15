@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="images/Icons/MacOS.png">
+    <meta name="theme-color" content="#000000">
     <title>macOS Interface — Web Simulation</title>
 
     <!-- SEO -->
@@ -913,6 +916,14 @@ function shutDownMac() {
 }
 // Attach shutDownMac globally so the Apple menu can call it
 window.shutDownMac = shutDownMac;
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(err => {
+      console.log('ServiceWorker registration failed: ', err);
+    });
+  });
+}
 </script>
 </body>
 </html>
