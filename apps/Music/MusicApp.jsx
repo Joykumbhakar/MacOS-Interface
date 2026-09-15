@@ -479,11 +479,9 @@ const AppleMusicApp = () => {
     // Track Changes
     useEffect(() => {
         if (currentTrack) {
-            if (currentTrack.url || currentTrack.previewUrl) {
+            // Initial load only: set src if not already playing or set
+            if (!audio.src && (currentTrack.url || currentTrack.previewUrl)) {
                 audio.src = currentTrack.url || currentTrack.previewUrl;
-            }
-            if (isPlaying) {
-                audio.play().catch(() => {});
             }
             updateControlCenter(currentTrack, isPlaying);
             if (data.storage && currentTrack.id) {
@@ -494,46 +492,36 @@ const AppleMusicApp = () => {
 
     // Play / Pause State
     useEffect(() => {
-        if (isPlaying) {
-            audio.play().catch(() => {});
-            updateControlCenter(currentTrack, true);
-            if (window.MacIsland && currentTrack) {
-                const totalDur = duration || (currentTrack.durationSec || 200);
-                window.MacIsland.media(
-                    currentTrack.title, 
-                    currentTrack.artist, 
-                    true, 
-                    currentTrack.cover, 
-                    formatTime(progress), 
-                    formatTime(totalDur), 
-                    Math.round((progress / totalDur) * 100), 
-                    '-' + formatTime(totalDur - progress),
-                    lovedIds.includes(currentTrack.id),
-                    currentTrack.format || 'Lossless'
-                );
-            }
-        } else {
-            audio.pause();
-            updateControlCenter(currentTrack, false);
-            if (window.MacIsland && currentTrack) {
-                const totalDur = duration || (currentTrack.durationSec || 200);
-                window.MacIsland.media(
-                    currentTrack.title, 
-                    currentTrack.artist, 
-                    false, 
-                    currentTrack.cover, 
-                    formatTime(progress), 
-                    formatTime(totalDur), 
-                    Math.round((progress / totalDur) * 100), 
-                    '-' + formatTime(totalDur - progress),
-                    lovedIds.includes(currentTrack.id),
-                    currentTrack.format || 'Lossless'
-                );
-            }
+        updateControlCenter(currentTrack, isPlaying);
+        if (window.MacIsland && currentTrack) {
+            const totalDur = duration || (currentTrack.durationSec || 200);
+            window.MacIsland.media(
+                currentTrack.title, 
+                currentTrack.artist, 
+                isPlaying, 
+                currentTrack.cover, 
+                formatTime(progress), 
+                formatTime(totalDur), 
+                Math.round((progress / totalDur) * 100), 
+                '-' + formatTime(totalDur - progress),
+                lovedIds.includes(currentTrack.id),
+                currentTrack.format || 'Lossless'
+            );
         }
     }, [isPlaying, lovedIds]);
 
-    const togglePlay = () => setIsPlaying(p => !p);
+    const togglePlay = () => {
+        if (isPlaying) {
+            audio.pause();
+            setIsPlaying(false);
+        } else {
+            if (!audio.src && currentTrack) {
+                audio.src = currentTrack.url || currentTrack.previewUrl;
+            }
+            audio.play().catch(e => console.error("togglePlay error:", e));
+            setIsPlaying(true);
+        }
+    };
 
     const playNext = () => {
         const pool = queue.length > 0 ? queue : data.songs;
@@ -545,8 +533,12 @@ const AppleMusicApp = () => {
             const currentIndex = pool.findIndex(s => s.id === currentTrack.id);
             nextIndex = (currentIndex + 1) % pool.length;
         }
-        setCurrentTrack(pool[nextIndex]);
-        if (!isPlaying) setIsPlaying(true);
+        const nextSong = pool[nextIndex];
+        setCurrentTrack(nextSong);
+        audio.src = nextSong.url || nextSong.previewUrl;
+        if (isPlaying) {
+            audio.play().catch(e => console.error("playNext error:", e));
+        }
     };
 
     const playPrev = () => {
@@ -554,8 +546,12 @@ const AppleMusicApp = () => {
         if (!pool.length) return;
         const currentIndex = pool.findIndex(s => s.id === currentTrack.id);
         const prevIndex = (currentIndex - 1 + pool.length) % pool.length;
-        setCurrentTrack(pool[prevIndex]);
-        if (!isPlaying) setIsPlaying(true);
+        const prevSong = pool[prevIndex];
+        setCurrentTrack(prevSong);
+        audio.src = prevSong.url || prevSong.previewUrl;
+        if (isPlaying) {
+            audio.play().catch(e => console.error("playPrev error:", e));
+        }
     };
 
     const seek = (e) => {
@@ -572,10 +568,18 @@ const AppleMusicApp = () => {
             setQueue(newQueue);
         }
         if (currentTrack && currentTrack.id === song.id) {
-            togglePlay();
+            if (!isPlaying) {
+                audio.play().catch(e => console.error("playSong error:", e));
+                setIsPlaying(true);
+            } else {
+                audio.pause();
+                setIsPlaying(false);
+            }
         } else {
             setCurrentTrack(song);
-            if (!isPlaying) setIsPlaying(true);
+            audio.src = song.url || song.previewUrl;
+            audio.play().catch(e => console.error("playSong play error:", e));
+            setIsPlaying(true);
         }
     };
 
