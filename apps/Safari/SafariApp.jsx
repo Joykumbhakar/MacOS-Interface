@@ -528,6 +528,21 @@ const SafariApp = () => {
                 <div className="safari-actions-cluster">
                     <button 
                         className="safari-btn"
+                        onClick={() => {
+                            if (activeTab.url && activeTab.url !== 'safari://startpage') {
+                                const realUrl = activeTab.url.startsWith('http') ? activeTab.url : `https://${activeTab.url}`;
+                                window.open(realUrl, '_blank');
+                            } else {
+                                window.open('https://google.com', '_blank');
+                            }
+                        }}
+                        title="Open in Real Browser"
+                    >
+                        <SafariIcon name="external-link" size={15} />
+                    </button>
+
+                    <button 
+                        className="safari-btn"
                         onClick={() => setShowShareMenu(!showShareMenu)}
                         title="Share this page"
                     >
