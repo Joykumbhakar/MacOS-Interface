@@ -52,7 +52,7 @@ const SafariIcon = ({ name, size = 16, color = 'currentColor', strokeWidth = 2, 
 
 // Favorites Configuration using authentic macOS icons
 const FAVORITES = [
-    { id: 'fav-impact', title: 'Impact Journey', url: 'impact.org', iconSrc: 'images/Icons/Impact.svg' },
+    { id: 'fav-impact', title: 'Impact Journey', url: 'impact.org', iconSrc: 'images/Icons/Impact.png' },
     { id: 'fav-apple', title: 'Apple', url: 'apple.com', iconSrc: 'images/Icons/Apple.png' },
     { id: 'fav-webkit', title: 'WebKit', url: 'webkit.org', iconSrc: 'images/Icons/safari.png' },
     { id: 'fav-figma', title: 'Figma', url: 'figma.com', iconSrc: 'images/Icons/Figma.png' },
@@ -168,7 +168,7 @@ const BOOKMARKS = [
 const getFavicon = (url) => {
     if (!url || url === 'safari://startpage') return { type: 'svg', name: 'compass' };
     const u = url.toLowerCase();
-    if (u.includes('impact') || u.includes('journey')) return { type: 'img', src: 'images/Icons/Impact.svg' };
+    if (u.includes('impact') || u.includes('journey')) return { type: 'img', src: 'images/Icons/Impact.png' };
     if (u.includes('apple.com')) return { type: 'img', src: 'images/Icons/Apple.png' };
     if (u.includes('google.com')) return { type: 'img', src: 'images/Icons/Google.png' };
     if (u.includes('github.com')) return { type: 'img', src: 'images/Icons/Github.png' };
@@ -407,7 +407,7 @@ const SafariApp = () => {
         const results = [];
 
         if ('impact'.includes(q) || 'journey'.includes(q)) {
-            results.push({ type: 'site', title: 'Your Journey to Impact', url: 'impact.org', iconSrc: 'images/Icons/Impact.svg' });
+            results.push({ type: 'site', title: 'Your Journey to Impact', url: 'impact.org', iconSrc: 'images/Icons/Impact.png' });
         }
         if ('google'.includes(q) || 'search'.includes(q)) {
             results.push({ type: 'site', title: 'Google Search Engine', url: 'google.com', iconSrc: 'images/Icons/Google.png' });

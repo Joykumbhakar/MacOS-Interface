@@ -1,4 +1,4 @@
-const CACHE_NAME = "macos-interface-v1";
+const CACHE_NAME = "macos-interface-v2";
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
