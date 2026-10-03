@@ -26,6 +26,7 @@ const SafariIcon = ({ name, size = 16, color = 'currentColor', strokeWidth = 2, 
         'compass': <g><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></g>,
         'clock': <g><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></g>,
         'globe': <g><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></g>,
+        'calendar': <g><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></g>,
         'code': <path d="M16 18l6-6-6-6 M8 6l-6 6 6 6" />,
         'copy': <g><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></g>,
         'mail': <g><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></g>,
@@ -51,6 +52,7 @@ const SafariIcon = ({ name, size = 16, color = 'currentColor', strokeWidth = 2, 
 
 // Favorites Configuration using authentic macOS icons
 const FAVORITES = [
+    { id: 'fav-impact', title: 'Impact Journey', url: 'impact.org', iconSrc: 'images/Icons/Impact.svg' },
     { id: 'fav-apple', title: 'Apple', url: 'apple.com', iconSrc: 'images/Icons/Apple.png' },
     { id: 'fav-webkit', title: 'WebKit', url: 'webkit.org', iconSrc: 'images/Icons/safari.png' },
     { id: 'fav-figma', title: 'Figma', url: 'figma.com', iconSrc: 'images/Icons/Figma.png' },
@@ -166,6 +168,7 @@ const BOOKMARKS = [
 const getFavicon = (url) => {
     if (!url || url === 'safari://startpage') return { type: 'svg', name: 'compass' };
     const u = url.toLowerCase();
+    if (u.includes('impact') || u.includes('journey')) return { type: 'img', src: 'images/Icons/Impact.svg' };
     if (u.includes('apple.com')) return { type: 'img', src: 'images/Icons/Apple.png' };
     if (u.includes('google.com')) return { type: 'img', src: 'images/Icons/Google.png' };
     if (u.includes('github.com')) return { type: 'img', src: 'images/Icons/Github.png' };
@@ -304,6 +307,10 @@ const SafariApp = () => {
             cleanUrl = 'google.com';
             displayTitle = query ? `${query} - Google Search` : 'Google';
             favicon = 'search';
+        } else if (cleanUrl.includes('impact') || cleanUrl.includes('journey')) {
+            cleanUrl = 'impact.org';
+            displayTitle = 'Your Journey to Impact';
+            favicon = 'globe';
         } else if (cleanUrl.includes('apple.com')) {
             cleanUrl = 'apple.com';
             displayTitle = 'Apple — Official Site';
@@ -399,6 +406,9 @@ const SafariApp = () => {
         const q = omnibarText.toLowerCase();
         const results = [];
 
+        if ('impact'.includes(q) || 'journey'.includes(q)) {
+            results.push({ type: 'site', title: 'Your Journey to Impact', url: 'impact.org', iconSrc: 'images/Icons/Impact.svg' });
+        }
         if ('google'.includes(q) || 'search'.includes(q)) {
             results.push({ type: 'site', title: 'Google Search Engine', url: 'google.com', iconSrc: 'images/Icons/Google.png' });
         }
@@ -803,6 +813,10 @@ const WebpageRouter = ({ tab, onNavigate, searchQueryInput, setSearchQueryInput,
         return <AppleView onNavigate={onNavigate} />;
     }
 
+    if (url === 'impact.org' || url.includes('impact') || url.includes('journey')) {
+        return <JourneyToImpactView onNavigate={onNavigate} />;
+    }
+
     if (url === 'github.com' || url.includes('github')) {
         return <GitHubView onNavigate={onNavigate} />;
     }
@@ -1194,6 +1208,123 @@ const HackerNewsView = ({ onNavigate }) => {
                         </div>
                     </div>
                 ))}
+            </div>
+        </div>
+    );
+};
+
+// Journey To Impact Simulated Page
+const JourneyToImpactView = ({ onNavigate }) => {
+    return (
+        <div className="safari-web-impact">
+            <div className="safari-impact-container">
+                <div className="safari-impact-header">
+                    <h1 className="safari-impact-title">Your Journey to Impact</h1>
+                    <div className="safari-impact-divider">
+                        <div className="safari-impact-div-line"></div>
+                        <div className="safari-impact-div-dot"></div>
+                    </div>
+                </div>
+
+                <div className="safari-impact-timeline">
+                    {/* Stage 1 */}
+                    <div className="safari-impact-card-wrapper">
+                        <div className="safari-impact-card">
+                            <div className="safari-impact-card-row">
+                                <div className="safari-impact-left">
+                                    <div className="safari-impact-head-row">
+                                        <span className="safari-impact-badge">STAGE-1</span>
+                                        <h2 className="safari-impact-stage-title">Registration</h2>
+                                    </div>
+                                    <p className="safari-impact-desc">
+                                        Register and fill up your details to kickstart your journey as a young social innovator.
+                                    </p>
+                                </div>
+                                <div className="safari-impact-right">
+                                    <div className="safari-impact-date">
+                                        <SafariIcon name="calendar" size={15} color="#9baec8" />
+                                        <span>8TH SEP - 8TH OCT</span>
+                                    </div>
+                                    <span className="safari-impact-completed">COMPLETED</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="safari-impact-connector"></div>
+                    </div>
+
+                    {/* Stage 2 */}
+                    <div className="safari-impact-card-wrapper">
+                        <div className="safari-impact-card">
+                            <div className="safari-impact-card-row">
+                                <div className="safari-impact-left">
+                                    <div className="safari-impact-head-row">
+                                        <span className="safari-impact-badge">STAGE-2</span>
+                                        <h2 className="safari-impact-stage-title">Problem statement selection and solution submission</h2>
+                                    </div>
+                                    <p className="safari-impact-desc">
+                                        Select a sector, choose a problem statement, and submit your innovative solution.
+                                    </p>
+                                </div>
+                                <div className="safari-impact-right">
+                                    <div className="safari-impact-date">
+                                        <SafariIcon name="calendar" size={15} color="#9baec8" />
+                                        <span>8TH SEP - 16TH OCT</span>
+                                    </div>
+                                    <span className="safari-impact-completed">COMPLETED</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="safari-impact-connector"></div>
+                    </div>
+
+                    {/* Stage 3 */}
+                    <div className="safari-impact-card-wrapper">
+                        <div className="safari-impact-card">
+                            <div className="safari-impact-card-row">
+                                <div className="safari-impact-left">
+                                    <div className="safari-impact-head-row">
+                                        <span className="safari-impact-badge">STAGE-3</span>
+                                        <h2 className="safari-impact-stage-title">Semi-finale round (Virtual)</h2>
+                                    </div>
+                                    <p className="safari-impact-desc">
+                                        Shortlisted participants advance to the online presentation round
+                                    </p>
+                                </div>
+                                <div className="safari-impact-right">
+                                    <div className="safari-impact-date">
+                                        <SafariIcon name="calendar" size={15} color="#9baec8" />
+                                        <span>TO BE ANNOUNCED</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="safari-impact-connector"></div>
+                    </div>
+
+                    {/* Stage 4 */}
+                    <div className="safari-impact-card-wrapper">
+                        <div className="safari-impact-card">
+                            <div className="safari-impact-card-row">
+                                <div className="safari-impact-left">
+                                    <div className="safari-impact-head-row">
+                                        <span className="safari-impact-badge">STAGE-4</span>
+                                        <h2 className="safari-impact-stage-title">Grand-finale round</h2>
+                                    </div>
+                                    <p className="safari-impact-desc">
+                                        Finalists present their ideas to the jury in an in-person presentation.
+                                    </p>
+                                </div>
+                                <div className="safari-impact-right">
+                                    <div className="safari-impact-date">
+                                        <SafariIcon name="calendar" size={15} color="#9baec8" />
+                                        <span>TO BE ANNOUNCED</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     );
