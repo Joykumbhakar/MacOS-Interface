@@ -529,12 +529,16 @@ const SafariApp = () => {
                     <button 
                         className="safari-btn"
                         onClick={() => {
-                            if (activeTab.url && activeTab.url !== 'safari://startpage') {
-                                const realUrl = activeTab.url.startsWith('http') ? activeTab.url : `https://${activeTab.url}`;
-                                window.open(realUrl, '_blank');
-                            } else {
+                            if (!activeTab.url || activeTab.url === 'safari://startpage') {
                                 window.open('https://google.com', '_blank');
+                                return;
                             }
+                            if ((activeTab.url === 'google.com' || activeTab.url.includes('google')) && activeTab.query) {
+                                window.open(`https://www.google.com/search?q=${encodeURIComponent(activeTab.query)}`, '_blank');
+                                return;
+                            }
+                            const realUrl = activeTab.url.startsWith('http') ? activeTab.url : `https://${activeTab.url}`;
+                            window.open(realUrl, '_blank');
                         }}
                         title="Open in Real Browser"
                     >
@@ -748,6 +752,19 @@ const SafariApp = () => {
                     <div className="safari-ctx-item" onClick={() => { handleNavigate(activeTab.url); closeContextMenu(); }}>Reload Page</div>
                     <div style={{ height: '1px', background: 'rgba(0,0,0,0.1)', margin: '4px 0' }}></div>
                     <div className="safari-ctx-item" onClick={() => { handleNewTab(); closeContextMenu(); }}>Open in New Tab</div>
+                    <div className="safari-ctx-item" onClick={() => {
+                        closeContextMenu();
+                        if (!activeTab.url || activeTab.url === 'safari://startpage') {
+                            window.open('https://google.com', '_blank');
+                            return;
+                        }
+                        if ((activeTab.url === 'google.com' || activeTab.url.includes('google')) && activeTab.query) {
+                            window.open(`https://www.google.com/search?q=${encodeURIComponent(activeTab.query)}`, '_blank');
+                            return;
+                        }
+                        const realUrl = activeTab.url.startsWith('http') ? activeTab.url : `https://${activeTab.url}`;
+                        window.open(realUrl, '_blank');
+                    }}>Open in Real Browser</div>
                     <div className="safari-ctx-item" onClick={() => closeContextMenu()}>Copy Link</div>
                     <div style={{ height: '1px', background: 'rgba(0,0,0,0.1)', margin: '4px 0' }}></div>
                     <div className="safari-ctx-item" onClick={() => closeContextMenu()}>Inspect Element</div>
