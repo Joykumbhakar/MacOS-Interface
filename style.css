@@ -213,7 +213,19 @@
         }
         .dock-item img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; transition: filter 0.2s ease; margin-bottom: 2px; }
         .dock-item:hover img { filter: brightness(0.85); }
-        .bounce-anim img { animation: macOSBounce 0.5s ease-out; }
+        .dock-item.bounce-anim > img,
+        .dock-item.bounce-anim > svg,
+        .dock-item.bounce-anim > i,
+        .dock-item.bounce-anim > div:not(.app-dot):not(.dock-tooltip) {
+            animation: macOSDockBounce 0.52s cubic-bezier(0.28, 0.84, 0.42, 1);
+        }
+        @keyframes macOSDockBounce {
+            0% { transform: translateY(0) scale(1, 1); }
+            30% { transform: translateY(-22px) scale(0.96, 1.05); }
+            60% { transform: translateY(0) scale(1.08, 0.92); }
+            80% { transform: translateY(-7px) scale(0.98, 1.02); }
+            100% { transform: translateY(0) scale(1, 1); }
+        }
         
         .app-dot { position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; border-radius: 50%; background-color: rgba(255, 255, 255, 0.95); pointer-events: none; box-shadow: 0 0 1px rgba(0,0,0,0.3); }
         .dock-tooltip {
@@ -224,14 +236,8 @@
             white-space: nowrap; border: 1px solid rgba(255,255,255,0.1); letter-spacing: 0.2px;
         }
         .dock-item:hover .dock-tooltip {
-            position: absolute; top: -38px; left: 50%; transform: translateX(-50%) translateY(5px);
-            background: rgba(30, 30, 32, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            color: #ffffff; padding: 5px 12px; border-radius: 6px; font-size: 13px; font-weight: 500;
-            opacity: 0; pointer-events: none; transition: opacity 0.15s ease-out, transform 0.15s ease-out;
-            white-space: nowrap; border: 1px solid rgba(255,255,255,0.1); letter-spacing: 0.2px;
+            opacity: 1; transform: translateX(-50%) translateY(0);
         }
-        .bounce-anim { animation: macOSBounce 0.45s cubic-bezier(0.28, 0.84, 0.42, 1); }
-        @keyframes macOSBounce { 0% { transform: translateY(0); } 35% { transform: translateY(-24px) scale(1.05); } 65% { transform: translateY(0) scale(0.96); } 85% { transform: translateY(-8px) scale(1.02); } 100% { transform: translateY(0) scale(1); } }
 
         .launchpad-overlay {
             position: fixed; inset: 0; z-index: 8000;
@@ -388,25 +394,111 @@
             border: 1px solid rgba(255, 255, 255, 0.45); border-radius: 12px; display: flex; overflow: hidden; color: #1d1d1f;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2), 0 0 0 0.5px rgba(255, 255, 255, 0.3);
             resize: both; min-width: 400px; min-height: 300px; max-height: calc(100vh - 115px); max-width: calc(100vw - 40px); z-index: 5000;
-            opacity: 0; pointer-events: none; transform: translate(var(--icon-tx, 0px), var(--icon-ty, 50vh)) scale(var(--icon-scale, 0.1));
-            transition: opacity 0.25s ease-out, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-radius 0.3s ease;
-            will-change: transform, opacity; 
+            transform-origin: 50% 50%; will-change: transform, opacity, clip-path;
+            opacity: 0; pointer-events: none;
+            transform: translate(calc(var(--base-tx) + var(--dock-tx, 0px)), calc(var(--base-ty) + var(--dock-ty, 50vh))) scale(var(--dock-scale-x, 0.05), var(--dock-scale-y, 0.05));
+            transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.34s cubic-bezier(0.25, 1, 0.5, 1), border-radius 0.3s ease;
         }
-        .mac-window.active { 
-            opacity: 1; pointer-events: auto; transform: translate(var(--base-tx), var(--base-ty)) scale(1); 
-            transition: opacity 0.35s ease-out, transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), border-radius 0.3s ease;
+        .mac-window.active:not(.is-minimized):not(.is-closing):not(.genie-minimizing):not(.genie-restoring) { 
+            opacity: 1; pointer-events: auto;
+            transform: translate(var(--base-tx), var(--base-ty)) scale(1, 1); 
+            clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 100% 100%, 0% 100%, 0% 50%);
+            transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), transform 0.38s cubic-bezier(0.16, 1.04, 0.3, 1), border-radius 0.3s ease;
         }
         .mac-window.dragged { --base-tx: 0px; --base-ty: 0px; }
         .mac-window.is-focused {  z-index: 5050 !important; }
         .mac-window.is-dragging { transition: none !important; will-change: top, left, transform; }
         
-        /* Proper macOS Minimize & Maximize Transitions */
+        /* Proper macOS Scale (Squash) Effect Transitions */
+        .mac-window.is-closing {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transform: translate(calc(var(--base-tx) + var(--dock-tx, 0px)), calc(var(--base-ty) + var(--dock-ty, 50vh))) scale(var(--dock-scale-x, 0.05), var(--dock-scale-y, 0.05)) !important;
+            transition: opacity 0.24s cubic-bezier(0.4, 0, 0.2, 1), transform 0.34s cubic-bezier(0.25, 1, 0.5, 1) !important;
+        }
         .mac-window.is-minimized {
             opacity: 0 !important;
             pointer-events: none !important;
-            transform: translate(var(--dock-tx, 0px), var(--dock-ty, 50vh)) scale(var(--dock-scale, 0.05)) !important;
-            transition: opacity 0.28s cubic-bezier(0.4, 0, 0.2, 1), transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), filter 0.28s ease !important;
-            filter: blur(6px);
+            transform: translate(calc(var(--base-tx) + var(--dock-tx, 0px)), calc(var(--base-ty) + var(--dock-ty, 50vh))) scale(var(--dock-scale-x, 0.05), var(--dock-scale-y, 0.05)) !important;
+            transition: opacity 0.26s cubic-bezier(0.4, 0, 0.2, 1), transform 0.34s cubic-bezier(0.25, 1, 0.5, 1) !important;
+        }
+
+        /* Authentic macOS Genie (Lamp Warp) Effect Keyframes */
+        .mac-window.genie-minimizing {
+            animation: macGenieMinimize 0.42s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+            pointer-events: none !important;
+            will-change: transform, opacity, clip-path;
+        }
+        .mac-window.genie-restoring {
+            animation: macGenieRestore 0.44s cubic-bezier(0.16, 1.02, 0.3, 1) forwards !important;
+            will-change: transform, opacity, clip-path;
+        }
+        .mac-window.slow-mo.genie-minimizing {
+            animation-duration: 2.2s !important;
+        }
+        .mac-window.slow-mo.genie-restoring {
+            animation-duration: 2.2s !important;
+        }
+        .mac-window.slow-mo.is-minimized,
+        .mac-window.slow-mo.is-closing {
+            transition-duration: 2.0s !important;
+        }
+        .mac-window.slow-mo.active {
+            transition-duration: 2.0s !important;
+        }
+        @keyframes macGenieMinimize {
+            0% {
+                opacity: 1;
+                transform: translate(var(--base-tx), var(--base-ty)) scale(1, 1) skewX(0deg);
+                clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 100% 100%, 0% 100%, 0% 50%);
+            }
+            30% {
+                opacity: 1;
+                transform: translate(calc(var(--base-tx) + var(--dock-tx, 0px) * 0.32), calc(var(--base-ty) + var(--dock-ty, 50vh) * 0.42)) scale(0.72, 0.65) skewX(calc(var(--dock-skew, 0deg) * 0.6));
+                clip-path: polygon(0% 0%, 100% 0%, 88% 50%, 68% 100%, 32% 100%, 12% 50%);
+            }
+            65% {
+                opacity: 0.95;
+                transform: translate(calc(var(--base-tx) + var(--dock-tx, 0px) * 0.78), calc(var(--base-ty) + var(--dock-ty, 50vh) * 0.8)) scale(0.38, 0.3) skewX(calc(var(--dock-skew, 0deg) * 0.9));
+                clip-path: polygon(10% 0%, 90% 0%, 78% 50%, 58% 100%, 42% 100%, 22% 50%);
+            }
+            90% {
+                opacity: 0.5;
+                transform: translate(calc(var(--base-tx) + var(--dock-tx, 0px) * 0.96), calc(var(--base-ty) + var(--dock-ty, 50vh) * 0.96)) scale(calc(var(--dock-scale-x, 0.05) * 1.3), calc(var(--dock-scale-y, 0.05) * 1.3)) skewX(calc(var(--dock-skew, 0deg) * 0.2));
+                clip-path: polygon(30% 0%, 70% 0%, 65% 50%, 54% 100%, 46% 100%, 35% 50%);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(calc(var(--base-tx) + var(--dock-tx, 0px)), calc(var(--base-ty) + var(--dock-ty, 50vh))) scale(var(--dock-scale-x, 0.05), var(--dock-scale-y, 0.05)) skewX(0deg);
+                clip-path: polygon(45% 100%, 55% 100%, 54% 100%, 52% 100%, 48% 100%, 46% 100%);
+            }
+        }
+        @keyframes macGenieRestore {
+            0% {
+                opacity: 0;
+                transform: translate(calc(var(--base-tx) + var(--dock-tx, 0px)), calc(var(--base-ty) + var(--dock-ty, 50vh))) scale(var(--dock-scale-x, 0.05), var(--dock-scale-y, 0.05)) skewX(0deg);
+                clip-path: polygon(45% 100%, 55% 100%, 54% 100%, 52% 100%, 48% 100%, 46% 100%);
+            }
+            20% {
+                opacity: 0.75;
+                transform: translate(calc(var(--base-tx) + var(--dock-tx, 0px) * 0.85), calc(var(--base-ty) + var(--dock-ty, 50vh) * 0.85)) scale(0.35, 0.28) skewX(calc(var(--dock-skew, 0deg) * 0.8));
+                clip-path: polygon(25% 0%, 75% 0%, 70% 50%, 56% 100%, 44% 100%, 30% 50%);
+            }
+            55% {
+                opacity: 0.95;
+                transform: translate(calc(var(--base-tx) + var(--dock-tx, 0px) * 0.45), calc(var(--base-ty) + var(--dock-ty, 50vh) * 0.48)) scale(0.68, 0.62) skewX(calc(var(--dock-skew, 0deg) * 0.5));
+                clip-path: polygon(6% 0%, 94% 0%, 84% 50%, 64% 100%, 36% 100%, 16% 50%);
+            }
+            85% {
+                opacity: 1;
+                transform: translate(calc(var(--base-tx) + var(--dock-tx, 0px) * 0.06), calc(var(--base-ty) + var(--dock-ty, 50vh) * 0.06)) scale(0.96, 0.98) skewX(calc(var(--dock-skew, 0deg) * 0.1));
+                clip-path: polygon(0% 0%, 100% 0%, 96% 50%, 88% 100%, 12% 100%, 4% 50%);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(var(--base-tx), var(--base-ty)) scale(1, 1) skewX(0deg);
+                clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 100% 100%, 0% 100%, 0% 50%);
+            }
         }
         .mac-window.maximized:not(.is-minimized) {
             width: 100vw !important;

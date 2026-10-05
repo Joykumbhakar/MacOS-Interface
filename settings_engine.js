@@ -16,6 +16,7 @@ const MacSettings = {
         dockMagnify:   true,
         dockAutoHide:  false,
         dockPosition:  'bottom',
+        minimizeEffect: 'genie',
         outputVolume:  65,
         inputVolume:   80,
         brightness:    85,
@@ -230,6 +231,11 @@ const MacSettings = {
         this.state.dockSize = size;
         // Update the CONFIG baseIconSize used by the dock animation engine
         if (window.dockCONFIG) window.dockCONFIG.baseIconSize = size;
+        this.save();
+    },
+
+    setMinimizeEffect(effect) {
+        this.state.minimizeEffect = (effect === 'scale') ? 'scale' : 'genie';
         this.save();
     },
 

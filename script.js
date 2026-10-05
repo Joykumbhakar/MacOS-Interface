@@ -970,7 +970,70 @@ const ICONS = {
                 }
             },
 
-            open(appId, sourceElement = null) {
+            updateDockTransform(win, sourceElement = null) {
+                if (!win) return;
+                const appId = win.id.replace('-window', '').replace('window-', '');
+                let iconEl = sourceElement || win._sourceIcon || document.getElementById('dock-' + appId) || document.getElementById('dock-' + appId.toLowerCase());
+                if (!iconEl) {
+                    iconEl = Array.from(document.querySelectorAll('.dock-item')).find(el => el.id && el.id.toLowerCase() === ('dock-' + appId).toLowerCase());
+                }
+                if (!iconEl) {
+                    iconEl = document.getElementById('dockPanel');
+                }
+                if (iconEl && iconEl !== document.getElementById('dockPanel')) {
+                    win._sourceIcon = iconEl;
+                }
+
+                let iconCenterX, iconCenterY, iconWidth = 52, iconHeight = 52;
+                if (iconEl) {
+                    const iconRect = iconEl.getBoundingClientRect();
+                    if (iconRect.width > 0 && iconRect.height > 0) {
+                        iconCenterX = iconRect.left + iconRect.width / 2;
+                        iconCenterY = iconRect.top + iconRect.height / 2;
+                        iconWidth = Math.max(iconRect.width, 24);
+                        iconHeight = Math.max(iconRect.height, 24);
+                    }
+                }
+                if (iconCenterX === undefined) {
+                    iconCenterX = window.innerWidth / 2;
+                    iconCenterY = window.innerHeight - 36;
+                }
+
+                const isDragged = win.classList.contains('dragged');
+                const winWidth = win.offsetWidth || parseFloat(win.style.width) || 800;
+                const winHeight = win.offsetHeight || parseFloat(win.style.height) || 500;
+
+                let activeCenterX, activeCenterY;
+                if (win.classList.contains('maximized')) {
+                    activeCenterX = window.innerWidth / 2;
+                    activeCenterY = 28 + (window.innerHeight - 28) / 2;
+                } else if (isDragged) {
+                    const curLeft = parseFloat(win.style.left) || win.offsetLeft;
+                    const curTop = parseFloat(win.style.top) || win.offsetTop;
+                    activeCenterX = curLeft + winWidth / 2;
+                    activeCenterY = curTop + winHeight / 2;
+                } else {
+                    const ml = parseFloat(win.style.marginLeft) || 0;
+                    const mt = parseFloat(win.style.marginTop) || 0;
+                    activeCenterX = (window.innerWidth / 2) + ml;
+                    activeCenterY = (28 + (window.innerHeight - 28 - 75) / 2) + mt;
+                }
+
+                const dx = iconCenterX - activeCenterX;
+                const dy = iconCenterY - activeCenterY;
+
+                const scaleX = Math.max(0.04, Math.min(1, iconWidth / winWidth));
+                const scaleY = Math.max(0.04, Math.min(1, iconHeight / winHeight));
+                const skewX = Math.max(-14, Math.min(14, (dx / (window.innerWidth / 2)) * 12));
+
+                win.style.setProperty('--dock-tx', `${Math.round(dx * 10) / 10}px`);
+                win.style.setProperty('--dock-ty', `${Math.round(dy * 10) / 10}px`);
+                win.style.setProperty('--dock-scale-x', scaleX.toFixed(4));
+                win.style.setProperty('--dock-scale-y', scaleY.toFixed(4));
+                win.style.setProperty('--dock-skew', `${skewX.toFixed(2)}deg`);
+            },
+
+            open(appId, sourceElement = null, event = null) {
                 let win = document.getElementById(appId + '-window');
                 if (!win) {
                     if (typeof appState.openApp === 'function') {
@@ -987,66 +1050,83 @@ const ICONS = {
                 if (!win) return;
 
                 if (win.classList.contains('is-minimized')) {
-                    this.restore(win, sourceElement);
+                    this.restore(win, sourceElement, event);
                     return;
                 }
 
-                let iconEl = sourceElement || document.getElementById('dock-' + appId);
-                if (iconEl) {
-                    win._sourceIcon = iconEl;
-                    const iconRect = iconEl.getBoundingClientRect();
-                    const iconCenterX = iconRect.left + iconRect.width / 2;
-                    const iconCenterY = iconRect.top + iconRect.height / 2;
-                    const tx = iconCenterX - win.offsetLeft - win.offsetWidth / 2;
-                    const ty = iconCenterY - win.offsetTop - win.offsetHeight / 2;
-                    const scale = iconRect.width / (win.offsetWidth || 600);
-
-                    win.style.setProperty('--icon-tx', `${tx}px`);
-                    win.style.setProperty('--icon-ty', `${ty}px`);
-                    win.style.setProperty('--icon-scale', Math.max(scale, 0.05));
+                // Trigger dock icon viscoelastic bounce when opening app
+                let dockIconEl = sourceElement || win._sourceIcon || document.getElementById('dock-' + appId) || document.getElementById('dock-' + appId.toLowerCase());
+                if (!dockIconEl) {
+                    dockIconEl = Array.from(document.querySelectorAll('.dock-item')).find(el => el.id && el.id.toLowerCase() === ('dock-' + appId).toLowerCase());
+                }
+                if (dockIconEl && !win.classList.contains('active')) {
+                    dockIconEl.classList.remove('bounce-anim');
+                    void dockIconEl.offsetWidth;
+                    dockIconEl.classList.add('bounce-anim');
+                    setTimeout(() => dockIconEl.classList.remove('bounce-anim'), 550);
                 }
 
-                win.classList.remove('is-minimized');
+                this.updateDockTransform(win, sourceElement);
+
+                const isGenie = (window.MacSettings && MacSettings.state && MacSettings.state.minimizeEffect === 'genie');
+                const isSlowMo = event?.shiftKey || window.event?.shiftKey;
+
+                win.classList.remove('is-minimized', 'is-closing', 'genie-minimizing');
+                if (isSlowMo) win.classList.add('slow-mo');
+                else win.classList.remove('slow-mo');
+
                 void win.offsetWidth;
                 requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
+                    if (isGenie) {
+                        win.classList.add('active', 'genie-restoring');
+                        const dur = isSlowMo ? 2200 : 440;
+                        setTimeout(() => {
+                            win.classList.remove('genie-restoring', 'slow-mo');
+                        }, dur);
+                    } else {
                         win.classList.add('active');
-                        this.focus(win);
-                    });
+                        if (isSlowMo) {
+                            setTimeout(() => win.classList.remove('slow-mo'), 2000);
+                        }
+                    }
+                    this.focus(win);
                 });
 
                 this.updateDockDot(appId, true);
             },
 
-            close(winOrId) {
+            close(winOrId, event = null) {
                 const win = typeof winOrId === 'string' ? (document.getElementById(winOrId + '-window') || document.getElementById(winOrId)) : winOrId;
                 if (!win) return;
                 const appId = win.id.replace('-window', '').replace('window-', '').toLowerCase();
 
                 if (window.MacAudio) MacAudio.play('close');
 
-                if (win._sourceIcon) {
-                    const iconRect = win._sourceIcon.getBoundingClientRect();
-                    const iconCenterX = iconRect.left + iconRect.width / 2;
-                    const iconCenterY = iconRect.top + iconRect.height / 2;
-                    const tx = iconCenterX - win.offsetLeft - win.offsetWidth / 2;
-                    const ty = iconCenterY - win.offsetTop - win.offsetHeight / 2;
-                    const scale = iconRect.width / (win.offsetWidth || 600);
+                this.updateDockTransform(win);
 
-                    win.style.setProperty('--icon-tx', `${tx}px`);
-                    win.style.setProperty('--icon-ty', `${ty}px`);
-                    win.style.setProperty('--icon-scale', Math.max(scale, 0.05));
-                }
+                const isGenie = (window.MacSettings && MacSettings.state && MacSettings.state.minimizeEffect === 'genie');
+                const isSlowMo = event?.shiftKey || window.event?.shiftKey;
 
-                win.classList.remove('active', 'maximized', 'is-minimized', 'is-focused');
+                win.classList.remove('is-focused', 'maximized');
                 win.style.zIndex = 5000;
+                if (isSlowMo) win.classList.add('slow-mo');
+                else win.classList.remove('slow-mo');
+
+                if (isGenie) {
+                    win.classList.remove('genie-restoring');
+                    win.classList.add('genie-minimizing');
+                } else {
+                    win.classList.add('is-closing');
+                }
 
                 this.focusTopmostRemaining();
                 if (appId !== 'finder') {
                     this.updateDockDot(appId, false);
                 }
 
+                const dur = isSlowMo ? (isGenie ? 2200 : 2000) : (isGenie ? 420 : 340);
                 setTimeout(() => {
+                    win.classList.remove('active', 'is-closing', 'is-minimized', 'genie-minimizing', 'genie-restoring', 'slow-mo');
                     if (appId === 'browser') {
                         if (window.ReactDOM) {
                             const root = document.getElementById('safari-react-root');
@@ -1071,35 +1151,39 @@ const ICONS = {
                         // Dynamically created apps (Music, VSCode, Messages, Calculator, etc.)
                         win.remove();
                     }
-                }, 350);
+                }, dur);
             },
 
-            minimize(winOrId) {
+            minimize(winOrId, event = null) {
                 const win = typeof winOrId === 'string' ? (document.getElementById(winOrId + '-window') || document.getElementById(winOrId)) : winOrId;
                 if (!win) return;
                 const appId = win.id.replace('-window', '').replace('window-', '').toLowerCase();
 
                 if (window.MacAudio) MacAudio.play('minimize');
 
-                const dockIcon = document.getElementById('dock-' + appId) || document.getElementById('dockPanel') || document.body;
-                const iconRect = dockIcon.getBoundingClientRect();
-                const winRect = win.getBoundingClientRect();
+                this.updateDockTransform(win);
 
-                const iconCenterX = iconRect.left + iconRect.width / 2;
-                const iconCenterY = iconRect.top + iconRect.height / 2;
-                const winCenterX = winRect.left + winRect.width / 2;
-                const winCenterY = winRect.top + winRect.height / 2;
+                const isGenie = (window.MacSettings && MacSettings.state && MacSettings.state.minimizeEffect === 'genie');
+                const isSlowMo = event?.shiftKey || window.event?.shiftKey;
 
-                const tx = iconCenterX - winCenterX;
-                const ty = iconCenterY - winCenterY;
-                const scale = Math.max(0.04, iconRect.width / (win.offsetWidth || 600));
-
-                win.style.setProperty('--dock-tx', `${tx}px`);
-                win.style.setProperty('--dock-ty', `${ty}px`);
-                win.style.setProperty('--dock-scale', scale);
-
-                win.classList.add('is-minimized');
                 win.classList.remove('is-focused');
+                if (isSlowMo) win.classList.add('slow-mo');
+                else win.classList.remove('slow-mo');
+
+                if (isGenie) {
+                    win.classList.remove('genie-restoring', 'is-closing');
+                    win.classList.add('genie-minimizing');
+                    const dur = isSlowMo ? 2200 : 410;
+                    setTimeout(() => {
+                        win.classList.remove('genie-minimizing', 'slow-mo');
+                        win.classList.add('is-minimized');
+                    }, dur);
+                } else {
+                    win.classList.add('is-minimized');
+                    if (isSlowMo) {
+                        setTimeout(() => win.classList.remove('slow-mo'), 2000);
+                    }
+                }
 
                 this.updateDockDot(appId, true);
                 this.focusTopmostRemaining();
@@ -1110,30 +1194,36 @@ const ICONS = {
                 }
             },
 
-            restore(winOrId, sourceElement = null) {
+            restore(winOrId, sourceElement = null, event = null) {
                 const win = typeof winOrId === 'string' ? (document.getElementById(winOrId + '-window') || document.getElementById(winOrId)) : winOrId;
                 if (!win) return;
                 const appId = win.id.replace('-window', '').replace('window-', '').toLowerCase();
 
                 if (window.MacAudio) MacAudio.play('maximize');
 
-                const iconEl = sourceElement || document.getElementById('dock-' + appId) || document.getElementById('dockPanel');
-                if (iconEl) {
-                    const iconRect = iconEl.getBoundingClientRect();
-                    const winRect = win.getBoundingClientRect();
-                    const iconCenterX = iconRect.left + iconRect.width / 2;
-                    const iconCenterY = iconRect.top + iconRect.height / 2;
-                    const tx = iconCenterX - (win.offsetLeft || winRect.left) - (win.offsetWidth || winRect.width) / 2;
-                    const ty = iconCenterY - (win.offsetTop || winRect.top) - (win.offsetHeight || winRect.height) / 2;
-                    const scale = iconRect.width / (win.offsetWidth || 600);
+                this.updateDockTransform(win, sourceElement);
 
-                    win.style.setProperty('--dock-tx', `${tx}px`);
-                    win.style.setProperty('--dock-ty', `${ty}px`);
-                    win.style.setProperty('--dock-scale', Math.max(scale, 0.05));
+                const isGenie = (window.MacSettings && MacSettings.state && MacSettings.state.minimizeEffect === 'genie');
+                const isSlowMo = event?.shiftKey || window.event?.shiftKey;
+
+                win.classList.remove('is-minimized', 'is-closing');
+                if (isSlowMo) win.classList.add('slow-mo');
+                else win.classList.remove('slow-mo');
+
+                if (isGenie) {
+                    win.classList.remove('genie-minimizing');
+                    win.classList.add('active', 'genie-restoring');
+                    const dur = isSlowMo ? 2200 : 430;
+                    setTimeout(() => {
+                        win.classList.remove('genie-restoring', 'slow-mo');
+                    }, dur);
+                } else {
+                    win.classList.add('active');
+                    if (isSlowMo) {
+                        setTimeout(() => win.classList.remove('slow-mo'), 2000);
+                    }
                 }
 
-                win.classList.remove('is-minimized');
-                win.classList.add('active');
                 this.focus(win);
                 this.updateDockDot(appId, true);
             },
@@ -1180,7 +1270,10 @@ const ICONS = {
             },
 
             updateDockDot(appId, isOpen) {
-                const dockItem = document.getElementById('dock-' + appId);
+                let dockItem = document.getElementById('dock-' + appId) || document.getElementById('dock-' + appId.toLowerCase());
+                if (!dockItem) {
+                    dockItem = Array.from(document.querySelectorAll('.dock-item')).find(el => el.id && el.id.toLowerCase() === ('dock-' + appId).toLowerCase());
+                }
                 if (!dockItem) return;
                 let dot = dockItem.querySelector('.app-dot');
                 if (isOpen) {
@@ -1190,7 +1283,7 @@ const ICONS = {
                         dockItem.appendChild(dot);
                     }
                 } else {
-                    if (dot && appId !== 'finder') {
+                    if (dot && appId.toLowerCase() !== 'finder') {
                         dot.remove();
                     }
                 }
@@ -1525,46 +1618,51 @@ const ICONS = {
             const win = document.getElementById(appId + '-window');
             if (!win) return;
             
-            let iconEl = sourceElement || document.getElementById('dock-' + appId);
-            
-            if (iconEl) {
-                win._sourceIcon = iconEl;
-                const iconRect = iconEl.getBoundingClientRect();
-                const iconCenterX = iconRect.left + iconRect.width / 2;
-                const iconCenterY = iconRect.top + iconRect.height / 2;
-                const tx = iconCenterX - win.offsetLeft - win.offsetWidth / 2;
-                const ty = iconCenterY - win.offsetTop - win.offsetHeight / 2;
-                const scale = iconRect.width / win.offsetWidth;
-                
-                win.style.setProperty('--icon-tx', `${tx}px`);
-                win.style.setProperty('--icon-ty', `${ty}px`);
-                win.style.setProperty('--icon-scale', Math.max(scale, 0.05));
-            }
+            MacWindowManager.updateDockTransform(win, sourceElement);
             
             if (appId === 'Browser' && window.renderSafariApp) {
                 window.renderSafariApp();
             }
+
+            const isGenie = (window.MacSettings && MacSettings.state && MacSettings.state.minimizeEffect === 'genie');
+            win.classList.remove('is-minimized', 'is-closing', 'genie-minimizing');
             void win.offsetWidth;
-            requestAnimationFrame(() => { requestAnimationFrame(() => { win.classList.add('active'); if (typeof focusWindow === 'function') focusWindow(win); }); });
+            requestAnimationFrame(() => {
+                if (isGenie) {
+                    win.classList.add('active', 'genie-restoring');
+                    setTimeout(() => {
+                        win.classList.remove('genie-restoring');
+                    }, 440);
+                } else {
+                    win.classList.add('active');
+                }
+                if (typeof MacWindowManager !== 'undefined') MacWindowManager.focus(win);
+                else if (typeof focusWindow === 'function') focusWindow(win);
+            });
+            if (typeof MacWindowManager !== 'undefined') {
+                MacWindowManager.updateDockDot(appId.toLowerCase(), true);
+            }
         };
 
         appState.closeApp = function(appId) {
-            const win = document.getElementById(appId + '-window');
-            if (!win) return;
-            
-            if (win._sourceIcon) {
-                const iconRect = win._sourceIcon.getBoundingClientRect();
-                const iconCenterX = iconRect.left + iconRect.width / 2;
-                const iconCenterY = iconRect.top + iconRect.height / 2;
-                const tx = iconCenterX - win.offsetLeft - win.offsetWidth / 2;
-                const ty = iconCenterY - win.offsetTop - win.offsetHeight / 2;
-                const scale = iconRect.width / win.offsetWidth;
-                
-                win.style.setProperty('--icon-tx', `${tx}px`);
-                win.style.setProperty('--icon-ty', `${ty}px`);
-                win.style.setProperty('--icon-scale', Math.max(scale, 0.05));
+            if (window.MacWindowManager) {
+                MacWindowManager.close(appId);
+            } else {
+                const win = document.getElementById(appId + '-window');
+                if (win) win.classList.remove('active', 'maximized');
             }
-            win.classList.remove('active', 'maximized');
+        };
+
+        appState.minimize = function(appId) {
+            if (window.MacWindowManager) {
+                MacWindowManager.minimize(appId);
+            }
+        };
+
+        appState.maximize = function(win) {
+            if (window.MacWindowManager) {
+                MacWindowManager.maximize(win);
+            }
         };
 
         
@@ -2172,7 +2270,12 @@ const SETTINGS_VIEWS = {
             
             ${setRow('Position on screen', setSelect(MacSettings.state.dockPosition === 'bottom' ? 'Bottom' : MacSettings.state.dockPosition === 'left' ? 'Left' : 'Right'))}
             
-            ${setRow('Minimize windows using', setSelect('Genie Effect'))}
+            ${setRow('Minimize windows using', `
+                <select class="mac-select" style="background: rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.12); border-radius: 6px; padding: 3px 8px; font-size: 12.5px; color: #1d1d1f; outline: none; cursor: pointer;" onchange="MacSettings.setMinimizeEffect(this.value);">
+                    <option value="genie" ${(MacSettings.state.minimizeEffect || 'genie') === 'genie' ? 'selected' : ''}>Genie Effect</option>
+                    <option value="scale" ${MacSettings.state.minimizeEffect === 'scale' ? 'selected' : ''}>Scale Effect (Squash)</option>
+                </select>
+            `)}
             
             ${setRow('Automatically hide and show the Dock', toggleHTML('t-autohide', MacSettings.state.dockAutoHide, 'MacSettings.state.dockAutoHide=this.checked;MacSettings.applyDock();'))}
             
@@ -3058,7 +3161,7 @@ const SETTINGS_VIEWS = {
                     e.stopPropagation();
                     e.preventDefault();
                     const win = closeBtn.closest('.mac-window');
-                    if (win) MacWindowManager.close(win);
+                    if (win) MacWindowManager.close(win, e);
                     return;
                 }
                 const minBtn = e.target.closest('.tl-min');
@@ -3066,7 +3169,7 @@ const SETTINGS_VIEWS = {
                     e.stopPropagation();
                     e.preventDefault();
                     const win = minBtn.closest('.mac-window');
-                    if (win) MacWindowManager.minimize(win);
+                    if (win) MacWindowManager.minimize(win, e);
                     return;
                 }
                 const maxBtn = e.target.closest('.tl-max');
@@ -3132,7 +3235,7 @@ const SETTINGS_VIEWS = {
                 if (window.MacIsland) window.MacIsland.dismiss();
             }
 
-            function handleAppClick(app) {
+            function handleAppClick(app, event = null) {
                 if (app.id === 'launchpad') { window.toggleLaunchpad(); return; }
                 const launchpadEl = document.getElementById('launchpad');
                 if (launchpadEl && launchpadEl.classList.contains('active')) window.toggleLaunchpad();
@@ -3160,11 +3263,11 @@ const SETTINGS_VIEWS = {
                     window.showFaceIdAuth('Settings').then(() => {
                         if (targetWindow) { 
                             if (targetWindow.classList.contains('is-minimized')) {
-                                MacWindowManager.restore(targetWindow, dockIconEl);
+                                MacWindowManager.restore(targetWindow, dockIconEl, event);
                             } else if (targetWindow.classList.contains('active')) {
                                 MacWindowManager.focus(targetWindow);
                             } else {
-                                MacWindowManager.open(app.id, dockIconEl);
+                                MacWindowManager.open(app.id, dockIconEl, event);
                             }
                         } else {
                             appState.openApp(app.id, dockIconEl);
@@ -3174,15 +3277,15 @@ const SETTINGS_VIEWS = {
                     const targetWindow = document.getElementById(app.id + '-window');
                     if (targetWindow) { 
                         if (targetWindow.classList.contains('is-minimized')) {
-                            MacWindowManager.restore(targetWindow, dockIconEl);
+                            MacWindowManager.restore(targetWindow, dockIconEl, event);
                         } else if (targetWindow.classList.contains('active')) {
                             if (targetWindow.classList.contains('is-focused')) {
-                                MacWindowManager.minimize(targetWindow);
+                                MacWindowManager.minimize(targetWindow, event);
                             } else {
                                 MacWindowManager.focus(targetWindow);
                             }
                         } else {
-                            MacWindowManager.open(app.id, dockIconEl);
+                            MacWindowManager.open(app.id, dockIconEl, event);
                         }
                     } else {
                         appState.openApp(app.id, dockIconEl);
@@ -3252,7 +3355,7 @@ const SETTINGS_VIEWS = {
                         app.isOpen = true; item.classList.remove('bounce-anim'); void item.offsetWidth; item.classList.add('bounce-anim');
                         setTimeout(() => item.classList.remove('bounce-anim'), 500);
                         let dot = item.querySelector('.app-dot'); if (app.isOpen && !dot) { dot = document.createElement('div'); dot.className = 'app-dot'; item.appendChild(dot); } 
-                        handleAppClick(app);
+                        handleAppClick(app, e);
                     });
                     item.addEventListener('contextmenu', (e) => {
                         e.preventDefault(); e.stopPropagation();
